@@ -29,6 +29,7 @@ from .AxisKT_data import (
     AxisKTModelData,
     axiskt_packed_collate_fn,
     build_axiskt_model,
+    use_compact_global,
 )
 
 logger = get_logger(__name__)
@@ -99,6 +100,7 @@ class AxisKTAnalyzer(BaseCaseAnalyzer):
             mastery pseudo-probabilities.
         """
         users, questions, responses, times, mask, kc_order, _, valid_idx = batch_data
+        compact_global = use_compact_global(mask)
         questions = self._move_tensor_to_device(questions)
         responses = self._move_tensor_to_device(responses)
         times = self._move_tensor_to_device(times)
@@ -107,7 +109,7 @@ class AxisKTAnalyzer(BaseCaseAnalyzer):
         valid_idx = self._move_tensor_to_device(valid_idx)
 
         logits_full, captured = self._forward_with_captured_states(
-            questions, responses, times, mask, kc_order
+            questions, responses, times, mask, kc_order, compact_global
         )
 
         logits = logits_full[:, :-1].flatten()[valid_idx]
@@ -132,6 +134,7 @@ class AxisKTAnalyzer(BaseCaseAnalyzer):
         times: torch.Tensor,
         mask: torch.Tensor,
         kc_order: torch.Tensor,
+        compact_global: bool,
     ) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
         """Run the model forward, capturing per-KC states and features.
 
@@ -165,7 +168,12 @@ class AxisKTAnalyzer(BaseCaseAnalyzer):
                 enabled=use_amp,
             ):
                 logits_full = model(
-                    questions, responses, times, mask, kc_order=kc_order
+                    questions,
+                    responses,
+                    times,
+                    mask,
+                    kc_order=kc_order,
+                    compact_global=compact_global,
                 )
             if use_amp:
                 logits_full = logits_full.float()

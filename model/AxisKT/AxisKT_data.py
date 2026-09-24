@@ -93,6 +93,22 @@ def axiskt_packed_collate_fn(batch):
     return (*dense_columns, kc_order, kc_inverse, valid_idx)
 
 
+def use_compact_global(mask: torch.Tensor) -> bool:
+    """Choose compact global computation from a CPU batch mask.
+
+    Only trailing padding can be skipped. An interior masked position remains
+    active because later valid positions may depend on its encoded state.
+    """
+    if mask.device.type != "cpu":
+        raise ValueError("use_compact_global expects the CPU collate mask")
+    if mask.numel() == 0:
+        return False
+    positions = torch.arange(1, mask.size(1) + 1)
+    lengths = torch.where(mask, positions, 0).amax(dim=1)
+    active_count = int(lengths.sum())
+    return active_count > 0 and 2 * active_count <= mask.numel()
+
+
 def build_question_skill_table(data_src: DataSource) -> tuple[np.ndarray, np.ndarray]:
     """Build a padded, permutation-stable KC set for every question."""
     relation = data_src.get_relation("question_skill")
@@ -249,4 +265,5 @@ __all__ = [
     "build_axiskt_model",
     "build_question_skill_table",
     "derive_max_gap_bins",
+    "use_compact_global",
 ]

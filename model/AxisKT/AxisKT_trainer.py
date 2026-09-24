@@ -127,7 +127,12 @@ class AxisKTTrainer(BaseTrainer):
     def forward_pass(
         self, batch_data: tuple[torch.Tensor, ...]
     ) -> dict[str, torch.Tensor]:
+        from model.AxisKT.AxisKT_data import use_compact_global
+
         questions, responses, times, mask, kc_order, kc_inverse, valid_idx = batch_data
+        compact_global = not self.run_config.compile.compile and use_compact_global(
+            mask
+        )
         questions = self._move_tensor_to_device(questions)
         responses = self._move_tensor_to_device(responses)
         times = self._move_tensor_to_device(times)
@@ -149,6 +154,7 @@ class AxisKTTrainer(BaseTrainer):
                 mask,
                 kc_order=kc_order,
                 kc_inverse=kc_inverse,
+                compact_global=compact_global,
             )
         if use_amp:
             logits_full = logits_full.float()
