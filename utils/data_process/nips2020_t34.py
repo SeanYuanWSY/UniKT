@@ -164,7 +164,7 @@ class NIPS2020T34Data(DataSource):
                 .str.split(",")
                 .list.eval(pl.element().str.strip_chars().cast(pl.Int64)),
             )
-            .explode("SubjectId")
+            .explode("SubjectId", empty_as_null=True)
             .rename({"SubjectId": "skill"})
             .filter(pl.col("skill").is_in(level3_ids))
             .with_columns(pl.col("skill").cast(pl.String))

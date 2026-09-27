@@ -13,7 +13,7 @@ license-file = "LICENSE"
 index-url = "https://pypi.org/simple"
 
 [feature.common.pypi-dependencies]
-swanlab = ">=0.9,<1.0"
+swanlab = ">=0.9.6,<1.0"
 wandb = ">=0.18,<1.0"
 
 [feature.base]

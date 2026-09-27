@@ -90,7 +90,7 @@ class Assistments2009Data(DataSource):
             mapped_data.select(["question", "skill"])
             .unique(subset=["question", "skill"], keep="first")
             .with_columns(pl.col("skill").str.split("_").alias("skill_parts"))
-            .explode("skill_parts")
+            .explode("skill_parts", empty_as_null=True)
             .with_columns(pl.col("skill_parts").cast(pl.String).alias("skill"))
             .select(["question", "skill"])
             .unique(subset=["question", "skill"], keep="first")

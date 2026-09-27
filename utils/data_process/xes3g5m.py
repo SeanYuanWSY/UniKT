@@ -92,7 +92,7 @@ class Xes3g5mData(DataSource):
                     "timestamps": "timestamp",
                 }
             )
-            .explode(explode_cols)
+            .explode(explode_cols, empty_as_null=True)
             .with_columns(
                 [
                     pl.col("user").cast(pl.Int32),
@@ -166,7 +166,7 @@ class Xes3g5mData(DataSource):
         question_skill = (
             self.cleaned_raw_data.select(["question", "concept"])
             .with_columns(pl.col("concept").str.split("_").alias("skill"))
-            .explode("skill")
+            .explode("skill", empty_as_null=True)
             .with_columns(pl.col("skill").cast(pl.Int32))
             .unique()
         )
