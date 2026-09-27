@@ -51,7 +51,11 @@ class StubDataSource:
         self._metadata = metadata or {}
         self._windowlate_data = windowlate_data
 
-    def get_split_skill_sequence_data(self) -> pl.DataFrame | None:
+    def get_split_skill_sequence_data(
+        self,
+        required: tuple[str, ...] = (),
+        optional: tuple[str, ...] = (),
+    ) -> pl.DataFrame | None:
         return self._split_skill_sequence_data
 
     def get_windowlate_data(self) -> pl.LazyFrame | None:

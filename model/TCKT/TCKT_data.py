@@ -140,7 +140,7 @@ class TCKTModelData(QuestionModelData):
             n_at:   max_rt_seconds + 1
             n_it:   max_it_minutes + 1
         """
-        data = self.data_src.get_split_question_sequence_data()
+        data = self.load_split_data(required=("ms_first_response", "timestamp"))
         num_users = data["sequence_id"].n_unique()
 
         sub = data.select(

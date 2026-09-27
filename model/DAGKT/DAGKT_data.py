@@ -54,7 +54,7 @@ class DAGKTModelData(QuestionModelData):
 
         logger.info("Building response sequences from split data...")
 
-        data = self.data_src.get_split_question_sequence_data().to_pandas()
+        data = self.load_split_data(optional=("attempt_count",)).to_pandas()
         max_seq_len = self.data_src.get_metadata("max_seq_len")
         num_users = data["sequence_id"].nunique()
 

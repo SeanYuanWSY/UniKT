@@ -214,7 +214,7 @@ class MCSKTModelData(SkillModelData):
     def _load_timestamps(self) -> np.ndarray:
         import polars as pl
 
-        data = self.data_src.get_split_skill_sequence_data()
+        data = self.load_split_data(required=("timestamp",))
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
         max_seq_len = self.data_src.get_metadata("max_seq_len")

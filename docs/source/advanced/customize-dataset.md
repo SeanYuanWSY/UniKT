@@ -307,7 +307,7 @@ def load_src_data(self):
         self.raw_data_path,
         ignore_errors=True,
     )
-    self._data_cache["raw"] = self.raw_data
+    self._data_cache[("raw", None)] = self.raw_data
 ```
 
 ## 完整示例：SimpleKT

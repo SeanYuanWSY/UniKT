@@ -90,7 +90,7 @@ class CIKTModelData(QuestionModelData):
         ``num_levels`` 个等级，最低正确率（最难）=0。训练集中未出现的题目默认 0。
         """
         num_questions = self.data_src.get_metadata("num_questions")
-        data = self.data_src.get_split_question_sequence_data()
+        data = self.load_split_data()
         train = data.filter((pl.col("fold") != fold_idx) & (pl.col("fold") != -1))
 
         stats = (

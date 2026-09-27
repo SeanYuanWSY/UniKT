@@ -529,7 +529,7 @@ class DyGKTModelData(QuestionModelData):
         num_users, max_seq_len = target_shape
         timestamps = np.zeros((num_users, max_seq_len), dtype=np.int64)
 
-        split_data = self.data_src.get_split_question_sequence_data().to_pandas()
+        split_data = self.load_split_data(required=("timestamp",)).to_pandas()
 
         ts_series = split_data["timestamp"]
         if np.issubdtype(ts_series.dtype, np.datetime64):

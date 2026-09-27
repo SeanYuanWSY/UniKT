@@ -200,7 +200,7 @@ class SQGKTModelData(QuestionModelData):
         """
         from scipy.stats import poisson
 
-        data = self.data_src.get_split_question_sequence_data()
+        data = self.load_split_data(required=("attempt_count", "hint_count"))
         data = data.filter(
             (pl.col("fold") != fold_idx) & (pl.col("fold") != -1)
         ).to_pandas()

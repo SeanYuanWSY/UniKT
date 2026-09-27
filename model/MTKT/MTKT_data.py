@@ -249,7 +249,7 @@ class MTKTModelData(SkillModelData):
         Returns:
             user_timestamp: shape (num_users, max_seq_len)
         """
-        data = self.data_src.get_split_skill_sequence_data().to_pandas()
+        data = self.load_split_data(required=("timestamp",)).to_pandas()
         max_seq_len: int = self.data_src.get_metadata("max_seq_len")
         num_users: int = int(data["sequence_id"].nunique())
 

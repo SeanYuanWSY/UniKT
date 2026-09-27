@@ -109,7 +109,7 @@ class PSKTModelData(QuestionModelData):
 
     def _load_sequences(self):
         """Return (questions 0-based, responses, masks, timestamps) as [num_users, max_seq_len] int arrays."""
-        data = self.data_src.get_split_question_sequence_data()
+        data = self.load_split_data(required=("timestamp",))
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
 

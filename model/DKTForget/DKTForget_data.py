@@ -159,7 +159,7 @@ class DKTForgetModelData(SkillModelData):
         self.num_pcount: int = 0
 
     def _build_dense_arrays(self):
-        data = self.data_src.get_split_skill_sequence_data()
+        data = self.load_split_data(required=("timestamp",))
 
         max_seq_len = self.data_src.get_metadata("max_seq_len")
         num_users = data["sequence_id"].n_unique()

@@ -20,17 +20,6 @@ from utils.model_data import QuestionModelData
 
 logger = get_logger(__name__)
 
-_RESPONSE_TIME_COL = "ms_first_response"
-
-
-def _validate_required_columns(columns: list[str]) -> None:
-    """校验序列数据含 HDKT 所需的答题用时列，缺失时 fail fast。"""
-    if _RESPONSE_TIME_COL not in columns:
-        raise ValueError(
-            f"HDKT requires the '{_RESPONSE_TIME_COL}' column for answer-time "
-            f"features, which is missing in this dataset."
-        )
-
 
 class HDKTDataset(Dataset):
     """HDKT 数据集。
@@ -85,10 +74,6 @@ class HDKTModelData(QuestionModelData):
         num_questions = self.data_src.get_metadata("num_questions")
         num_skills = self.data_src.get_metadata("num_skills")
         num_users = self.data_src.get_metadata("num_users")
-
-        _validate_required_columns(
-            self.data_src.get_split_question_sequence_data().columns
-        )
 
         user_sequence, user_response, user_mask, user_id_sequence = (
             self.load_sequence_data()
@@ -176,7 +161,7 @@ class HDKTModelData(QuestionModelData):
             at_seq / it_seq: 词表 id [N, S]
             n_at / n_it: 词表大小 = 唯一值数 + 1
         """
-        data = self.data_src.get_split_question_sequence_data()
+        data = self.load_split_data(required=("ms_first_response", "timestamp"))
         num_users = data["sequence_id"].n_unique()
 
         sub = data.select(

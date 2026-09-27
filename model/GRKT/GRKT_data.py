@@ -62,7 +62,7 @@ class GRKTModelData(QuestionModelData):
         num_skills = self.data_src.get_metadata("num_skills")
 
         # Load split question sequence data
-        q_data = self.data_src.get_split_question_sequence_data()
+        q_data = self.load_split_data(optional=("timestamp",))
         num_users = q_data["sequence_id"].n_unique()
         merged_pd = q_data.to_pandas()
 

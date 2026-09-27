@@ -209,7 +209,7 @@ class AxisKTModelData(QuestionModelData):
         ``ms_first_response`` dwell times are accumulated. Sequences without
         a usable timestamp fall back to position indices.
         """
-        q_data = self.data_src.get_split_question_sequence_data()
+        q_data = self.load_split_data(optional=("ms_first_response", "timestamp"))
         num_users = q_data["sequence_id"].n_unique()
         max_seq_len = int(self.data_src.get_metadata("max_seq_len"))
         time_seqs = np.zeros((num_users, max_seq_len), dtype=np.float64)
