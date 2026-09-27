@@ -198,7 +198,14 @@ class SkillModelData(BaseModelData):
 
     def _get_kfold_data(self) -> pl.DataFrame:
         """Override: retrieve K-fold labels from skill sequence data."""
-        return self.data_src.get_split_skill_sequence_data()
+        return self._load_split_data()
+
+    def _load_split_data(self) -> pl.DataFrame:
+        """Override: project and load split skill sequences."""
+        return self.data_src.get_split_skill_sequence_data(
+            required=self.REQUIRED_FEATURE_COLUMNS,
+            optional=self.OPTIONAL_FEATURE_COLUMNS,
+        )
 
     def build_sequence_data(
         self,
@@ -218,7 +225,7 @@ class SkillModelData(BaseModelData):
 
         logger.info("Building skill sequences from split data...")
 
-        data = self.data_src.get_split_skill_sequence_data()
+        data = self._load_split_data()
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
         max_seq_len = self.data_src.get_metadata("max_seq_len")

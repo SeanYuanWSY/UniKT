@@ -152,6 +152,8 @@ class DKTForgetWindowlateIterableDataset(WindowlateIterableDataset):
 class DKTForgetModelData(SkillModelData):
     """DKT-Forget 模型数据加载器"""
 
+    REQUIRED_FEATURE_COLUMNS = ("timestamp",)
+
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
         self.num_rgap: int = 0
@@ -159,7 +161,7 @@ class DKTForgetModelData(SkillModelData):
         self.num_pcount: int = 0
 
     def _build_dense_arrays(self):
-        data = self.data_src.get_split_skill_sequence_data()
+        data = self._load_split_data()
 
         max_seq_len = self.data_src.get_metadata("max_seq_len")
         num_users = data["sequence_id"].n_unique()

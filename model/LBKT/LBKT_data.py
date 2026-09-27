@@ -10,9 +10,6 @@ from utils.model_data import QuestionModelData
 
 logger = get_logger(__name__)
 
-_RESPONSE_TIME_COL = "ms_first_response"
-_REQUIRED_COLUMNS = ["attempt_count", "hint_count"]
-
 
 class LBKTDataset(Dataset):
     def __init__(
@@ -39,23 +36,9 @@ class LBKTDataset(Dataset):
         return len(self.sequences)
 
 
-def _validate_required_columns(columns: list[str]):
-    if _RESPONSE_TIME_COL not in columns:
-        raise ValueError(
-            f"LBKT requires '{_RESPONSE_TIME_COL}' column for time_factor computation, "
-            f"but it was not found. Available columns: {columns}. "
-            f"Please ensure the data source preserves this field."
-        )
-
-    for col in _REQUIRED_COLUMNS:
-        if col not in columns:
-            raise ValueError(
-                f"LBKT requires '{col}' column for behavioral factor computation, "
-                f"but it was not found. Available columns: {columns}. "
-            )
-
-
 class LBKTModelData(QuestionModelData):
+    REQUIRED_FEATURE_COLUMNS = ("ms_first_response", "attempt_count", "hint_count")
+
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -113,10 +96,7 @@ class LBKTModelData(QuestionModelData):
         """
         logger.info("Building response sequences with behavioral factors...")
 
-        data = self.data_src.get_split_question_sequence_data().to_pandas()
-        columns = data.columns.tolist()
-
-        _validate_required_columns(columns)
+        data = self._load_split_data().to_pandas()
 
         max_seq_len = self.data_src.get_metadata("max_seq_len")
         num_users = data["sequence_id"].nunique()
@@ -165,7 +145,7 @@ class LBKTModelData(QuestionModelData):
         5. std == 0 时 time_factor = 1
         6. response_time == 0 的行（padding/缺失）time_factor = 1
         """
-        response_times = data[_RESPONSE_TIME_COL].values.astype(np.float64) / 1000.0
+        response_times = data["ms_first_response"].values.astype(np.float64) / 1000.0
 
         time_factors = np.ones(len(data), dtype=np.float32)
 

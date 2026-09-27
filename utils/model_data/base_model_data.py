@@ -39,6 +39,23 @@ class BaseModelData(ABC):
         self.data_src = data_src
         self._cache = cache
 
+    # Feature columns beyond the structural core; the structural columns
+    # (sequence_id/seq_pos/label/question[/skill]/user/fold) are always
+    # resolved by the DataSource.
+    REQUIRED_FEATURE_COLUMNS: tuple[str, ...] = ()  # missing -> fail fast
+    OPTIONAL_FEATURE_COLUMNS: tuple[str, ...] = ()  # missing -> silently skipped
+
+    def _load_split_data(self) -> pl.DataFrame:
+        """Load split sequences projected to the declared columns.
+
+        Returns:
+            Projected split sequence DataFrame.
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} must inherit QuestionModelData or "
+            "SkillModelData to load split sequences."
+        )
+
     @overload
     @staticmethod
     def disk_cache(

@@ -435,6 +435,8 @@ class DyGKTDataset(Dataset):
 class DyGKTModelData(QuestionModelData):
     """Data adapter for DyGKT."""
 
+    REQUIRED_FEATURE_COLUMNS = ("timestamp",)
+
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -529,7 +531,7 @@ class DyGKTModelData(QuestionModelData):
         num_users, max_seq_len = target_shape
         timestamps = np.zeros((num_users, max_seq_len), dtype=np.int64)
 
-        split_data = self.data_src.get_split_question_sequence_data().to_pandas()
+        split_data = self._load_split_data().to_pandas()
 
         ts_series = split_data["timestamp"]
         if np.issubdtype(ts_series.dtype, np.datetime64):

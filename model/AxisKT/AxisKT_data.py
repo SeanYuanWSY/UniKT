@@ -156,6 +156,8 @@ def build_axiskt_model(rc, data_src: DataSource, extra: dict):
 class AxisKTModelData(QuestionModelData):
     """Prepare original question sequences and a separate question-KC view."""
 
+    OPTIONAL_FEATURE_COLUMNS = ("ms_first_response", "timestamp")
+
     @override
     def prepare_data(self, rc: Any):
         fold_idx = rc.data.fold if rc.data.fold >= 0 else None
@@ -209,7 +211,7 @@ class AxisKTModelData(QuestionModelData):
         ``ms_first_response`` dwell times are accumulated. Sequences without
         a usable timestamp fall back to position indices.
         """
-        q_data = self.data_src.get_split_question_sequence_data()
+        q_data = self._load_split_data()
         num_users = q_data["sequence_id"].n_unique()
         max_seq_len = int(self.data_src.get_metadata("max_seq_len"))
         time_seqs = np.zeros((num_users, max_seq_len), dtype=np.float64)

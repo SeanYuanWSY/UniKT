@@ -69,6 +69,8 @@ class ClusterKTModelData(QuestionModelData):
     - Timestamp extraction for lagtime computation
     """
 
+    REQUIRED_FEATURE_COLUMNS = ("timestamp",)
+
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -115,13 +117,7 @@ class ClusterKTModelData(QuestionModelData):
             - user_mask: validity mask
             - user_timestamp: absolute timestamps
         """
-        data = self.data_src.get_split_question_sequence_data()
-
-        if "timestamp" not in data.columns:
-            raise ValueError(
-                "ClusterKT requires timestamp data, but 'timestamp' column not found. "
-                "Please ensure the dataset includes timestamp information."
-            )
+        data = self._load_split_data()
 
         data_pd = data.to_pandas()
 

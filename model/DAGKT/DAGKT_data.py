@@ -41,6 +41,8 @@ class DAGKTModelData(QuestionModelData):
     - 学生尝试次数（attempt_counts）: 直接使用数据集中的 attempt_count 字段
     """
 
+    OPTIONAL_FEATURE_COLUMNS = ("attempt_count",)
+
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -54,7 +56,7 @@ class DAGKTModelData(QuestionModelData):
 
         logger.info("Building response sequences from split data...")
 
-        data = self.data_src.get_split_question_sequence_data().to_pandas()
+        data = self._load_split_data().to_pandas()
         max_seq_len = self.data_src.get_metadata("max_seq_len")
         num_users = data["sequence_id"].nunique()
 

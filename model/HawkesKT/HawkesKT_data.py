@@ -41,6 +41,9 @@ class HawkesKTModelData(QuestionModelData):
     split data. Skills are obtained by joining with question_data (first skill per question).
     """
 
+    REQUIRED_FEATURE_COLUMNS = ("timestamp",)
+    OPTIONAL_FEATURE_COLUMNS = ("ms_first_response",)
+
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -50,7 +53,7 @@ class HawkesKTModelData(QuestionModelData):
         max_seq_len = self.data_src.get_metadata("max_seq_len")
 
         # 1. Load question split data (one row per question, has timestamp)
-        q_data = self.data_src.get_split_question_sequence_data()
+        q_data = self._load_split_data()
         num_users = q_data["sequence_id"].n_unique()
 
         # 2. Get first skill per question from question_data

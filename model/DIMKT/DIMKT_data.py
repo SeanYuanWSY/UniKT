@@ -67,7 +67,7 @@ class DIMKTModelData(SkillModelData):
         num_skills = self.data_src.get_metadata("num_skills")
         num_questions = self.data_src.get_metadata("num_questions")
 
-        data = self.data_src.get_split_skill_sequence_data()
+        data = self._load_split_data()
 
         train_data = data.filter((pl.col("fold") != fold_idx) & (pl.col("fold") != -1))
 

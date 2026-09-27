@@ -168,11 +168,7 @@ class STHKTModelData(QuestionModelData):
 
         # No user–question relation table exists; 'user' holds real student
         # ids in the split sequences.
-        pairs = (
-            self.data_src.get_split_question_sequence_data()
-            .select(["user", "question"])
-            .unique()
-        )
+        pairs = self._load_split_data().select(["user", "question"]).unique()
         qs_q = pairs["question"].to_numpy() + 1
         qs_s = pairs["user"].to_numpy()
 

@@ -30,6 +30,26 @@ from .windowlate_processor import WindowlateProcessor
 
 logger = get_logger(__name__)
 
+# Structural core always loaded for split reads; feature columns beyond it
+# are declared by ModelData subclasses.
+_SPLIT_STRUCTURAL_COLUMNS: dict[str, tuple[str, ...]] = {
+    "split_question_sequence": (
+        "sequence_id",
+        "seq_pos",
+        "label",
+        "user",
+        "question",
+    ),
+    "split_skill_sequence": (
+        "sequence_id",
+        "seq_pos",
+        "label",
+        "user",
+        "question",
+        "skill",
+    ),
+}
+
 
 class DataSource(ABC):
     """Base class for data source management.
@@ -76,8 +96,11 @@ class DataSource(ABC):
         # e.g., "question_skill", "question_assignment", "question_template"
         self.relation_data: dict[str, pl.DataFrame] = {}
 
-        # Data cache
-        self._data_cache: dict[str, pl.DataFrame | pl.LazyFrame] = {}
+        # Data cache: (data_type, projected columns or None) -> frame
+        self._data_cache: dict[
+            tuple[str, tuple[str, ...] | None], pl.DataFrame | pl.LazyFrame
+        ] = {}
+        self._split_schema_cache: dict[str, frozenset[str]] = {}
         self._data_config: dict[str, dict] = {
             "sequence": {"lazy": False},
             "split_question_sequence": {"lazy": False},
@@ -624,11 +647,15 @@ class DataSource(ABC):
 
         return hash_md5.hexdigest()
 
-    def _load_data(self, data_type: str) -> pl.DataFrame | pl.LazyFrame:
+    def _load_data(
+        self, data_type: str, columns: Sequence[str] | None = None
+    ) -> pl.DataFrame | pl.LazyFrame:
         """Load data by type using the configured lazy/eager policy.
 
         Args:
             data_type: Data type key corresponding to the configuration dict.
+            columns: Column projection for parquet reading. None loads all
+                columns; an explicit sequence reads only those columns.
 
         Returns:
             DataFrame or LazyFrame.
@@ -639,20 +666,29 @@ class DataSource(ABC):
         if data_type not in self._data_config:
             raise ValueError(f"Unknown data type: {data_type}")
 
+        cache_key: tuple[str, tuple[str, ...] | None] = (
+            data_type,
+            tuple(columns) if columns is not None else None,
+        )
         # Check cache
-        if data_type in self._data_cache:
-            return self._data_cache[data_type]
+        if cache_key in self._data_cache:
+            return self._data_cache[cache_key]
 
         config = self._data_config[data_type]
         data_path = self._validate_saved_data(data_type)
 
-        # Read according to configuration (lazy vs eager)
-        read_func = pl.scan_parquet if config["lazy"] else pl.read_parquet
-        logger.info(f"Loading {data_type} data: {data_path}")
-        data = read_func(data_path)
+        data: pl.DataFrame | pl.LazyFrame
+        if columns is not None:
+            logger.info(f"Loading {data_type} data: {data_path} [{', '.join(columns)}]")
+            data = pl.read_parquet(data_path, columns=list(columns))
+        else:
+            # Read according to configuration (lazy vs eager)
+            read_func = pl.scan_parquet if config["lazy"] else pl.read_parquet
+            logger.info(f"Loading {data_type} data: {data_path}")
+            data = read_func(data_path)
 
         # Cache the loaded data
-        self._data_cache[data_type] = data
+        self._data_cache[cache_key] = data
 
         return data
 
@@ -667,8 +703,8 @@ class DataSource(ABC):
 
         Each relation is a 2-column DataFrame unique on (src, dst).
         """
-        if name in self._data_cache:
-            cached = self._data_cache[name]
+        if (name, None) in self._data_cache:
+            cached = self._data_cache[(name, None)]
             assert isinstance(cached, pl.DataFrame)  # relations are eager
             return cached
         if self.relation_data and name in self.relation_data:
@@ -682,7 +718,7 @@ class DataSource(ABC):
             )
         logger.info(f"Loading relation {name} from: {path}")
         data = pl.read_parquet(path)
-        self._data_cache[name] = data
+        self._data_cache[(name, None)] = data
         return data
 
     def get_available_relations(self) -> list[str]:
@@ -700,15 +736,100 @@ class DataSource(ABC):
             if "_relation_" in p
         ]
 
-    def get_split_question_sequence_data(self) -> pl.DataFrame:
-        """Get split user sequence data."""
-        data = self._load_data("split_question_sequence")
+    def _resolve_split_columns(
+        self,
+        data_type: str,
+        required: Sequence[str],
+        optional: Sequence[str],
+    ) -> list[str]:
+        """Resolve the final column projection for a split sequence read.
+
+        The structural core (id/position/label/content columns, plus ``fold``
+        when the parquet carries it) is always included; callers only declare
+        feature columns beyond it.
+
+        Args:
+            data_type: Either "split_question_sequence" or "split_skill_sequence".
+            required: Feature columns that must exist; missing ones raise.
+            optional: Feature columns loaded only when present in the schema.
+
+        Returns:
+            List of column names to project.
+
+        Raises:
+            FileNotFoundError: If the split parquet does not exist.
+            ValueError: If a required column is absent from the parquet schema.
+        """
+        available = self._split_available_columns(data_type)
+        data_path = os.path.join(
+            self.data_folder, f"{self.dataset}_{data_type}.parquet"
+        )
+
+        missing = [c for c in required if c not in available]
+        if missing:
+            raise ValueError(
+                f"Dataset '{self.dataset}' is missing required column(s) "
+                f"{missing} in {os.path.basename(data_path)}. "
+                f"Available columns: {sorted(available)}."
+            )
+
+        columns = list(_SPLIT_STRUCTURAL_COLUMNS[data_type])
+        if "fold" in available:
+            columns.append("fold")
+        columns.extend(
+            c for c in (*required, *optional) if c in available and c not in columns
+        )
+        logger.debug(f"Projected columns for {data_type}: {columns}")
+        return columns
+
+    def _split_available_columns(self, data_type: str) -> frozenset[str]:
+        """Return the split parquet's column names, memoized per data type."""
+        cached = self._split_schema_cache.get(data_type)
+        if cached is not None:
+            return cached
+        data_path = os.path.join(
+            self.data_folder, f"{self.dataset}_{data_type}.parquet"
+        )
+        self._validate_data_files_exist([data_path])
+        available = frozenset(pl.read_parquet_schema(data_path))
+        self._split_schema_cache[data_type] = available
+        return available
+
+    def get_split_question_sequence_data(
+        self,
+        required: Sequence[str] = (),
+        optional: Sequence[str] = (),
+    ) -> pl.DataFrame:
+        """Get split user sequence data, projected to the requested columns.
+
+        Column semantics (structural core, ``required``/``optional``
+        handling): see :meth:`_resolve_split_columns`.
+        """
+        data = self._load_data(
+            "split_question_sequence",
+            columns=self._resolve_split_columns(
+                "split_question_sequence", required, optional
+            ),
+        )
         assert isinstance(data, pl.DataFrame)  # split data is always eager
         return data
 
-    def get_split_skill_sequence_data(self) -> pl.DataFrame:
-        """Get split skill sequence data."""
-        data = self._load_data("split_skill_sequence")
+    def get_split_skill_sequence_data(
+        self,
+        required: Sequence[str] = (),
+        optional: Sequence[str] = (),
+    ) -> pl.DataFrame:
+        """Get split skill sequence data, projected to the requested columns.
+
+        Column semantics (structural core, ``required``/``optional``
+        handling): see :meth:`_resolve_split_columns`.
+        """
+        data = self._load_data(
+            "split_skill_sequence",
+            columns=self._resolve_split_columns(
+                "split_skill_sequence", required, optional
+            ),
+        )
         assert isinstance(data, pl.DataFrame)  # split data is always eager
         return data
 

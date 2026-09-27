@@ -171,6 +171,8 @@ class MCSKTWindowlateIterableDataset(WindowlateIterableDataset):
 class MCSKTModelData(SkillModelData):
     """MCSKT 数据加载器：技能序列 + 遗忘特征。"""
 
+    REQUIRED_FEATURE_COLUMNS = ("timestamp",)
+
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -214,7 +216,7 @@ class MCSKTModelData(SkillModelData):
     def _load_timestamps(self) -> np.ndarray:
         import polars as pl
 
-        data = self.data_src.get_split_skill_sequence_data()
+        data = self._load_split_data()
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
         max_seq_len = self.data_src.get_metadata("max_seq_len")

@@ -109,6 +109,7 @@ def make_data_source(tmp_path: Path) -> Callable[..., _MinimalDataSource]:
         ds.data_url = None
         ds._id_mappings = {}
         ds._data_cache = {}
+        ds._split_schema_cache = {}
         ds._data_config = {
             "sequence": {"lazy": False},
             "split_question_sequence": {"lazy": False},

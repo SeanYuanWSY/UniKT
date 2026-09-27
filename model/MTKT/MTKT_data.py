@@ -192,6 +192,8 @@ class MTKTModelData(SkillModelData):
     继承 SkillModelData, 在标准技能序列基础上额外计算时间间隔特征。
     """
 
+    REQUIRED_FEATURE_COLUMNS = ("timestamp",)
+
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -249,7 +251,7 @@ class MTKTModelData(SkillModelData):
         Returns:
             user_timestamp: shape (num_users, max_seq_len)
         """
-        data = self.data_src.get_split_skill_sequence_data().to_pandas()
+        data = self._load_split_data().to_pandas()
         max_seq_len: int = self.data_src.get_metadata("max_seq_len")
         num_users: int = int(data["sequence_id"].nunique())
 
