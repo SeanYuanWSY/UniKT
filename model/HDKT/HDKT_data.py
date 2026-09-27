@@ -61,8 +61,6 @@ class HDKTDataset(Dataset):
 class HDKTModelData(QuestionModelData):
     """HDKT 模型数据加载器。"""
 
-    REQUIRED_FEATURE_COLUMNS = ("ms_first_response", "timestamp")
-
     @override
     def prepare_data(self, rc: Any) -> tuple:
         """准备训练 / 验证 / 测试数据与模型所需的元信息。
@@ -163,7 +161,7 @@ class HDKTModelData(QuestionModelData):
             at_seq / it_seq: 词表 id [N, S]
             n_at / n_it: 词表大小 = 唯一值数 + 1
         """
-        data = self._load_split_data()
+        data = self.load_split_data(required=("ms_first_response", "timestamp"))
         num_users = data["sequence_id"].n_unique()
 
         sub = data.select(

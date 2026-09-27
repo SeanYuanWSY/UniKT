@@ -33,17 +33,11 @@ class QuestionModelData(BaseModelData):
             cache: Whether to enable disk caching.
         """
         super().__init__(data_src, cache=cache)
+        self._split_getter = data_src.get_split_question_sequence_data
 
     def _get_kfold_data(self) -> pl.DataFrame:
         """Override: retrieve K-fold labels from question sequence data."""
-        return self._load_split_data()
-
-    def _load_split_data(self) -> pl.DataFrame:
-        """Override: project and load split question sequences."""
-        return self.data_src.get_split_question_sequence_data(
-            required=self.REQUIRED_FEATURE_COLUMNS,
-            optional=self.OPTIONAL_FEATURE_COLUMNS,
-        )
+        return self.load_split_data()
 
     @abstractmethod
     def prepare_data(self, args: Any) -> Any:
@@ -70,7 +64,7 @@ class QuestionModelData(BaseModelData):
         logger.info("Building response sequences from split data...")
 
         # Load split sequence data
-        data = self._load_split_data().to_pandas()
+        data = self.load_split_data().to_pandas()
         max_seq_len = self.data_src.get_metadata("max_seq_len")
         num_users = data["sequence_id"].nunique()
 

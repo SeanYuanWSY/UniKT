@@ -152,8 +152,6 @@ class FAKTWindowlateIterableDataset(WindowlateIterableDataset):
 
 
 class FAKTModelData(SkillModelData):
-    REQUIRED_FEATURE_COLUMNS = ("timestamp",)
-
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
         self.num_rgap = 0
@@ -237,7 +235,7 @@ class FAKTModelData(SkillModelData):
 
     def _compute_time_gaps(self):
         """从 split_skill_sequence_data 的时间戳计算 rgaps/sgaps/pcounts。"""
-        data = self._load_split_data().to_pandas()
+        data = self.load_split_data(required=("timestamp",)).to_pandas()
         max_seq_len = self.data_src.get_metadata("max_seq_len")
         num_users = data["sequence_id"].nunique()
 

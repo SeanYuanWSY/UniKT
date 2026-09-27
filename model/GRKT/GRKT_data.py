@@ -51,8 +51,6 @@ class GRKTModelData(QuestionModelData):
     split_kfold_data's train definition.
     """
 
-    OPTIONAL_FEATURE_COLUMNS = ("timestamp",)
-
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -64,7 +62,7 @@ class GRKTModelData(QuestionModelData):
         num_skills = self.data_src.get_metadata("num_skills")
 
         # Load split question sequence data
-        q_data = self._load_split_data()
+        q_data = self.load_split_data(optional=("timestamp",))
         num_users = q_data["sequence_id"].n_unique()
         merged_pd = q_data.to_pandas()
 

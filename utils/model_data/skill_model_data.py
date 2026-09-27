@@ -195,17 +195,11 @@ class SkillModelData(BaseModelData):
             cache: Whether to enable disk caching.
         """
         super().__init__(data_src, cache=cache)
+        self._split_getter = data_src.get_split_skill_sequence_data
 
     def _get_kfold_data(self) -> pl.DataFrame:
         """Override: retrieve K-fold labels from skill sequence data."""
-        return self._load_split_data()
-
-    def _load_split_data(self) -> pl.DataFrame:
-        """Override: project and load split skill sequences."""
-        return self.data_src.get_split_skill_sequence_data(
-            required=self.REQUIRED_FEATURE_COLUMNS,
-            optional=self.OPTIONAL_FEATURE_COLUMNS,
-        )
+        return self.load_split_data()
 
     def build_sequence_data(
         self,
@@ -225,7 +219,7 @@ class SkillModelData(BaseModelData):
 
         logger.info("Building skill sequences from split data...")
 
-        data = self._load_split_data()
+        data = self.load_split_data()
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
         max_seq_len = self.data_src.get_metadata("max_seq_len")

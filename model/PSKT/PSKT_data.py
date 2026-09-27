@@ -45,8 +45,6 @@ class PSKTDataset(Dataset):
 
 
 class PSKTModelData(QuestionModelData):
-    REQUIRED_FEATURE_COLUMNS = ("timestamp",)
-
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
         self.max_concepts = None
@@ -111,7 +109,7 @@ class PSKTModelData(QuestionModelData):
 
     def _load_sequences(self):
         """Return (questions 0-based, responses, masks, timestamps) as [num_users, max_seq_len] int arrays."""
-        data = self._load_split_data()
+        data = self.load_split_data(required=("timestamp",))
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
 

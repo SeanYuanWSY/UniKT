@@ -61,8 +61,6 @@ class TCKTDataset(Dataset):
 class TCKTModelData(QuestionModelData):
     """TCKT 模型数据加载器。"""
 
-    REQUIRED_FEATURE_COLUMNS = ("ms_first_response", "timestamp")
-
     @override
     def prepare_data(self, rc: Any) -> tuple:
         """准备训练 / 验证 / 测试数据与模型所需的元信息。
@@ -142,7 +140,7 @@ class TCKTModelData(QuestionModelData):
             n_at:   max_rt_seconds + 1
             n_it:   max_it_minutes + 1
         """
-        data = self._load_split_data()
+        data = self.load_split_data(required=("ms_first_response", "timestamp"))
         num_users = data["sequence_id"].n_unique()
 
         sub = data.select(

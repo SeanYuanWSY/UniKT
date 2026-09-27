@@ -66,8 +66,6 @@ def sample_hist_neighbors(
 
 
 class SQGKTModelData(QuestionModelData):
-    REQUIRED_FEATURE_COLUMNS = ("attempt_count", "hint_count")
-
     def __init__(self, data_src):
         super().__init__(data_src)
 
@@ -202,7 +200,7 @@ class SQGKTModelData(QuestionModelData):
         """
         from scipy.stats import poisson
 
-        data = self._load_split_data()
+        data = self.load_split_data(required=("attempt_count", "hint_count"))
         data = data.filter(
             (pl.col("fold") != fold_idx) & (pl.col("fold") != -1)
         ).to_pandas()

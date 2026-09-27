@@ -8,9 +8,9 @@ import functools
 import hashlib
 import pickle
 from abc import ABC, abstractmethod
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, overload
+from typing import Any, Protocol, overload
 
 import numpy as np
 import polars as pl
@@ -19,6 +19,14 @@ from utils.core import get_logger
 from utils.data_process import DataSource
 
 logger = get_logger(__name__)
+
+
+class _SplitSequenceGetter(Protocol):
+    """Signature shared by the DataSource split-sequence getters."""
+
+    def __call__(
+        self, required: Sequence[str] = (), optional: Sequence[str] = ()
+    ) -> pl.DataFrame: ...
 
 
 class BaseModelData(ABC):
@@ -39,22 +47,28 @@ class BaseModelData(ABC):
         self.data_src = data_src
         self._cache = cache
 
-    # Feature columns beyond the structural core; the structural columns
-    # (sequence_id/seq_pos/label/question[/skill]/user/fold) are always
-    # resolved by the DataSource.
-    REQUIRED_FEATURE_COLUMNS: tuple[str, ...] = ()  # missing -> fail fast
-    OPTIONAL_FEATURE_COLUMNS: tuple[str, ...] = ()  # missing -> silently skipped
+    # Bound to the chain-specific split getter (question or skill) by
+    # QuestionModelData / SkillModelData at construction.
+    _split_getter: _SplitSequenceGetter
 
-    def _load_split_data(self) -> pl.DataFrame:
+    def load_split_data(
+        self, required: Sequence[str] = (), optional: Sequence[str] = ()
+    ) -> pl.DataFrame:
         """Load split sequences projected to the declared columns.
 
-        Returns:
-            Projected split sequence DataFrame.
+        Returns the structural core (sequence_id/seq_pos/label/user/
+        question[/skill], plus fold when present) with the declared feature
+        columns merged in.
+
+        Args:
+            required: Feature columns that must exist in the dataset;
+                missing ones raise ValueError naming the dataset and the
+                available columns.
+            optional: Feature columns loaded only when present in the
+                schema; absent ones are simply not in the frame -- callers
+                handle the fallback.
         """
-        raise NotImplementedError(
-            f"{type(self).__name__} must inherit QuestionModelData or "
-            "SkillModelData to load split sequences."
-        )
+        return self._split_getter(required=required, optional=optional)
 
     @overload
     @staticmethod

@@ -37,8 +37,6 @@ class LBKTDataset(Dataset):
 
 
 class LBKTModelData(QuestionModelData):
-    REQUIRED_FEATURE_COLUMNS = ("ms_first_response", "attempt_count", "hint_count")
-
     def __init__(self, data_src: DataSource):
         super().__init__(data_src)
 
@@ -96,7 +94,9 @@ class LBKTModelData(QuestionModelData):
         """
         logger.info("Building response sequences with behavioral factors...")
 
-        data = self._load_split_data().to_pandas()
+        data = self.load_split_data(
+            required=("ms_first_response", "attempt_count", "hint_count")
+        ).to_pandas()
 
         max_seq_len = self.data_src.get_metadata("max_seq_len")
         num_users = data["sequence_id"].nunique()
