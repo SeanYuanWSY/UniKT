@@ -575,19 +575,99 @@ class AxisKT(nn.Module):
             + self.question_diff(questions) * pooled_change
         )
 
-    def _global_history_states(
+    def _global_history_states_dense(
         self,
         event_embedding: torch.Tensor,
         responses: torch.Tensor,
         mask: torch.Tensor,
     ) -> torch.Tensor:
-        if not self.use_global:
-            return torch.zeros_like(event_embedding)
         global_state = event_embedding + self.answer_embed(responses)
         global_state = global_state.masked_fill(~mask.unsqueeze(-1), 0.0)
         for block in self.global_blocks:
             global_state = block(global_state)
         return self.global_norm(global_state + self.global_ffn(global_state))
+
+    def _global_history_states_compact(
+        self,
+        event_embedding: torch.Tensor,
+        responses: torch.Tensor,
+        mask: torch.Tensor,
+        lengths: torch.Tensor,
+    ) -> torch.Tensor:
+        """Evaluate the existing causal blocks only through each row's last event.
+
+        Interior masked positions stay in the compact stream: the dense blocks
+        can produce nonzero states there, which later valid positions may read.
+        Only trailing positions are discarded, so valid outputs keep the same
+        causal dependencies and all convolution weights remain unchanged.
+        """
+        batch_size, seq_len, hidden = event_embedding.shape
+        active = torch.arange(seq_len, device=mask.device).unsqueeze(
+            0
+        ) < lengths.unsqueeze(1)
+        flat_index = active.flatten().nonzero().flatten()
+        row = flat_index // seq_len
+        pos = flat_index % seq_len
+        starts = lengths.cumsum(0) - lengths
+
+        state = event_embedding.flatten(0, 1).index_select(0, flat_index)
+        answers = responses.flatten().index_select(0, flat_index)
+        state = state + self.answer_embed(answers)
+        state = state.masked_fill(
+            ~mask.flatten().index_select(0, flat_index).unsqueeze(1), 0.0
+        )
+
+        neighbor_cache: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
+        for block in self.global_blocks:
+            depthwise_weight = block.depthwise.weight[:, 0, :]
+            mixed = state * depthwise_weight[:, -1]
+            for kernel_index in range(depthwise_weight.size(1) - 1):
+                offset = (
+                    depthwise_weight.size(1) - 1 - kernel_index
+                ) * block.depthwise.dilation[0]
+                if offset not in neighbor_cache:
+                    neighbor_index = starts[row] + (pos - offset).clamp_min(0)
+                    neighbor_cache[offset] = (
+                        neighbor_index,
+                        (pos >= offset).unsqueeze(1),
+                    )
+                neighbor_index, valid_neighbor = neighbor_cache[offset]
+                previous = state.index_select(0, neighbor_index)
+                mixed = (
+                    mixed
+                    + previous * valid_neighbor * depthwise_weight[:, kernel_index]
+                )
+            if block.depthwise.bias is not None:
+                mixed = mixed + block.depthwise.bias
+            mixed = F.linear(
+                mixed, block.pointwise.weight[:, :, 0], block.pointwise.bias
+            )
+            state = block.norm(state + block.dropout(F.gelu(mixed)))
+
+        state = self.global_norm(state + self.global_ffn(state))
+        dense = event_embedding.new_zeros(batch_size * seq_len, hidden)
+        dense.index_copy_(0, flat_index, state)
+        return dense.view(batch_size, seq_len, hidden)
+
+    def _global_history_states(
+        self,
+        event_embedding: torch.Tensor,
+        responses: torch.Tensor,
+        mask: torch.Tensor,
+        compact: bool = False,
+    ) -> torch.Tensor:
+        if not self.use_global:
+            return torch.zeros_like(event_embedding)
+        # The CPU batch mask makes the density decision, avoiding a GPU-to-CPU
+        # synchronization on every forward. Small inputs keep cuDNN's dense path.
+        if compact and event_embedding.is_cuda and event_embedding.numel() >= 250_000:
+            seq_len = mask.size(1)
+            positions = torch.arange(1, seq_len + 1, device=mask.device)
+            lengths = torch.where(mask, positions, 0).amax(dim=1)
+            return self._global_history_states_compact(
+                event_embedding, responses, mask, lengths
+            )
+        return self._global_history_states_dense(event_embedding, responses, mask)
 
     def _irt_term(
         self, features: torch.Tensor, next_questions: torch.Tensor
@@ -609,6 +689,7 @@ class AxisKT(nn.Module):
         mask: torch.Tensor,
         kc_order: torch.Tensor | None = None,
         kc_inverse: torch.Tensor | None = None,
+        compact_global: bool = False,
     ) -> torch.Tensor:
         """Return next-item logits where output[t] predicts response[t+1].
 
@@ -618,7 +699,9 @@ class AxisKT(nn.Module):
         position's response: gap decays compose only into later reads of the
         same KC. ``kc_inverse`` is the dataset-precomputed inverse of
         ``kc_order`` over the full flat slot domain; when omitted the fused
-        inference path rebuilds it on the fly.
+        inference path rebuilds it on the fly. ``compact_global`` selects
+        equivalent causal computation over active sequence prefixes; the
+        caller determines whether the batch has enough trailing padding.
         """
         mask = mask.bool()
         if times.shape != questions.shape:
@@ -706,7 +789,9 @@ class AxisKT(nn.Module):
                 skill_embedding=skill_embedding,
                 skill_change_embedding=skill_change_embedding,
             )
-        global_state = self._global_history_states(event_embedding, responses, mask)
+        global_state = self._global_history_states(
+            event_embedding, responses, mask, compact=compact_global
+        )
 
         features = torch.cat(
             [
