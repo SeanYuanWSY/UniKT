@@ -94,16 +94,14 @@ def axiskt_packed_collate_fn(batch):
 
 
 def use_compact_global(mask: torch.Tensor) -> bool:
-    """Choose compact global computation from a CPU batch mask.
+    """Choose compact global computation from a batch mask.
 
     Only trailing padding can be skipped. An interior masked position remains
     active because later valid positions may depend on its encoded state.
     """
-    if mask.device.type != "cpu":
-        raise ValueError("use_compact_global expects the CPU collate mask")
     if mask.numel() == 0:
         return False
-    positions = torch.arange(1, mask.size(1) + 1)
+    positions = torch.arange(1, mask.size(1) + 1, device=mask.device)
     lengths = torch.where(mask, positions, 0).amax(dim=1)
     active_count = int(lengths.sum())
     return active_count > 0 and 2 * active_count <= mask.numel()
