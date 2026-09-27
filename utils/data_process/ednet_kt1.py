@@ -256,7 +256,7 @@ class EdNetKT1Data(DataSource):
                 pl.col("skill").map_elements(_canonicalize_tags, return_dtype=pl.Utf8)
             )
             .with_columns(pl.col("skill").str.split(";").alias("skill_parts"))
-            .explode("skill_parts")
+            .explode("skill_parts", empty_as_null=True)
             .with_columns(pl.col("skill_parts").cast(pl.String).alias("skill"))
             .select(["question", "skill"])
             .unique(subset=["question", "skill"], keep="first")

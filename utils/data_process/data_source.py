@@ -993,7 +993,7 @@ class DataSource(ABC):
                 batch = batch.with_columns(pl.int_range(pl.len()).alias("__order"))
                 batch = (
                     batch.join(question_skills, on="question", how="inner")
-                    .explode("skills")
+                    .explode("skills", empty_as_null=True)
                     .rename({"skills": "skill"})
                     .sort(["__order", "skill"])
                     .drop("__order")
