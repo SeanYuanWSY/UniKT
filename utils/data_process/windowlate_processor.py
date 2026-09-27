@@ -290,7 +290,7 @@ class WindowlateProcessor:
         output_path: str,
     ) -> pq.ParquetWriter:
         """Flush buffered data to a parquet file."""
-        data = {
+        data: dict[str, np.ndarray | list[Any]] = {
             "sample_id": np.asarray(buffers["sample_id"], dtype=np.int64),
             "position": np.asarray(buffers["position"], dtype=np.int32),
             "skill": np.asarray(buffers["skill"], dtype=np.int32),
