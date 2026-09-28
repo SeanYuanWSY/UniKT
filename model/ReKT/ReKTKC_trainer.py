@@ -122,22 +122,17 @@ class ReKTKCTrainer(BaseTrainer):
 
         logits = self.model(question, skill, response, mask)
 
-        logits_aligned = logits[:, 1:]
-        true_label_aligned = true_label[:, 1:]
-        mask_aligned = mask[:, 1:]
-        group_id_aligned = group_id[:, 1:]
-
-        y_hat = torch.masked_select(logits_aligned, mask_aligned)
-        y_label = torch.masked_select(true_label_aligned, mask_aligned).float()
-        group_ids = torch.masked_select(group_id_aligned, mask_aligned)
+        y_hat = torch.masked_select(logits, mask)
+        y_label = torch.masked_select(true_label, mask).float()
+        group_ids = torch.masked_select(group_id, mask)
 
         y_hat, y_label = self._handle_empty_batch(y_hat, y_label)
-
+        y_prob = torch.sigmoid(y_hat)
         return {
             "y_hat": y_hat,
             "y_label": y_label,
             "y_predict": self._generate_binary_predictions(y_hat, threshold=0.0),
-            "y_score": y_hat,
-            "y_prob": torch.sigmoid(y_hat),
+            "y_score": y_prob,
+            "y_prob": y_prob,
             "group_id": group_ids,
         }
