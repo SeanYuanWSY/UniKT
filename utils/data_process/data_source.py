@@ -233,8 +233,8 @@ class DataSource(ABC):
             "max_skill_seq_len": int(
                 self.split_skill_sequence_data.group_by("sequence_id")
                 .agg(pl.len().alias("n"))
-                .get_column("n")
-                .max()
+                .select(pl.col("n").max())
+                .item()
             ),
             "random_seed": self.seed,
             "sequence_data_md5": self.compute_md5(sequence_data_path),
@@ -996,7 +996,7 @@ class DataSource(ABC):
         min_seq_len: int,
         seq_cols: list[str],
         next_new_id: int,
-    ) -> tuple[pl.DataFrame, list[pl.Expr], int]:
+    ) -> tuple[pl.DataFrame | None, list[pl.Expr], int]:
         """Split one user-aligned batch by expanded row position.
 
         Expands first (when ``question_skills`` is given), then slices every
@@ -1024,10 +1024,10 @@ class DataSource(ABC):
             .alias("split_len"),
         )
 
-        b, n_new = self._assign_split_ids(b, min_seq_len, next_new_id)
-        if b is None:
-            return b, [], n_new
-        b = b.with_columns(
+        joined, n_new = self._assign_split_ids(b, min_seq_len, next_new_id)
+        if joined is None:
+            return None, [], n_new
+        b = joined.with_columns(
             [
                 pl.col("new_user_id").alias("sequence_id"),
                 (pl.col("seq_pos") % max_seq_len).alias("relative_pos"),
@@ -1049,7 +1049,7 @@ class DataSource(ABC):
         min_seq_len: int,
         seq_cols: list[str],
         next_new_id: int,
-    ) -> tuple[pl.DataFrame, list[pl.Expr], int]:
+    ) -> tuple[pl.DataFrame | None, list[pl.Expr], int]:
         """Split one user-aligned batch by original interaction position.
 
         Slices every ``max_seq_len`` raw interactions into a split BEFORE
@@ -1075,10 +1075,10 @@ class DataSource(ABC):
             .alias("split_len"),
         )
 
-        b, n_new = self._assign_split_ids(b, min_seq_len, next_new_id)
-        if b is None:
-            return b, [], n_new
-        b = b.with_columns(pl.col("new_user_id").alias("sequence_id"))
+        joined, n_new = self._assign_split_ids(b, min_seq_len, next_new_id)
+        if joined is None:
+            return None, [], n_new
+        b = joined.with_columns(pl.col("new_user_id").alias("sequence_id"))
 
         # Expand inside the retained splits. Sorting by ``__order`` keeps the
         # chronological order, so the per-split row index below is the
