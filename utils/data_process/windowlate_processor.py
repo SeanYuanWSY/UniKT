@@ -32,7 +32,10 @@ class WindowlateProcessor:
     - History positions serve as context only (mask=0).
     - Target positions are evaluated (mask=1).
     - When a sequence exceeds max_seq_len, only the last window ending at the
-      target position is kept.
+      target position is kept: with ``split_unit="skill"`` the window holds at
+      most ``max_seq_len`` expanded skill rows; with ``split_unit=
+      "interaction"`` it holds the last ``max_seq_len`` whole interactions,
+      whose skill rows stay together (possibly exceeding ``max_seq_len``).
     - All extra columns from the source sequence_data are preserved as-is
       (target position retains its true value).
     """
@@ -103,6 +106,7 @@ class WindowlateProcessor:
         group_id_start: int,
         max_seq_len: int,
         extras: dict[str, list],
+        split_unit: str = "skill",
     ) -> Iterator[list[tuple]]:
         """Generate all sample data for a single user.
 
@@ -113,8 +117,13 @@ class WindowlateProcessor:
             questions: Question ID for each interaction.
             sample_id_start: Starting sample ID.
             group_id_start: Starting group ID.
-            max_seq_len: Maximum sequence length.
+            max_seq_len: Maximum sequence length; its unit follows
+                ``split_unit``.
             extras: Extra source columns to preserve as-is, keyed by column name.
+            split_unit: Window unit. ``"skill"`` keeps at most ``max_seq_len``
+                expanded skill rows; ``"interaction"`` keeps the last
+                ``max_seq_len`` whole interactions (target one included),
+                whose skill rows stay together.
 
         Yields:
             list[tuple]: All rows for one complete sample, each row formatted as
@@ -173,23 +182,24 @@ class WindowlateProcessor:
                     for col in extra_columns
                 }
 
-                # Keep only the window ending at the target position
-                if len(full_skills) > max_seq_len:
-                    win_skills = full_skills[-max_seq_len:]
-                    win_questions = full_questions[-max_seq_len:]
-                    win_labels = full_labels[-max_seq_len:]
-                    win_group_ids = full_group_ids[-max_seq_len:]
-                    win_true_labels = full_true_labels[-max_seq_len:]
-                    win_extras = {
-                        col: full_extras[col][-max_seq_len:] for col in extra_columns
-                    }
+                # Keep only the window ending at the target position.
+                if split_unit == "interaction":
+                    # Keep the last max_seq_len whole interactions (the
+                    # target's own interaction included): every kept
+                    # interaction's skills stay together, so the window's
+                    # row count may exceed max_seq_len.
+                    win_start = inter_boundaries[max(0, inter_idx - max_seq_len + 1)]
                 else:
-                    win_skills = full_skills
-                    win_questions = full_questions
-                    win_labels = full_labels
-                    win_group_ids = full_group_ids
-                    win_true_labels = full_true_labels
-                    win_extras = full_extras
+                    # Keep the last max_seq_len expanded skill rows.
+                    win_start = max(0, len(full_skills) - max_seq_len)
+                win_skills = full_skills[win_start:]
+                win_questions = full_questions[win_start:]
+                win_labels = full_labels[win_start:]
+                win_group_ids = full_group_ids[win_start:]
+                win_true_labels = full_true_labels[win_start:]
+                win_extras = {
+                    col: full_extras[col][win_start:] for col in extra_columns
+                }
 
                 target_pos = len(win_skills) - 1
                 rows = []
@@ -217,25 +227,29 @@ class WindowlateProcessor:
     def process_user_batch(
         cls,
         args: tuple,
-    ) -> tuple[int, str | None, int]:
+    ) -> tuple[int, str | None, int, int]:
         """Process a batch of users, streaming into a single parquet file.
 
         Args:
-            args: (batch_idx, batch_users, max_seq_len, chunk_row_limit, output_dir)
+            args: (batch_idx, batch_users, max_seq_len, chunk_row_limit,
+                output_dir, split_unit)
 
         Returns:
-            tuple: (batch_idx, output_path | None, total_rows)
+            tuple: (batch_idx, output_path | None, total_rows, max_window_len)
         """
-        batch_idx, batch_users, max_seq_len, chunk_row_limit, output_dir = args
+        batch_idx, batch_users, max_seq_len, chunk_row_limit, output_dir, split_unit = (
+            args
+        )
 
         if not batch_users:
-            return batch_idx, None, 0
+            return batch_idx, None, 0, 0
 
         output_path = os.path.join(
             output_dir, f"windowlate_worker_{batch_idx:05d}.parquet"
         )
         writer = None
         total_rows = 0
+        max_window_len = 0
 
         sample_columns = cls.CORE_SAMPLE_COLUMNS + cls.EXTRA_COLUMNS
         # Initialize buffers (fold is filled with a constant, not buffered)
@@ -260,11 +274,13 @@ class WindowlateProcessor:
                     group_id_start,
                     max_seq_len,
                     extras,
+                    split_unit,
                 ):
                     for row in sample_rows:
                         for i, col in enumerate(sample_columns):
                             buffers[col].append(row[i])
 
+                    max_window_len = max(max_window_len, len(sample_rows))
                     if len(buffers["sample_id"]) >= chunk_row_limit:
                         writer = cls._flush_buffers(buffers, writer, output_path)
                         total_rows += len(buffers["sample_id"])
@@ -280,7 +296,12 @@ class WindowlateProcessor:
             if writer is not None:
                 writer.close()
 
-        return batch_idx, (output_path if total_rows > 0 else None), total_rows
+        return (
+            batch_idx,
+            (output_path if total_rows > 0 else None),
+            total_rows,
+            max_window_len,
+        )
 
     @classmethod
     def _flush_buffers(
@@ -327,16 +348,24 @@ class WindowlateProcessor:
         output_path: str,
         num_workers: int = 0,
         users_per_batch: int = 64,
-    ) -> None:
+        split_unit: str = "skill",
+    ) -> int:
         """Build windowlate data and write directly to file.
 
         Args:
             test_data: Test set sequence data.
             question_data: Question data containing skill mappings.
-            max_seq_len: Maximum sequence length.
+            max_seq_len: Maximum sequence length; its unit follows
+                ``split_unit``.
             output_path: Output file path (streamed write).
             num_workers: Number of parallel workers (0 or negative for auto).
             users_per_batch: Number of users per batch.
+            split_unit: Window unit, ``"skill"`` (rows) or ``"interaction"``
+                (whole interactions kept together).
+
+        Returns:
+            The largest window row count across all generated samples; this
+            is the padded length evaluation must allocate.
         """
         # Build question-to-skill-list mapping
         q_skill_map = (
@@ -378,7 +407,7 @@ class WindowlateProcessor:
 
             # Build batch inputs
             batch_inputs = cls._build_batch_inputs(
-                user_records, max_seq_len, users_per_batch, tmp_dir
+                user_records, max_seq_len, users_per_batch, tmp_dir, split_unit
             )
 
             logger.debug(
@@ -390,11 +419,13 @@ class WindowlateProcessor:
             worker_results = cls._parallel_process(batch_inputs, num_workers)
 
             # Merge directly to final output path
-            total_rows = cls._merge_results(worker_results, output_path)
+            total_rows, max_window_len = cls._merge_results(worker_results, output_path)
 
         logger.debug(
-            f"Built windowlate data: {global_sample_id} samples, {total_rows} rows"
+            f"Built windowlate data: {global_sample_id} samples, {total_rows} rows, "
+            f"max_window_len={max_window_len}"
         )
+        return max_window_len
 
     @classmethod
     def _prepare_user_records(
@@ -446,14 +477,22 @@ class WindowlateProcessor:
         max_seq_len: int,
         users_per_batch: int,
         tmp_dir: str,
+        split_unit: str,
     ) -> list:
         """Build batch input parameters."""
-        batch_inputs: list[tuple[int, list, int, int, str]] = []
+        batch_inputs: list[tuple[int, list, int, int, str, str]] = []
         for idx in range(0, len(user_records), users_per_batch):
             batch_idx = len(batch_inputs)
             batch_users = user_records[idx : idx + users_per_batch]
             batch_inputs.append(
-                (batch_idx, batch_users, max_seq_len, cls.CHUNK_ROW_LIMIT, tmp_dir)
+                (
+                    batch_idx,
+                    batch_users,
+                    max_seq_len,
+                    cls.CHUNK_ROW_LIMIT,
+                    tmp_dir,
+                    split_unit,
+                )
             )
         return batch_inputs
 
@@ -503,11 +542,16 @@ class WindowlateProcessor:
         cls,
         worker_results: list,
         output_path: str,
-    ) -> int:
-        """Merge all worker results into the final output file."""
+    ) -> tuple[int, int]:
+        """Merge all worker results into the final output file.
+
+        Returns:
+            tuple: (total_rows, max_window_len) across all workers.
+        """
         tmp_path = output_path + ".tmp"
         final_writer = None
         total_rows = 0
+        max_window_len = 0
         has_written_rows = False
 
         logger.info("Saving windowlate data to output path")
@@ -516,7 +560,7 @@ class WindowlateProcessor:
             for item in worker_results:
                 if item is None:
                     continue
-                _, worker_path, worker_rows = item
+                _, worker_path, worker_rows, worker_max_window = item
                 if worker_path is None:
                     continue
 
@@ -528,6 +572,7 @@ class WindowlateProcessor:
                     final_writer.write_table(table)
                     has_written_rows = True
                 total_rows += worker_rows
+                max_window_len = max(max_window_len, worker_max_window)
         finally:
             if final_writer is not None:
                 final_writer.close()
@@ -536,4 +581,4 @@ class WindowlateProcessor:
             raise ValueError("No valid windowlate evaluation samples generated")
 
         os.replace(tmp_path, output_path)
-        return total_rows
+        return total_rows, max_window_len

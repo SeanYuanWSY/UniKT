@@ -81,7 +81,7 @@ class DKTPlusModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        window_test_data = self.create_windowlate_iterable_dataset(rc.data.max_seq_len)
+        window_test_data = self.create_windowlate_iterable_dataset()
 
         train_dataset = DKTPlusDataset(train_data[0], train_data[1], train_data[2])
         val_dataset = DKTPlusDataset(val_data[0], val_data[1], val_data[2])

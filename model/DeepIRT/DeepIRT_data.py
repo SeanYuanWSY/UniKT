@@ -72,7 +72,7 @@ class DeepIRTModelData(SkillModelData):
         train_dataset = DeepIRTDataset(train_data[0], train_data[1], train_data[2])
         val_dataset = DeepIRTDataset(val_data[0], val_data[1], val_data[2])
 
-        window_test_data = self.create_windowlate_iterable_dataset(rc.data.max_seq_len)
+        window_test_data = self.create_windowlate_iterable_dataset()
         test_batch_size = getattr(rc.model, "test_batch_size", rc.model.batch_size)
         test_num_workers = getattr(rc.model, "test_num_workers", 4)
         test_loader_kwargs = {

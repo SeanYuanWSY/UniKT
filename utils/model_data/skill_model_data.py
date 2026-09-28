@@ -209,7 +209,8 @@ class SkillModelData(BaseModelData):
         Returns:
             Tuple of (user_sequence, user_response, user_mask,
             user_id_sequence, user_question) as numpy arrays,
-            each of shape (num_split_users, max_seq_len). user_id_sequence
+            each of shape (num_split_users, max_skill_seq_len) -- the padded
+            length recorded in metadata by preprocessing. user_id_sequence
             carries ORIGINAL student ids (from the ``user`` column),
             so one student's multiple splits share the same id -- matching
             the windowlate parquet's id space.
@@ -222,7 +223,7 @@ class SkillModelData(BaseModelData):
         data = self.load_split_data()
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_skill_seq_len")
         num_users = data["sequence_id"].n_unique()
 
         user_sequence = np.zeros((num_users, max_seq_len), dtype=int)
@@ -247,7 +248,7 @@ class SkillModelData(BaseModelData):
         return user_sequence, user_response, user_mask, user_id_sequence, user_question
 
     def load_windowlate_data(
-        self, max_seq_len: int
+        self,
     ) -> tuple[
         np.ndarray,
         np.ndarray,
@@ -262,15 +263,14 @@ class SkillModelData(BaseModelData):
         Loads sliding window data from a preprocessed parquet file and
         converts it to numpy arrays.
 
-        Args:
-            max_seq_len: Maximum sequence length (window size).
-
         Returns:
             Tuple of (user_sequence, user_response, user_mask,
             late_group_id, user_true_labels, user_question,
             user_id_sequence) as numpy arrays,
-            each of shape (num_samples, max_seq_len). user_id_sequence
-            (original student ids) is last, matching WindowlateIterableDataset.
+            each of shape (num_samples, windowlate_max_len) -- the maximum
+            window row count recorded in metadata by preprocessing.
+            user_id_sequence (original student ids) is last, matching
+            WindowlateIterableDataset.
         """
         import numpy as np
 
@@ -280,6 +280,7 @@ class SkillModelData(BaseModelData):
             raise ValueError(
                 "No windowlate data available. Please re-run preprocessing with K-fold labels."
             )
+        max_seq_len = self.data_src.get_metadata("windowlate_max_len")
 
         required_cols = [
             "sample_id",
@@ -335,13 +336,14 @@ class SkillModelData(BaseModelData):
 
     def create_windowlate_iterable_dataset(
         self,
-        max_seq_len: int,
         batch_read_rows: int = 200_000,
     ) -> WindowlateIterableDataset:
         """Create a WindowlateIterableDataset from the windowlate parquet file.
 
+        The padded length is the dataset's maximum window row count
+        (metadata ``windowlate_max_len``, recorded by preprocessing).
+
         Args:
-            max_seq_len: Maximum sequence length (window size).
             batch_read_rows: Number of rows to read per batch (default: 200000).
 
         Returns:
@@ -353,6 +355,6 @@ class SkillModelData(BaseModelData):
 
         return WindowlateIterableDataset(
             parquet_path=parquet_path,
-            max_seq_len=max_seq_len,
+            max_seq_len=self.data_src.get_metadata("windowlate_max_len"),
             batch_read_rows=batch_read_rows,
         )

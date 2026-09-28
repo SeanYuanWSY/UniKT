@@ -124,7 +124,7 @@ class UKTTrainer(BaseTrainer):
             use_uncertainty_aug=not m.no_uncertainty_aug,
             l2=m.l2,
             atten_type=m.atten_type,
-            seq_len=rc.data.max_seq_len,
+            seq_len=metadata["max_skill_seq_len"],
         )
 
         loss_fn = torch.nn.BCELoss()

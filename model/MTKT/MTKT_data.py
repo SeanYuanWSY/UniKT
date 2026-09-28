@@ -250,7 +250,7 @@ class MTKTModelData(SkillModelData):
             user_timestamp: shape (num_users, max_seq_len)
         """
         data = self.load_split_data(required=("timestamp",)).to_pandas()
-        max_seq_len: int = self.data_src.get_metadata("max_seq_len")
+        max_seq_len: int = self.data_src.get_metadata("max_skill_seq_len")
         num_users: int = int(data["sequence_id"].nunique())
 
         user_timestamp = np.zeros((num_users, max_seq_len), dtype=np.float64)
@@ -340,7 +340,7 @@ class MTKTModelData(SkillModelData):
         )
         test_dataset = MTKTWindowlateIterableDataset(
             parquet_path=parquet_path,
-            max_seq_len=rc.data.max_seq_len,
+            max_seq_len=self.data_src.get_metadata("windowlate_max_len"),
             num_rgap=num_rgap,
             num_sgap=num_sgap,
             num_pcount=num_pcount,

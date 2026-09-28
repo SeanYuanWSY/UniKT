@@ -159,7 +159,7 @@ class UKTModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        window_test_data = self.create_windowlate_iterable_dataset(rc.data.max_seq_len)
+        window_test_data = self.create_windowlate_iterable_dataset()
 
         train_dataset = UKTDataset(
             train_data[0],

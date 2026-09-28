@@ -75,7 +75,7 @@ class SKVMNModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        window_test_data = self.create_windowlate_iterable_dataset(rc.data.max_seq_len)
+        window_test_data = self.create_windowlate_iterable_dataset()
 
         train_dataset = SKVMNDataset(train_data[0], train_data[1], train_data[2])
         val_dataset = SKVMNDataset(val_data[0], val_data[1], val_data[2])

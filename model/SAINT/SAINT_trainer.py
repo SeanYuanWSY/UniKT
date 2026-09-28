@@ -88,7 +88,7 @@ class SAINTTrainer(BaseTrainer):
         model = SAINT(
             num_questions=metadata["num_questions"],
             num_skills=metadata["num_skills"],
-            seq_len=rc.data.max_seq_len,
+            seq_len=metadata["max_skill_seq_len"],
             emb_size=m.emb_size,
             num_attn_heads=m.num_attn_heads,
             dropout=m.dropout,

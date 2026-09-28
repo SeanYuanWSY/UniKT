@@ -163,7 +163,10 @@ class TestBuildSequenceDataOriginalUser:
             def prepare_data(self, rc: RunConfig) -> None: ...
 
         return _Concrete(
-            cast(DataSource, StubDataSource(frame, {"max_seq_len": 3, "num_users": 10}))
+            cast(
+                DataSource,
+                StubDataSource(frame, {"max_skill_seq_len": 3, "num_users": 10}),
+            )
         )
 
     def test_user_id_sequence_carries_original_ids(
@@ -227,8 +230,10 @@ class TestLoadWindowlateDataOrder:
 
         path = self._write_parquet(tmp_path)
         lazy = pl.scan_parquet(path)
-        model_data = make_skill_model_data(windowlate_data=lazy)
-        out = model_data.load_windowlate_data(max_seq_len=4)
+        model_data = make_skill_model_data(
+            windowlate_data=lazy, metadata={"windowlate_max_len": 4}
+        )
+        out = model_data.load_windowlate_data()
         assert len(out) == 7
         # user_id last, NOT at index 3 (its old numpy-variant position).
         user_id_sequence = out[-1]
@@ -245,9 +250,11 @@ class TestLoadWindowlateDataOrder:
     def test_missing_windowlate_data_raises(
         self, make_skill_model_data: Callable[..., SkillModelData]
     ) -> None:
-        model_data = make_skill_model_data(windowlate_data=None)
+        model_data = make_skill_model_data(
+            windowlate_data=None, metadata={"windowlate_max_len": 4}
+        )
         with pytest.raises(ValueError):
-            model_data.load_windowlate_data(max_seq_len=4)
+            model_data.load_windowlate_data()
 
 
 # --- DataSource._build_split_sequences ----------------------------------------
@@ -267,7 +274,13 @@ class TestSplitPipelineOriginalUserColumn:
 
         ds = _MinimalDS.__new__(_MinimalDS)
         ds.args = type(
-            "Args", (), {"max_seq_len": max_seq_len, "min_seq_len": min_seq_len}
+            "Args",
+            (),
+            {
+                "max_seq_len": max_seq_len,
+                "min_seq_len": min_seq_len,
+                "skill_split_unit": "skill",
+            },
         )()
         ds.sequence_data = frame
         # expand_skills=False path never reads relation_data; None keeps

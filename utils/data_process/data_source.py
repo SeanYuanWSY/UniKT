@@ -227,6 +227,15 @@ class DataSource(ABC):
         metadata = {
             "min_seq_len": self.args.min_seq_len,
             "max_seq_len": self.args.max_seq_len,
+            "skill_split_unit": self.args.skill_split_unit,
+            # Real per-split maximum; with skill_split_unit="interaction"
+            # this can exceed max_seq_len (padded length for skill models).
+            "max_skill_seq_len": int(
+                self.split_skill_sequence_data.group_by("sequence_id")
+                .agg(pl.len().alias("n"))
+                .get_column("n")
+                .max()
+            ),
             "random_seed": self.seed,
             "sequence_data_md5": self.compute_md5(sequence_data_path),
             "split_question_sequence_data_md5": self.compute_md5(
@@ -919,6 +928,172 @@ class DataSource(ABC):
             yield int(boundaries[start]), int(boundaries[end])
             start = end
 
+    def _assign_split_ids(
+        self, b: pl.DataFrame, min_seq_len: int, next_new_id: int
+    ) -> tuple[pl.DataFrame | None, int]:
+        """Keep splits long enough and assign dense global split ids.
+
+        Args:
+            b: Frame carrying ``user``/``split_idx``/``split_len``, with the
+                length counted in the split unit's own terms (expanded skill
+                rows or original interactions).
+            min_seq_len: Minimum split length, in the same unit.
+            next_new_id: Running global id counter; locally-assigned ids are
+                offset by it so the dense assignment in global
+                ``(user, split_idx)`` order is preserved across batches.
+
+        Returns:
+            Tuple of (frame inner-joined with the retained splits, carrying
+            ``new_user_id``; number of retained splits). The frame is None
+            when no split survives the filter.
+        """
+        valid = (
+            b.filter(pl.col("split_len") >= min_seq_len)
+            .select(["user", "split_idx"])
+            .unique()
+            .sort("user", "split_idx")
+            .with_row_index("new_user_id")
+        )
+        n_new = valid.height
+        if n_new == 0:
+            return None, 0
+        # Offset the locally-assigned ids by the running global counter so
+        # the global (user, split_idx) ordering is preserved across batches.
+        valid = valid.with_columns(
+            (pl.col("new_user_id").cast(pl.Int64) + next_new_id)
+            .cast(pl.Int32)
+            .alias("new_user_id")
+        )
+        return b.join(valid, on=["user", "split_idx"], how="inner"), n_new
+
+    @staticmethod
+    def _expand_batch_skills(
+        batch: pl.DataFrame, question_skills: pl.DataFrame
+    ) -> pl.DataFrame:
+        """Expand each interaction into one row per skill, order-preserving.
+
+        The hash join does not guarantee row order, so the deterministic
+        chronological (interaction-major) order must be restored ourselves:
+        each interaction carries its position in the (already sorted) batch
+        as ``__order``; after exploding, sorting by ``(__order, skill)``
+        keeps interactions in chronological order with each interaction's
+        skills ascending. This reproduces whole-frame output exactly --
+        including users with repeated interactions (same question and
+        timestamp) -- and is independent of batch size.
+        """
+        return (
+            batch.join(question_skills, on="question", how="inner")
+            .explode("skills", empty_as_null=True)
+            .rename({"skills": "skill"})
+            .sort(["__order", "skill"])
+        )
+
+    def _split_batch_by_rows(
+        self,
+        batch: pl.DataFrame,
+        question_skills: pl.DataFrame | None,
+        max_seq_len: int,
+        min_seq_len: int,
+        seq_cols: list[str],
+        next_new_id: int,
+    ) -> tuple[pl.DataFrame, list[pl.Expr], int]:
+        """Split one user-aligned batch by expanded row position.
+
+        Expands first (when ``question_skills`` is given), then slices every
+        ``max_seq_len`` expanded rows into a split; the length bounds count
+        rows, so one interaction's skills may straddle two splits.
+        """
+        if question_skills is not None:
+            batch = self._expand_batch_skills(batch, question_skills)
+
+        # Per-user sequence position (0..L-1) and total length L.
+        b = batch.with_columns(pl.int_range(pl.len()).over("user").alias("seq_pos"))
+        b = b.join(
+            b.group_by("user").agg(pl.len().alias("seq_len")),
+            on="user",
+            how="left",
+        )
+
+        # Split index and per-split length (constant within a split).
+        b = b.with_columns(
+            (pl.col("seq_pos") // max_seq_len).alias("split_idx")
+        ).with_columns(
+            pl.when(pl.col("seq_pos") + max_seq_len >= pl.col("seq_len"))
+            .then(pl.col("seq_len") - pl.col("split_idx") * max_seq_len)
+            .otherwise(max_seq_len)
+            .alias("split_len"),
+        )
+
+        b, n_new = self._assign_split_ids(b, min_seq_len, next_new_id)
+        if b is None:
+            return b, [], n_new
+        b = b.with_columns(
+            [
+                pl.col("new_user_id").alias("sequence_id"),
+                (pl.col("seq_pos") % max_seq_len).alias("relative_pos"),
+            ]
+        )
+
+        out_cols = [pl.col(c) for c in seq_cols]
+        out_cols.append(pl.col("sequence_id"))
+        if question_skills is not None:
+            out_cols.append(pl.col("skill"))
+        out_cols.append(pl.col("relative_pos").alias("seq_pos"))
+        return b, out_cols, n_new
+
+    def _split_batch_by_interaction(
+        self,
+        batch: pl.DataFrame,
+        question_skills: pl.DataFrame,
+        max_seq_len: int,
+        min_seq_len: int,
+        seq_cols: list[str],
+        next_new_id: int,
+    ) -> tuple[pl.DataFrame, list[pl.Expr], int]:
+        """Split one user-aligned batch by original interaction position.
+
+        Slices every ``max_seq_len`` raw interactions into a split BEFORE
+        expanding, so one interaction's skills never straddle two splits; the
+        length bounds count interactions, and the expanded split may exceed
+        ``max_seq_len`` rows.
+        """
+        # Per-user interaction position (0..L-1) and interaction count L.
+        b = batch.with_columns(pl.int_range(pl.len()).over("user").alias("inter_pos"))
+        b = b.join(
+            b.group_by("user").agg(pl.len().alias("inter_len")),
+            on="user",
+            how="left",
+        )
+
+        # Split index and per-split length, in interaction units.
+        b = b.with_columns(
+            (pl.col("inter_pos") // max_seq_len).alias("split_idx")
+        ).with_columns(
+            pl.when(pl.col("inter_pos") + max_seq_len >= pl.col("inter_len"))
+            .then(pl.col("inter_len") - pl.col("split_idx") * max_seq_len)
+            .otherwise(max_seq_len)
+            .alias("split_len"),
+        )
+
+        b, n_new = self._assign_split_ids(b, min_seq_len, next_new_id)
+        if b is None:
+            return b, [], n_new
+        b = b.with_columns(pl.col("new_user_id").alias("sequence_id"))
+
+        # Expand inside the retained splits. Sorting by ``__order`` keeps the
+        # chronological order, so the per-split row index below is the
+        # expanded position within the split.
+        b = self._expand_batch_skills(b, question_skills)
+        b = b.with_columns(
+            pl.int_range(pl.len()).over("sequence_id").alias("relative_pos")
+        )
+
+        out_cols = [pl.col(c) for c in seq_cols]
+        out_cols.append(pl.col("sequence_id"))
+        out_cols.append(pl.col("skill"))
+        out_cols.append(pl.col("relative_pos").alias("seq_pos"))
+        return b, out_cols, n_new
+
     def _build_split_sequences(self, expand_skills: bool) -> pl.DataFrame:
         """Build split sequences, processing users in memory-bounded batches.
 
@@ -932,8 +1107,9 @@ class DataSource(ABC):
 
         Args:
             expand_skills: If True, expand each question into its skills (one
-                row per skill) before splitting, producing skill sequences. If
-                False, split the question sequences unchanged.
+                row per skill); the split order then follows
+                ``args.skill_split_unit``. If False, split the question
+                sequences unchanged.
 
         Returns:
             DataFrame with the original ``sequence_data`` columns (including
@@ -962,9 +1138,17 @@ class DataSource(ABC):
                 .group_by("question")
                 .agg(pl.col("skill").sort().alias("skills"))
             )
+
+        # The split unit only governs the skill path: question sequences have
+        # nothing to expand.
+        split_by_interaction = (
+            expand_skills and self.args.skill_split_unit == "interaction"
+        )
+        if expand_skills:
             logger.info(
                 f"Building split skill sequences (max_len={max_seq_len}, "
-                f"min_len={min_seq_len})"
+                f"min_len={min_seq_len}, split_unit="
+                f"{'interaction' if split_by_interaction else 'skill'})"
             )
         else:
             logger.info(
@@ -978,77 +1162,31 @@ class DataSource(ABC):
             self._iter_user_aligned_slices(self.sequence_data, self._SPLIT_BATCH_ROWS)
         ):
             batch = self.sequence_data.slice(start, end - start)
+            # Stamp the (already sorted) batch position once; every
+            # order-restoring sort below keys on it.
+            batch = batch.with_columns(pl.int_range(pl.len()).alias("__order"))
 
-            if expand_skills:
+            if split_by_interaction:
                 assert question_skills is not None  # set when expand_skills
-                # The hash join does not guarantee row order, so we must
-                # preserve the deterministic chronological (interaction-major)
-                # order ourselves. Stamp each interaction with its position in
-                # the (already sorted) batch before joining, then explode and
-                # restore order by (position, skill): interactions stay in
-                # chronological order, with each interaction's skills ascending.
-                # This reproduces the previous whole-frame output exactly --
-                # including users with repeated interactions (same question and
-                # timestamp) -- and is independent of batch size.
-                batch = batch.with_columns(pl.int_range(pl.len()).alias("__order"))
-                batch = (
-                    batch.join(question_skills, on="question", how="inner")
-                    .explode("skills", empty_as_null=True)
-                    .rename({"skills": "skill"})
-                    .sort(["__order", "skill"])
-                    .drop("__order")
+                b, out_cols, n_new = self._split_batch_by_interaction(
+                    batch,
+                    question_skills,
+                    max_seq_len,
+                    min_seq_len,
+                    seq_cols,
+                    next_new_id,
                 )
-
-            # Per-user sequence position (0..L-1) and total length L.
-            b = batch.with_columns(pl.int_range(pl.len()).over("user").alias("seq_pos"))
-            b = b.join(
-                b.group_by("user").agg(pl.len().alias("seq_len")),
-                on="user",
-                how="left",
-            )
-
-            # Split index and per-split length (constant within a split).
-            b = b.with_columns(
-                (pl.col("seq_pos") // max_seq_len).alias("split_idx")
-            ).with_columns(
-                pl.when(pl.col("seq_pos") + max_seq_len >= pl.col("seq_len"))
-                .then(pl.col("seq_len") - pl.col("split_idx") * max_seq_len)
-                .otherwise(max_seq_len)
-                .alias("split_len"),
-            )
-
-            # Keep only splits long enough, then assign dense new user ids.
-            valid = (
-                b.filter(pl.col("split_len") >= min_seq_len)
-                .select(["user", "split_idx"])
-                .unique()
-                .sort("user", "split_idx")
-                .with_row_index("new_user_id")
-            )
-            n_new = valid.height
-            if n_new == 0:
+            else:
+                b, out_cols, n_new = self._split_batch_by_rows(
+                    batch,
+                    question_skills,
+                    max_seq_len,
+                    min_seq_len,
+                    seq_cols,
+                    next_new_id,
+                )
+            if b is None:
                 continue
-            # Offset the locally-assigned ids by the running global counter so
-            # the global (user, split_idx) ordering is preserved across batches.
-            valid = valid.with_columns(
-                (pl.col("new_user_id").cast(pl.Int64) + next_new_id)
-                .cast(pl.Int32)
-                .alias("new_user_id")
-            )
-
-            b = b.join(valid, on=["user", "split_idx"], how="inner")
-            b = b.with_columns(
-                [
-                    pl.col("new_user_id").alias("sequence_id"),
-                    (pl.col("seq_pos") % max_seq_len).alias("relative_pos"),
-                ]
-            )
-
-            out_cols = [pl.col(c) for c in seq_cols]
-            out_cols.append(pl.col("sequence_id"))
-            if expand_skills:
-                out_cols.append(pl.col("skill"))
-            out_cols.append(pl.col("relative_pos").alias("seq_pos"))
             parts.append(b.select(out_cols).sort("sequence_id", "seq_pos"))
 
             next_new_id += n_new
@@ -1096,7 +1234,7 @@ class DataSource(ABC):
         Expands question sequences into skill sequences (one question may map
         to multiple skills), preserving the question column, then splits long
         sequences by ``max_seq_len`` and drops splits shorter than
-        ``min_seq_len``.
+        ``min_seq_len``, in the order given by ``args.skill_split_unit``.
 
         Processing is done in user-aligned batches to bound peak memory,
         while producing output identical to whole-frame processing.
@@ -1138,7 +1276,11 @@ class DataSource(ABC):
             raise ValueError("No test-set interactions (fold == -1) found")
 
         max_seq_len = self.args.max_seq_len
-        logger.info(f"Building windowlate data (max_seq_len={max_seq_len})...")
+        split_unit = self.args.skill_split_unit
+        logger.info(
+            f"Building windowlate data (max_seq_len={max_seq_len}, "
+            f"split_unit={split_unit})..."
+        )
 
         # Prepare output path
         os.makedirs(self.data_folder, exist_ok=True)
@@ -1150,13 +1292,18 @@ class DataSource(ABC):
         users_per_batch = getattr(self.args, "windowlate_users_per_batch", 1)
 
         # Build and save directly to file
-        WindowlateProcessor.build(
+        windowlate_max_len = WindowlateProcessor.build(
             test_data=test_data,
             question_data=self.relation_data["question_skill"],
             max_seq_len=max_seq_len,
+            split_unit=split_unit,
             output_path=output_path,
             users_per_batch=users_per_batch,
         )
+        # Padded length consumed by windowlate evaluation: with
+        # skill_split_unit="interaction" a window keeps max_seq_len whole
+        # interactions, so its row count may exceed max_seq_len.
+        self.update_metadata("windowlate_max_len", windowlate_max_len)
 
     def add_kfold_labels(self, n_splits: int = 5, test_ratio: float = 0.2) -> None:
         """Add K-fold cross-validation labels with test set separation.

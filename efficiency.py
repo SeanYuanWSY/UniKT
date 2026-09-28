@@ -69,6 +69,7 @@ def _run_single_efficiency(
     logger.info(f"[Benchmark] output_dir={output_dir}")
 
     data_src = get_data_source(rc)
+    _apply_benchmark_seq_to_data_src(data_src, eff_cfg)
     if weights_path:
         logger.info(f"[Benchmark] loading weights: {weights_path}")
     target = build_target(rc, data_src, exp_manager, weights_path)
@@ -80,6 +81,7 @@ def _run_single_efficiency(
 def _run_sweep(rc: RunConfig, eff_cfg: Any, weights_path: str | None) -> None:
     """Sweep a set of batch sizes, rebuilding the trainer per size."""
     data_src = get_data_source(rc)
+    _apply_benchmark_seq_to_data_src(data_src, eff_cfg)
     EfficiencySweep(
         rc=rc, eff_cfg=eff_cfg, data_src=data_src, weights_path=weights_path
     ).run()
@@ -152,6 +154,26 @@ def _apply_benchmark_overrides(rc: RunConfig, eff_cfg: Any) -> None:
         "[Benchmark] uniform input override: "
         f"batch_size={rc.model.batch_size} seq_len={rc.data.max_seq_len}"
     )
+
+
+def _apply_benchmark_seq_to_data_src(data_src: Any, eff_cfg: Any) -> None:
+    """Propagate the benchmark seq_len override into dataset metadata.
+
+    Skill-level models size their tensors and position encodings from
+    metadata (``max_skill_seq_len`` / ``windowlate_max_len``) rather than
+    ``rc.data.max_seq_len``. Call right after ``get_data_source`` so the
+    override wins; values never shrink below the dataset's real padded
+    lengths, which seq_pos indexes depend on.
+    """
+    seq = eff_cfg.general.benchmark_seq_len
+    if seq is None:
+        return
+    for key in ("max_skill_seq_len", "windowlate_max_len"):
+        current = data_src.get_metadata(key)
+        data_src.update_metadata(key, max(seq, current))
+        logger.info(
+            f"[Benchmark] metadata override: {key}={data_src.get_metadata(key)}"
+        )
 
 
 if __name__ == "__main__":
