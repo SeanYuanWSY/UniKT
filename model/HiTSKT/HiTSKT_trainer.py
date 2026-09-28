@@ -37,18 +37,49 @@ class HiTSKTConfig(ModelConfig):
     session_gap_hours: float = 10.0
     timestamp_unit: Literal["auto", "seconds", "milliseconds"] = "auto"
     d_model: int = field(
-        default=256, metadata={"optuna": {"type": "categorical", "choices": [128, 256]}}
+        default=256,
+        metadata={"optuna": {"type": "categorical", "choices": [128, 256]}},
     )
-    d_inner: int = 2048
-    n_layers: int = 1
-    n_head: int = 4
-    d_k: int = 64
-    d_v: int = 64
-    dropout: float = 0.1
+    d_inner: int = field(
+        default=2048,
+        metadata={"optuna": {"type": "categorical", "choices": [512, 1024, 2048]}},
+    )
+    n_layers: int = field(
+        default=1,
+        metadata={"optuna": {"type": "int", "low": 1, "high": 3}},
+    )
+    n_head: int = field(
+        default=4,
+        metadata={"optuna": {"type": "categorical", "choices": [2, 4, 8]}},
+    )
+    d_k: int = field(
+        default=64,
+        metadata={"optuna": {"type": "categorical", "choices": [32, 64, 128]}},
+    )
+    d_v: int = field(
+        default=64,
+        metadata={"optuna": {"type": "categorical", "choices": [32, 64, 128]}},
+    )
+    dropout: float = field(
+        default=0.1,
+        metadata={"optuna": {"type": "float", "low": 0.0, "high": 0.5}},
+    )
     epochs: int = 100
-    batch_size: int = 64
-    learning_rate: float = 5e-5
-    weight_decay: float = 0.0
+    batch_size: int = field(
+        default=64,
+        metadata={"optuna": {"type": "categorical", "choices": [32, 64, 128]}},
+    )
+    learning_rate: float = field(
+        default=5e-5,
+        metadata={"optuna": {"type": "float", "low": 1e-5, "high": 1e-3, "log": True}},
+    )
+    # categorical so the default 0.0 stays inside the space
+    weight_decay: float = field(
+        default=0.0,
+        metadata={
+            "optuna": {"type": "categorical", "choices": [0.0, 1e-5, 1e-4, 1e-3]}
+        },
+    )
 
 
 @register_trainer("HiTSKT")
