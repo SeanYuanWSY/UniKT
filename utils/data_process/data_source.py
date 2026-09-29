@@ -226,9 +226,9 @@ class DataSource(ABC):
         # Save metadata
         metadata = {
             "min_seq_len": self.args.min_seq_len,
-            "skill_split_unit": self.args.skill_split_unit,
+            "truncation_stage": self.args.truncation_stage,
             # Real per-split maxima per tensor family: question rows,
-            # skill-expanded rows (with skill_split_unit="interaction" this
+            # skill-expanded rows (with truncation_stage="pre_expansion" this
             # can exceed the max_seq_len budget). The windowlate counterpart
             # is written by build_windowlate_data.
             "max_question_seq_len": int(
@@ -1114,8 +1114,8 @@ class DataSource(ABC):
 
         Args:
             expand_skills: If True, expand each question into its skills (one
-                row per skill); the split order then follows
-                ``args.skill_split_unit``. If False, split the question
+                row per skill); the truncation stage then follows
+                ``args.truncation_stage``. If False, split the question
                 sequences unchanged.
 
         Returns:
@@ -1146,16 +1146,16 @@ class DataSource(ABC):
                 .agg(pl.col("skill").sort().alias("skills"))
             )
 
-        # The split unit only governs the skill path: question sequences have
-        # nothing to expand.
-        split_by_interaction = (
-            expand_skills and self.args.skill_split_unit == "interaction"
+        # The truncation stage only governs the skill path: question
+        # sequences have nothing to expand.
+        truncate_pre_expansion = (
+            expand_skills and self.args.truncation_stage == "pre_expansion"
         )
         if expand_skills:
             logger.info(
                 f"Building split skill sequences (max_len={max_seq_len}, "
-                f"min_len={min_seq_len}, split_unit="
-                f"{'interaction' if split_by_interaction else 'skill'})"
+                f"min_len={min_seq_len}, truncation_stage="
+                f"{'pre_expansion' if truncate_pre_expansion else 'post_expansion'})"
             )
         else:
             logger.info(
@@ -1173,7 +1173,7 @@ class DataSource(ABC):
             # order-restoring sort below keys on it.
             batch = batch.with_columns(pl.int_range(pl.len()).alias("__order"))
 
-            if split_by_interaction:
+            if truncate_pre_expansion:
                 assert question_skills is not None  # set when expand_skills
                 b, out_cols, n_new = self._split_batch_by_interaction(
                     batch,
@@ -1241,7 +1241,7 @@ class DataSource(ABC):
         Expands question sequences into skill sequences (one question may map
         to multiple skills), preserving the question column, then splits long
         sequences by ``max_seq_len`` and drops splits shorter than
-        ``min_seq_len``, in the order given by ``args.skill_split_unit``.
+        ``min_seq_len``, in the order given by ``args.truncation_stage``.
 
         Processing is done in user-aligned batches to bound peak memory,
         while producing output identical to whole-frame processing.
@@ -1283,10 +1283,10 @@ class DataSource(ABC):
             raise ValueError("No test-set interactions (fold == -1) found")
 
         max_seq_len = self.args.max_seq_len
-        split_unit = self.args.skill_split_unit
+        truncation_stage = self.args.truncation_stage
         logger.info(
             f"Building windowlate data (max_seq_len={max_seq_len}, "
-            f"split_unit={split_unit})..."
+            f"truncation_stage={truncation_stage})..."
         )
 
         # Prepare output path
@@ -1303,12 +1303,12 @@ class DataSource(ABC):
             test_data=test_data,
             question_data=self.relation_data["question_skill"],
             max_seq_len=max_seq_len,
-            split_unit=split_unit,
+            truncation_stage=truncation_stage,
             output_path=output_path,
             users_per_batch=users_per_batch,
         )
         # Padded length consumed by windowlate evaluation: with
-        # skill_split_unit="interaction" a window keeps max_seq_len whole
+        # truncation_stage="pre_expansion" a window keeps max_seq_len whole
         # interactions, so its row count may exceed max_seq_len.
         self.update_metadata("max_windowlate_seq_len", max_windowlate_seq_len)
 

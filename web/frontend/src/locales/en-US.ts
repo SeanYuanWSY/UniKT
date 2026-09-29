@@ -194,7 +194,7 @@ export default {
     kfold_n_splits: 'K-fold',
     test_ratio: 'Test ratio',
     min_seq_len: 'Min sequence length',
-    skill_split_unit: 'Skill split unit',
+    truncation_stage: 'Truncation stage',
     max_question_seq_len: 'Max question seq length',
     max_skill_seq_len: 'Max skill seq length',
     max_windowlate_seq_len: 'Max windowlate seq length',

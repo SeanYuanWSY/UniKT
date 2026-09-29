@@ -125,14 +125,15 @@ class RunDataConfig:
             metadata by preprocessing (``max_question_seq_len`` /
             ``max_skill_seq_len`` / ``max_windowlate_seq_len``), never from
             this budget.
-        skill_split_unit: Unit that ``max_seq_len``/``min_seq_len`` count for
-            skill (KC-level) sequence splitting. ``"skill"`` splits AFTER the
-            KC expansion: each split holds at most ``max_seq_len`` expanded
-            skill rows, so one interaction's skills may straddle two splits.
-            ``"interaction"`` splits BEFORE the expansion: each split holds at
-            most ``max_seq_len`` original interactions whose skills stay
-            together, so the expanded split may exceed ``max_seq_len`` rows
-            (``max_skill_seq_len`` may thus exceed the budget). Question
+        truncation_stage: Stage of the KC expansion at which ``max_seq_len``/
+            ``min_seq_len`` truncate the skill (KC-level) sequence.
+            ``"post_expansion"`` truncates AFTER the expansion: each split
+            holds at most ``max_seq_len`` expanded skill rows, so one
+            interaction's skills may straddle two splits.
+            ``"pre_expansion"`` truncates BEFORE the expansion: each split
+            holds at most ``max_seq_len`` original interactions whose skills
+            stay together, so the expanded split may exceed ``max_seq_len``
+            rows (``max_skill_seq_len`` may thus exceed the budget). Question
             sequences are unaffected.
         sample_size: Absolute sample count (null disables sampling).
         sample_ratio: Sample ratio 0.0-1.0 (overrides sample_size).
@@ -148,8 +149,8 @@ class RunDataConfig:
     test_ratio: float = 0.2
     min_seq_len: int = field(default=3, metadata={"preprocess_ui": True})
     max_seq_len: int = field(default=200, metadata={"preprocess_ui": True})
-    skill_split_unit: Literal["skill", "interaction"] = field(
-        default="skill", metadata={"preprocess_ui": True}
+    truncation_stage: Literal["pre_expansion", "post_expansion"] = field(
+        default="post_expansion", metadata={"preprocess_ui": True}
     )
     sample_size: int | None = field(default=None, metadata={"preprocess_ui": True})
     sample_ratio: float | None = field(default=None, metadata={"preprocess_ui": True})

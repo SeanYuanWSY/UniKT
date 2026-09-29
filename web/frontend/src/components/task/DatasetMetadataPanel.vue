@@ -77,7 +77,7 @@ const KEY_LABELS: Record<string, string> = {
   kfold_n_splits: 'meta.kfold_n_splits',
   test_ratio: 'meta.test_ratio',
   min_seq_len: 'meta.min_seq_len',
-  skill_split_unit: 'meta.skill_split_unit',
+  truncation_stage: 'meta.truncation_stage',
   max_question_seq_len: 'meta.max_question_seq_len',
   max_skill_seq_len: 'meta.max_skill_seq_len',
   max_windowlate_seq_len: 'meta.max_windowlate_seq_len',

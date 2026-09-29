@@ -142,7 +142,7 @@ class TestGenerateUserSamples:
                 sample_id_start=0,
                 group_id_start=0,
                 max_seq_len=2,
-                split_unit="interaction",
+                truncation_stage="pre_expansion",
                 **_U7,
             )
         )
@@ -367,8 +367,8 @@ class TestBuild:
                 }
             )
         )
-        for split_unit, expected in (("skill", 2), ("interaction", 3)):
-            output_path = str(tmp_path / f"windowlate_{split_unit}.parquet")
+        for stage, expected in (("post_expansion", 2), ("pre_expansion", 3)):
+            output_path = str(tmp_path / f"windowlate_{stage}.parquet")
             max_window = WindowlateProcessor.build(
                 test_data=test_data,
                 question_data=question_data,
@@ -376,9 +376,9 @@ class TestBuild:
                 output_path=output_path,
                 num_workers=1,
                 users_per_batch=1,
-                split_unit=split_unit,
+                truncation_stage=stage,
             )
-            assert max_window == expected, split_unit
+            assert max_window == expected, stage
 
     def test_all_questions_missing_raises(
         self, processor_defaults: None, tmp_path: Path

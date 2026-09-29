@@ -279,7 +279,7 @@ class TestSplitPipelineOriginalUserColumn:
             {
                 "max_seq_len": max_seq_len,
                 "min_seq_len": min_seq_len,
-                "skill_split_unit": "skill",
+                "truncation_stage": "post_expansion",
             },
         )()
         ds.sequence_data = frame

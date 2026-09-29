@@ -83,7 +83,7 @@ def make_data_source(tmp_path: Path) -> Callable[..., _MinimalDataSource]:
         relation_data: dict[str, pl.DataFrame] | None = None,
         max_seq_len: int = 100,
         min_seq_len: int = 1,
-        skill_split_unit: str = "skill",
+        truncation_stage: str = "post_expansion",
         dataset: str = "stub",
         metadata: dict[str, Any] | None = None,
         data_folder: Path | str | None = None,
@@ -97,7 +97,7 @@ def make_data_source(tmp_path: Path) -> Callable[..., _MinimalDataSource]:
         ds.args = SimpleNamespace(
             max_seq_len=max_seq_len,
             min_seq_len=min_seq_len,
-            skill_split_unit=skill_split_unit,
+            truncation_stage=truncation_stage,
             windowlate_users_per_batch=1,
         )
         # DataSource declares a non-optional field; callers that don't need

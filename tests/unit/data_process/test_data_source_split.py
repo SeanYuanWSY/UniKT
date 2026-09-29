@@ -154,7 +154,7 @@ class TestBuildSplitSequencesInteraction:
             relation_data=rel,
             max_seq_len=3,
             min_seq_len=2,
-            skill_split_unit="interaction",
+            truncation_stage="pre_expansion",
         )
         out = ds._build_split_sequences(expand_skills=True)
 
@@ -180,7 +180,7 @@ class TestBuildSplitSequencesInteraction:
             relation_data=rel,
             max_seq_len=3,
             min_seq_len=1,
-            skill_split_unit="interaction",
+            truncation_stage="pre_expansion",
         )
         out = ds._build_split_sequences(expand_skills=True)
 
@@ -188,14 +188,14 @@ class TestBuildSplitSequencesInteraction:
         assert out["skill"].to_list() == [10, 11, 12, 13, 14, 15]
         assert out["seq_pos"].to_list() == [0, 1, 2, 3, 4, 0]
 
-    def test_question_mode_ignores_split_unit(
+    def test_question_mode_ignores_truncation_stage(
         self,
         make_data_source: Callable[..., DataSource],
         make_sequence_frame: Callable[..., pl.DataFrame],
         make_question_skill_frame: Callable[..., pl.DataFrame],
     ) -> None:
         # The knob only governs the skill path: question sequences split
-        # identically regardless of skill_split_unit.
+        # identically regardless of truncation_stage.
         seq = make_sequence_frame(_IU_USERS, _IU_QUESTIONS, _IU_LABELS, _IU_TIMESTAMPS)
         rel = {"question_skill": make_question_skill_frame(_IU_QS_PAIRS)}
         out_skill = make_data_source(
@@ -206,7 +206,7 @@ class TestBuildSplitSequencesInteraction:
             relation_data=rel,
             max_seq_len=2,
             min_seq_len=1,
-            skill_split_unit="interaction",
+            truncation_stage="pre_expansion",
         )._build_split_sequences(expand_skills=False)
 
         assert_frame_equal(out_skill, out_interaction)
@@ -225,7 +225,7 @@ class TestBuildSplitSequencesInteraction:
             relation_data=rel,
             max_seq_len=3,
             min_seq_len=1,
-            skill_split_unit="interaction",
+            truncation_stage="pre_expansion",
         )
         out = ds._build_split_sequences(expand_skills=True)
 
@@ -251,7 +251,7 @@ class TestBuildSplitSequencesInteraction:
 
 class TestBuildSplitSequencesBatches:
     @pytest.mark.parametrize("expand_skills", [False, True], ids=["question", "skill"])
-    @pytest.mark.parametrize("skill_split_unit", ["skill", "interaction"])
+    @pytest.mark.parametrize("truncation_stage", ["post_expansion", "pre_expansion"])
     @pytest.mark.parametrize("limit", [1, 2, 4])
     def test_small_batch_limit_matches_single_batch(
         self,
@@ -260,7 +260,7 @@ class TestBuildSplitSequencesBatches:
         make_sequence_frame: Callable[..., pl.DataFrame],
         make_question_skill_frame: Callable[..., pl.DataFrame],
         expand_skills: bool,
-        skill_split_unit: str,
+        truncation_stage: str,
         limit: int,
     ) -> None:
         seq, rel = _split_frames(make_sequence_frame, make_question_skill_frame)
@@ -269,7 +269,7 @@ class TestBuildSplitSequencesBatches:
             sequence_data=seq,
             relation_data=rel,
             max_seq_len=2,
-            skill_split_unit=skill_split_unit,
+            truncation_stage=truncation_stage,
         )
         whole = ds_whole._build_split_sequences(expand_skills=expand_skills)
 
@@ -278,7 +278,7 @@ class TestBuildSplitSequencesBatches:
             sequence_data=seq,
             relation_data=rel,
             max_seq_len=2,
-            skill_split_unit=skill_split_unit,
+            truncation_stage=truncation_stage,
         )
         batched = ds_batched._build_split_sequences(expand_skills=expand_skills)
 

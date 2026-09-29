@@ -32,10 +32,11 @@ class WindowlateProcessor:
     - History positions serve as context only (mask=0).
     - Target positions are evaluated (mask=1).
     - When a sequence exceeds max_seq_len, only the last window ending at the
-      target position is kept: with ``split_unit="skill"`` the window holds at
-      most ``max_seq_len`` expanded skill rows; with ``split_unit=
-      "interaction"`` it holds the last ``max_seq_len`` whole interactions,
-      whose skill rows stay together (possibly exceeding ``max_seq_len``).
+      target position is kept: with ``truncation_stage="post_expansion"`` the
+      window holds at most ``max_seq_len`` expanded skill rows; with
+      ``truncation_stage="pre_expansion"`` it holds the last ``max_seq_len``
+      whole interactions, whose skill rows stay together (possibly exceeding
+      ``max_seq_len``).
     - All extra columns from the source sequence_data are preserved as-is
       (target position retains its true value).
     """
@@ -106,7 +107,7 @@ class WindowlateProcessor:
         group_id_start: int,
         max_seq_len: int,
         extras: dict[str, list],
-        split_unit: str = "skill",
+        truncation_stage: str = "post_expansion",
     ) -> Iterator[list[tuple]]:
         """Generate all sample data for a single user.
 
@@ -117,13 +118,14 @@ class WindowlateProcessor:
             questions: Question ID for each interaction.
             sample_id_start: Starting sample ID.
             group_id_start: Starting group ID.
-            max_seq_len: Maximum sequence length; its unit follows
-                ``split_unit``.
+            max_seq_len: Maximum sequence length; what it counts follows
+                ``truncation_stage``.
             extras: Extra source columns to preserve as-is, keyed by column name.
-            split_unit: Window unit. ``"skill"`` keeps at most ``max_seq_len``
-                expanded skill rows; ``"interaction"`` keeps the last
-                ``max_seq_len`` whole interactions (target one included),
-                whose skill rows stay together.
+            truncation_stage: Stage of the KC expansion at which the window
+                is truncated. ``"post_expansion"`` keeps at most
+                ``max_seq_len`` expanded skill rows; ``"pre_expansion"``
+                keeps the last ``max_seq_len`` whole interactions (target one
+                included), whose skill rows stay together.
 
         Yields:
             list[tuple]: All rows for one complete sample, each row formatted as
@@ -183,7 +185,7 @@ class WindowlateProcessor:
                 }
 
                 # Keep only the window ending at the target position.
-                if split_unit == "interaction":
+                if truncation_stage == "pre_expansion":
                     # Keep the last max_seq_len whole interactions (the
                     # target's own interaction included): every kept
                     # interaction's skills stay together, so the window's
@@ -232,14 +234,19 @@ class WindowlateProcessor:
 
         Args:
             args: (batch_idx, batch_users, max_seq_len, chunk_row_limit,
-                output_dir, split_unit)
+                output_dir, truncation_stage)
 
         Returns:
             tuple: (batch_idx, output_path | None, total_rows, max_window_len)
         """
-        batch_idx, batch_users, max_seq_len, chunk_row_limit, output_dir, split_unit = (
-            args
-        )
+        (
+            batch_idx,
+            batch_users,
+            max_seq_len,
+            chunk_row_limit,
+            output_dir,
+            truncation_stage,
+        ) = args
 
         if not batch_users:
             return batch_idx, None, 0, 0
@@ -274,7 +281,7 @@ class WindowlateProcessor:
                     group_id_start,
                     max_seq_len,
                     extras,
-                    split_unit,
+                    truncation_stage,
                 ):
                     for row in sample_rows:
                         for i, col in enumerate(sample_columns):
@@ -348,20 +355,21 @@ class WindowlateProcessor:
         output_path: str,
         num_workers: int = 0,
         users_per_batch: int = 64,
-        split_unit: str = "skill",
+        truncation_stage: str = "post_expansion",
     ) -> int:
         """Build windowlate data and write directly to file.
 
         Args:
             test_data: Test set sequence data.
             question_data: Question data containing skill mappings.
-            max_seq_len: Maximum sequence length; its unit follows
-                ``split_unit``.
+            max_seq_len: Maximum sequence length; what it counts follows
+                ``truncation_stage``.
             output_path: Output file path (streamed write).
             num_workers: Number of parallel workers (0 or negative for auto).
             users_per_batch: Number of users per batch.
-            split_unit: Window unit, ``"skill"`` (rows) or ``"interaction"``
-                (whole interactions kept together).
+            truncation_stage: Stage of the KC expansion at which windows are
+                truncated -- ``"post_expansion"`` (expanded skill rows) or
+                ``"pre_expansion"`` (whole interactions kept together).
 
         Returns:
             The largest window row count across all generated samples; this
@@ -407,7 +415,7 @@ class WindowlateProcessor:
 
             # Build batch inputs
             batch_inputs = cls._build_batch_inputs(
-                user_records, max_seq_len, users_per_batch, tmp_dir, split_unit
+                user_records, max_seq_len, users_per_batch, tmp_dir, truncation_stage
             )
 
             logger.debug(
@@ -477,7 +485,7 @@ class WindowlateProcessor:
         max_seq_len: int,
         users_per_batch: int,
         tmp_dir: str,
-        split_unit: str,
+        truncation_stage: str,
     ) -> list:
         """Build batch input parameters."""
         batch_inputs: list[tuple[int, list, int, int, str, str]] = []
@@ -491,7 +499,7 @@ class WindowlateProcessor:
                     max_seq_len,
                     cls.CHUNK_ROW_LIMIT,
                     tmp_dir,
-                    split_unit,
+                    truncation_stage,
                 )
             )
         return batch_inputs
