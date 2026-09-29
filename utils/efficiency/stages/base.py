@@ -40,7 +40,6 @@ class StageContext:
     sample_batch: Any
     batch_size: int
     valid_tokens: float
-    seq_len: int | None
     cfg: Any
     environment: EnvironmentInfo
     output_dir: Path | None = None

@@ -156,7 +156,6 @@ def _run_stage(
         sample_batch=None,
         batch_size=batch_size,
         valid_tokens=valid_tokens,
-        seq_len=4,
         cfg=cfg
         or SimpleNamespace(
             general=SimpleNamespace(warmup_iters=2),

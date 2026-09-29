@@ -65,8 +65,7 @@ def benchmark_training(
     — the same computation the real training loop performs. The metrics
     accumulator is bypassed to keep throughput measurement clean. ``valid_tokens``
     is the per-batch average over a full train-split pass (the timing loop itself
-    reuses ``sample_batch``; the uniform-input override pins every batch to the
-    same padded shape, so its step cost represents any batch).
+    reuses ``sample_batch`` from the model's normal data pipeline).
 
     Warmup runs once; the timed loop is repeated ``repeats`` times and the
     reported step time is the median across repeats — launch-bound steps have

@@ -54,12 +54,6 @@ class GeneralEfficiencyConfig:
             shared by the inference/train/trace stages.
         resource_sample_interval: Background resource sampling interval (s).
         output_dir: Where to write efficiency_report.json; default = exp dir.
-        benchmark_batch_size: Override rc.model.batch_size so every model is
-            measured under one batch size; None keeps the model's default.
-            Throughput is per-interaction but its wall-time still scales with GPU
-            utilization, which depends on batch size — uniformize to compare.
-        benchmark_seq_len: Override rc.data.max_seq_len so every model pads to
-            one length; None keeps the dataset default.
     """
 
     modes: str = ""
@@ -68,8 +62,6 @@ class GeneralEfficiencyConfig:
     warmup_iters: int = 50
     resource_sample_interval: float = 0.05
     output_dir: str | None = None
-    benchmark_batch_size: int | None = None
-    benchmark_seq_len: int | None = None
 
 
 @dataclass

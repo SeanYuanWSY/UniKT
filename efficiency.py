@@ -49,8 +49,6 @@ def main() -> None:
     logger.info(
         f"[Benchmark] model={rc.experiment.model_name} dataset={rc.data.dataset}"
     )
-    _apply_benchmark_overrides(rc, eff_cfg)
-
     if eff_cfg.general.batch_sizes or eff_cfg.general.compile_modes:
         _run_sweep(rc, eff_cfg, weights_path)
     else:
@@ -69,19 +67,17 @@ def _run_single_efficiency(
     logger.info(f"[Benchmark] output_dir={output_dir}")
 
     data_src = get_data_source(rc)
-    _apply_benchmark_seq_to_data_src(data_src, eff_cfg)
     if weights_path:
         logger.info(f"[Benchmark] loading weights: {weights_path}")
     target = build_target(rc, data_src, exp_manager, weights_path)
     EfficiencySession(
-        target=target, rc=rc, eff_cfg=eff_cfg, output_dir=output_dir
+        target=target, rc=rc, eff_cfg=eff_cfg, data_src=data_src, output_dir=output_dir
     ).run().print_console()
 
 
 def _run_sweep(rc: RunConfig, eff_cfg: Any, weights_path: str | None) -> None:
     """Sweep a set of batch sizes, rebuilding the trainer per size."""
     data_src = get_data_source(rc)
-    _apply_benchmark_seq_to_data_src(data_src, eff_cfg)
     EfficiencySweep(
         rc=rc, eff_cfg=eff_cfg, data_src=data_src, weights_path=weights_path
     ).run()
@@ -130,55 +126,6 @@ def _resolve_weights(eff_cfg: Any) -> str | None:
     if not path.exists():
         raise SystemExit(f"efficiency.py: checkpoint not found: {path}")
     return str(path)
-
-
-def _apply_benchmark_overrides(rc: RunConfig, eff_cfg: Any) -> None:
-    """Force a uniform batch_size / max_seq_len so throughput compares across models.
-
-    Throughput normalizes per interaction, but its wall-time denominator still
-    scales with GPU utilization (batch size) and padding cost (seq_len). Without
-    uniform inputs a bs=6 model and a bs=10000 model cannot be ranked by
-    interactions/s. Opt-in: None keeps the model/dataset default. Applied before
-    the sweep branch, so a batch-size sweep still wins on rc.model.batch_size
-    while seq_len stays uniform across sweep points.
-    """
-    bs = eff_cfg.general.benchmark_batch_size
-    seq = eff_cfg.general.benchmark_seq_len
-    if bs is None and seq is None:
-        return
-    if bs is not None:
-        rc.model.batch_size = bs
-    if seq is not None:
-        rc.data.max_seq_len = seq
-    logger.info(
-        "[Benchmark] uniform input override: "
-        f"batch_size={rc.model.batch_size} seq_len={rc.data.max_seq_len}"
-    )
-
-
-def _apply_benchmark_seq_to_data_src(data_src: Any, eff_cfg: Any) -> None:
-    """Propagate the benchmark seq_len override into dataset metadata.
-
-    Models size their tensors and position encodings from the metadata
-    padded-length keys (``max_question_seq_len`` / ``max_skill_seq_len`` /
-    ``max_windowlate_seq_len``) rather than ``rc.data.max_seq_len``. Call
-    right after ``get_data_source`` so the override wins; values never
-    shrink below the dataset's real padded lengths, which seq_pos indexes
-    depend on.
-    """
-    seq = eff_cfg.general.benchmark_seq_len
-    if seq is None:
-        return
-    for key in (
-        "max_question_seq_len",
-        "max_skill_seq_len",
-        "max_windowlate_seq_len",
-    ):
-        current = data_src.get_metadata(key)
-        data_src.update_metadata(key, max(seq, current))
-        logger.info(
-            f"[Benchmark] metadata override: {key}={data_src.get_metadata(key)}"
-        )
 
 
 if __name__ == "__main__":

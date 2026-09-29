@@ -4,7 +4,7 @@ A sweep is a list of :class:`SweepPoint` ``(label, mutate)`` entries. Each point
 runs on a fresh deepcopy of the run config with its ``mutate`` applied, rebuilds
 a trainer under its own sub-dir (clean CUDA allocator, isolated peak memory),
 and prints its full efficiency report. :func:`batch_size_sweep` is the built-in
-factory; ``seq_len``/precision/fold sweeps are the same shape.
+factory; precision/fold sweeps can follow the same pattern.
 
 A lightweight index lists the runs (and any points that failed, with their
 error); per-point metrics stay in each point's own report (no cross-point
@@ -302,6 +302,7 @@ class EfficiencySweep:
                 target=target,
                 rc=rc,
                 eff_cfg=self.cfg,
+                data_src=self.data_src,
                 output_dir=child_exp.get_log_dir(),
             ).run()
             report.print_console()
