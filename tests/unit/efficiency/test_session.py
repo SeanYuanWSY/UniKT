@@ -117,7 +117,7 @@ def _make_session(
 
     rc = SimpleNamespace(
         experiment=SimpleNamespace(model_name="UTestModel"),
-        data=SimpleNamespace(dataset="tinyds", max_seq_len=3),
+        data=SimpleNamespace(dataset="tinyds", max_seq_len=200),
         general=SimpleNamespace(seed=42),
     )
     # ``rc`` is a SimpleNamespace mirroring the RunConfig read-surface and the
@@ -126,6 +126,15 @@ def _make_session(
         target=cast(BenchmarkTarget, target or _FakeTarget()),
         rc=cast(RunConfig, rc),
         eff_cfg=_EffCfg(),
+        data_src=cast(
+            Any,
+            SimpleNamespace(
+                get_metadata=lambda: {
+                    "max_question_seq_len": 3,
+                    "max_skill_seq_len": 5,
+                }
+            ),
+        ),
         output_dir=tmp_path,
     )
 
@@ -214,6 +223,10 @@ class TestSplitThroughputNumerator:
         # mean equals the single batch's count, but arrives with provenance.
         report = _make_session(tmp_path, "utest_capture_stage").run()
         assert report.results == {"utest_capture_stage": {"ok": True}}
+        assert report.sequence_lengths == {
+            "max_question_seq_len": 3,
+            "max_skill_seq_len": 5,
+        }
         assert ctx_capture_stage["valid_tokens"] == pytest.approx(6.0)
         assert ctx_capture_stage["total"] == 6
         assert ctx_capture_stage["batches"] == 1

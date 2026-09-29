@@ -125,7 +125,7 @@ class FAKTTrainer(BaseTrainer):
             n_blocks=m.n_blocks,
             dropout=m.dropout,
             d_ff=m.d_ff,
-            seq_len=metadata["max_seq_len"],
+            seq_len=metadata["max_skill_seq_len"],
             kernel_size1=m.kernel_size1,
             kernel_size2=m.kernel_size2,
             freq=True,

@@ -16,7 +16,7 @@ def _make_report() -> EfficiencyReport:
         dataset_name="assist09",
         timestamp="2026-08-19 00:00:00",
         batch_size=32,
-        seq_len=100,
+        sequence_lengths={"max_skill_seq_len": 100},
         modes=["train"],
         config={"general": {"warmup_iters": 50}},
         determinism={"seed": 42},
@@ -30,6 +30,7 @@ class TestEfficiencyReport:
     def test_to_dict_includes_nested_stage_results(self) -> None:
         payload = _make_report().to_dict()
         assert payload["model_name"] == "GIKT"
+        assert payload["sequence_lengths"] == {"max_skill_seq_len": 100}
         assert payload["results"]["train"]["iters"] == 2
         assert payload["environment"]["device_type"] == "cpu"
 

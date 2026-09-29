@@ -38,7 +38,7 @@ class EfficiencyReport:
     dataset_name: str
     timestamp: str
     batch_size: int
-    seq_len: int | None
+    sequence_lengths: dict[str, int]
     modes: list[str]
     config: dict[str, Any]
     determinism: dict[str, Any]
@@ -68,10 +68,12 @@ class EfficiencyReport:
             f"[white]{self.model_name}[/] on [white]{self.dataset_name}[/]  "
             f"({self.timestamp})"
         )
-        console.print(
-            f"  batch_size={self.batch_size}  seq_len={self.seq_len}  "
-            f"modes={','.join(self.modes)}"
-        )
+        console.print(f"  batch_size={self.batch_size}  modes={','.join(self.modes)}")
+        if self.sequence_lengths:
+            lengths = "  ".join(
+                f"{key}={value}" for key, value in self.sequence_lengths.items()
+            )
+            console.print(f"  dataset padded lengths (metadata): {lengths}")
         console.print()
 
         for name in self.modes:

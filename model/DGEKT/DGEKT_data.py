@@ -61,7 +61,7 @@ class DGEKTModelData(QuestionModelData):
         """
         num_questions = self.data_src.get_metadata("num_questions")
         num_skills = self.data_src.get_metadata("num_skills")
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_question_seq_len")
 
         user_sequence, user_response, user_mask, _ = self.load_sequence_data()
 
@@ -101,7 +101,7 @@ class DGEKTModelData(QuestionModelData):
         info = {
             "num_questions": num_questions,
             "num_skills": num_skills,
-            "max_seq_len": max_seq_len,
+            "max_question_seq_len": max_seq_len,
             "hyper_factors": (hyper_p, hyper_q),
             "adj_out": adj_out,
             "adj_in": adj_in,

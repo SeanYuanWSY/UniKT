@@ -151,7 +151,7 @@ class KeenKTTrainer(BaseTrainer):
             final_fc_dim2=m.final_fc_dim2,
             se_ratio=m.se_ratio,
             # data arrays are always built at the preprocessed width
-            seq_len=metadata["max_seq_len"],
+            seq_len=metadata["max_skill_seq_len"],
             emb_type=m.emb_type,
             use_cl=m.use_cl,
             use_diffusion=m.use_diffusion,

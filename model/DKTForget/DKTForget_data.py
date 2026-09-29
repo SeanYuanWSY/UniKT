@@ -161,7 +161,7 @@ class DKTForgetModelData(SkillModelData):
     def _build_dense_arrays(self):
         data = self.load_split_data(required=("timestamp",))
 
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_skill_seq_len")
         num_users = data["sequence_id"].n_unique()
 
         user_indices = data["sequence_id"].to_numpy()
@@ -244,7 +244,7 @@ class DKTForgetModelData(SkillModelData):
         # 测试集
         test_iterable = DKTForgetWindowlateIterableDataset(
             parquet_path=self._windowlate_path(),
-            max_seq_len=rc.data.max_seq_len,
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
             num_rgap=self.num_rgap,
             num_sgap=self.num_sgap,
             num_pcount=self.num_pcount,

@@ -117,7 +117,7 @@ class CSKTTrainer(BaseTrainer):
         m = rc.model
         model = CSKT(
             num_c=metadata["num_skills"],
-            max_seq_len=rc.data.max_seq_len,
+            max_seq_len=metadata["max_skill_seq_len"],
             n_pid=n_pid,
             d_model=m.d_model,
             num_blocks=m.num_blocks,

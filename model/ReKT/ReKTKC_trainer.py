@@ -66,7 +66,12 @@ class ReKTKCTrainer(BaseTrainer):
 
         m = rc.model
         logger.info("Initializing ReKTKC model...")
-        model = ReKT(metadata, hidden_dim=m.hidden_dim, dropout=m.dropout)
+        model = ReKT(
+            metadata,
+            metadata["max_skill_seq_len"],
+            hidden_dim=m.hidden_dim,
+            dropout=m.dropout,
+        )
 
         loss_fn = torch.nn.BCEWithLogitsLoss()
         optimizer = torch.optim.Adam(

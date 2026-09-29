@@ -125,7 +125,7 @@ class STHKTTrainer(BaseTrainer):
             num_questions=info["num_questions"],
             num_skills=info["num_skills"],
             num_users=info["num_users"],
-            max_seq_len=info["max_seq_len"],
+            max_seq_len=info["max_question_seq_len"],
             d_model=m.d_model,
             num_heads=m.num_heads,
             d_ff=m.d_ff,

@@ -115,7 +115,7 @@ class RobustKTTrainer(BaseTrainer):
             d_ff=m.d_ff,
             final_fc_dim=m.final_fc_dim,
             kernel_size=m.kernel_size,
-            max_seq_len=rc.data.max_seq_len,
+            max_seq_len=metadata["max_skill_seq_len"],
         )
 
         loss_fn = torch.nn.BCELoss()

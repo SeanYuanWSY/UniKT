@@ -84,7 +84,7 @@ class HDKTTrainer(BaseTrainer):
             n_at=info["n_at"],
             n_it=info["n_it"],
             num_users=info["num_users"],
-            max_seq_len=info["max_seq_len"],
+            max_seq_len=info["max_question_seq_len"],
             hidden_size=m.hidden_size,
             dropout=m.dropout,
             tau=m.tau,

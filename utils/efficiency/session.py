@@ -70,12 +70,23 @@ class EfficiencySession:
         target: BenchmarkTarget,
         rc: RunConfig,
         eff_cfg: Any,
+        data_src: DataSource,
         output_dir: str | Path | None = None,
     ) -> None:
         """Bind the benchmark target, run config, and enabled stages."""
         self.target = target
         self.rc = rc
         self.cfg = eff_cfg
+        metadata = data_src.get_metadata()
+        self.sequence_lengths = {
+            key: int(metadata[key])
+            for key in (
+                "max_question_seq_len",
+                "max_skill_seq_len",
+                "max_windowlate_seq_len",
+            )
+            if key in metadata
+        }
         self.device = target.device
         self.output_dir = Path(output_dir) if output_dir else None
         modes = [m.strip() for m in eff_cfg.general.modes.split(",") if m.strip()]
@@ -99,22 +110,21 @@ class EfficiencySession:
         # DataLoader IPC noise.
         sample_batch = to_device(next(iter(self.target.train_data)), device)
         batch_size = batch_size_of(sample_batch)
-        seq_len = getattr(self.rc.data, "max_seq_len", None)
 
         # Throughput numerators use the per-batch average over a full train-split
         # pass, not the prefetched batch's count: the sum over all batches is
         # invariant to the loader's shuffle order, so the average depends only on
         # the dataset and the model's data granularity. The counting forwards
         # also warm lazily built seq-len constants (AKT family) under no_grad;
-        # timing loops still reuse sample_batch — the uniform-input override
-        # pins every batch to the same padded shape, so its per-step cost
-        # represents any batch.
+        # timing loops still reuse sample_batch; standard model datasets pad
+        # sequences to the lengths recorded by preprocessing.
         valid_tokens_total, valid_tokens_batches = count_valid_interactions_split(
             self.target, self.target.train_data
         )
         valid_tokens = valid_tokens_total / valid_tokens_batches
         logger.info(
-            f"[Setup] batch_size={batch_size} seq_len={seq_len} "
+            f"[Setup] batch_size={batch_size} "
+            f"padded_lengths={self.sequence_lengths} "
             f"valid_tokens={valid_tokens:.1f}/batch "
             f"(split mean: {valid_tokens_total} over "
             f"{valid_tokens_batches} batches)"
@@ -126,7 +136,6 @@ class EfficiencySession:
             sample_batch=sample_batch,
             batch_size=batch_size,
             valid_tokens=valid_tokens,
-            seq_len=seq_len,
             cfg=self.cfg,
             environment=environment,
             output_dir=self.output_dir,
@@ -167,7 +176,7 @@ class EfficiencySession:
             dataset_name=self.rc.data.dataset,
             timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             batch_size=batch_size,
-            seq_len=seq_len,
+            sequence_lengths=self.sequence_lengths,
             modes=[name for name, _ in self.stages],
             config=config_to_dict(self.cfg),
             determinism={

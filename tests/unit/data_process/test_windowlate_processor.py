@@ -134,6 +134,34 @@ class TestGenerateUserSamples:
             (3, 1, 103, 12, 0, 1, 7, 2, 1),
         ]
 
+    def test_interaction_window_keeps_whole_interactions(
+        self, processor_defaults: None
+    ) -> None:
+        samples = list(
+            WindowlateProcessor.generate_user_samples(
+                sample_id_start=0,
+                group_id_start=0,
+                max_seq_len=2,
+                truncation_stage="pre_expansion",
+                **_U7,
+            )
+        )
+        # Sample 2 (target 102; the history never carries its sibling skill
+        # 101) stays within the budget either way.
+        assert samples[2] == [
+            (2, 0, 100, 10, 1, 0, 7, 0, 1),
+            (2, 1, 102, 11, 0, 1, 7, 1, 0),
+        ]
+        # Sample 3 (target 103) holds the last 2 whole interactions: the
+        # two-skill interaction 1 stays complete (3 rows), where the "skill"
+        # unit would cut it in half ([102, 103]).
+        assert samples[3] == [
+            (3, 0, 101, 11, 0, 0, 7, 1, 0),
+            (3, 1, 102, 11, 0, 0, 7, 1, 0),
+            (3, 2, 103, 12, 0, 1, 7, 2, 1),
+        ]
+        assert max(len(s) for s in samples) == 3
+
     def test_mask_one_only_at_target_position(self, processor_defaults: None) -> None:
         samples = list(
             WindowlateProcessor.generate_user_samples(
@@ -204,18 +232,19 @@ class TestProcessUserBatch:
     ) -> None:
         # Sample i has i+1 rows (history grows), so with limit 3 the buffer
         # flushes after samples 2..10 -> 1 leftover group + 8 mid flushes.
-        batch_idx, path, rows = WindowlateProcessor.process_user_batch(
-            (0, [self._user(1, 10)], 100, 3, str(tmp_path))
+        batch_idx, path, rows, max_window = WindowlateProcessor.process_user_batch(
+            (0, [self._user(1, 10)], 100, 3, str(tmp_path), "skill")
         )
         assert batch_idx == 0
         assert rows == 55  # 1+2+...+10
+        assert max_window == 10
         assert pq.ParquetFile(path).num_row_groups == 9
 
     def test_below_limit_single_row_group(
         self, processor_defaults: None, tmp_path: Path
     ) -> None:
-        _, path, rows = WindowlateProcessor.process_user_batch(
-            (0, [self._user(1, 3)], 100, 500_000, str(tmp_path))
+        _, path, rows, _ = WindowlateProcessor.process_user_batch(
+            (0, [self._user(1, 3)], 100, 500_000, str(tmp_path), "skill")
         )
         assert rows == 6  # 1+2+3
         assert pq.ParquetFile(path).num_row_groups == 1
@@ -223,15 +252,17 @@ class TestProcessUserBatch:
     def test_empty_batch_returns_none_and_writes_nothing(
         self, processor_defaults: None, tmp_path: Path
     ) -> None:
-        result = WindowlateProcessor.process_user_batch((1, [], 100, 3, str(tmp_path)))
-        assert result == (1, None, 0)
+        result = WindowlateProcessor.process_user_batch(
+            (1, [], 100, 3, str(tmp_path), "skill")
+        )
+        assert result == (1, None, 0, 0)
         assert list(tmp_path.iterdir()) == []
 
     def test_flushed_columns_match_core_schema(
         self, processor_defaults: None, tmp_path: Path
     ) -> None:
-        _, path, _ = WindowlateProcessor.process_user_batch(
-            (0, [self._user(1, 2)], 100, 500_000, str(tmp_path))
+        _, path, _, _ = WindowlateProcessor.process_user_batch(
+            (0, [self._user(1, 2)], 100, 500_000, str(tmp_path), "skill")
         )
         # A flush is asserted above via num_row_groups, so path is not None.
         df = pl.read_parquet(cast("str", path))
@@ -313,6 +344,42 @@ class TestBuild:
             (3, 0, 100, 10, 0, 1, 8, 2, 0, -1, 1),
         ]
 
+    def test_build_returns_max_window_len(
+        self, processor_defaults: None, tmp_path: Path
+    ) -> None:
+        # Three interactions, the middle one carrying two skills: with the
+        # target at the last interaction, "skill" keeps its last 2 rows
+        # (cutting the middle interaction in half) while "interaction" keeps
+        # the middle interaction whole (3 rows).
+        test_data = pl.DataFrame(
+            {
+                "user": pl.Series([7, 7, 7], dtype=pl.Int32),
+                "question": pl.Series([10, 11, 12], dtype=pl.Int32),
+                "label": pl.Series([1, 0, 1], dtype=pl.Int8),
+                "timestamp": pl.Series([1, 2, 3], dtype=pl.Int64),
+            }
+        )
+        question_data = self._question_data().vstack(
+            pl.DataFrame(
+                {
+                    "question": pl.Series([12], dtype=pl.Int32),
+                    "skill": pl.Series([103], dtype=pl.Int32),
+                }
+            )
+        )
+        for stage, expected in (("post_expansion", 2), ("pre_expansion", 3)):
+            output_path = str(tmp_path / f"windowlate_{stage}.parquet")
+            max_window = WindowlateProcessor.build(
+                test_data=test_data,
+                question_data=question_data,
+                max_seq_len=2,
+                output_path=output_path,
+                num_workers=1,
+                users_per_batch=1,
+                truncation_stage=stage,
+            )
+            assert max_window == expected, stage
+
     def test_all_questions_missing_raises(
         self, processor_defaults: None, tmp_path: Path
     ) -> None:
@@ -364,16 +431,19 @@ class TestMergeResults:
             {},
         )
         res_a = WindowlateProcessor.process_user_batch(
-            (0, [user_a], 10, 500_000, str(work))
+            (0, [user_a], 10, 500_000, str(work), "skill")
         )
         res_b = WindowlateProcessor.process_user_batch(
-            (1, [user_b], 10, 500_000, str(work))
+            (1, [user_b], 10, 500_000, str(work), "skill")
         )
 
         output_path = str(tmp_path / "merged.parquet")
-        total = WindowlateProcessor._merge_results([res_a, res_b], output_path)
+        total, max_window = WindowlateProcessor._merge_results(
+            [res_a, res_b], output_path
+        )
 
         assert total == res_a[2] + res_b[2]
+        assert max_window == max(res_a[3], res_b[3])
         assert os.path.exists(output_path)
         # os.replace consumed the staging file; nothing scratch is left behind.
         assert not os.path.exists(output_path + ".tmp")

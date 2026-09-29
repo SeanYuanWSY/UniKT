@@ -47,7 +47,7 @@ class HawkesKTModelData(QuestionModelData):
     @override
     def prepare_data(self, rc: Any) -> tuple:
         fold_idx = rc.data.fold if rc.data.fold >= 0 else None
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_question_seq_len")
 
         # 1. Load question split data (one row per question, has timestamp)
         q_data = self.load_split_data(

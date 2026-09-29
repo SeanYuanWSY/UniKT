@@ -63,7 +63,7 @@ class ASIKTModelData(SkillModelData):
             train[3], train[1], train[2].astype(bool), n_question
         )
         test = DataLoader(
-            self.create_windowlate_iterable_dataset(rc.data.max_seq_len),
+            self.create_windowlate_iterable_dataset(),
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=0,

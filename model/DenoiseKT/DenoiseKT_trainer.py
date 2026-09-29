@@ -108,7 +108,7 @@ class DenoiseKTTrainer(BaseTrainer):
             dropout1=m.dropout1,
             bf=m.bf,
             d_ff=m.d_ff,
-            seq_len=rc.data.max_seq_len,
+            seq_len=metadata["max_question_seq_len"],
             kq_same=m.kq_same,
             final_fc_dim=m.final_fc_dim,
             final_fc_dim2=m.final_fc_dim2,

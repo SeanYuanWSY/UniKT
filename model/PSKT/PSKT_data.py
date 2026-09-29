@@ -113,7 +113,7 @@ class PSKTModelData(QuestionModelData):
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
 
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_question_seq_len")
         num_users = data["sequence_id"].n_unique()
 
         user_sequence = np.zeros((num_users, max_seq_len), dtype=np.int64)

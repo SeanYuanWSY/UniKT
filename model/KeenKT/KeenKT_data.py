@@ -150,7 +150,7 @@ class KeenKTModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        stream_dataset = self.create_windowlate_iterable_dataset(rc.data.max_seq_len)
+        stream_dataset = self.create_windowlate_iterable_dataset()
 
         train_dataset = KeenKTTrainDataset(
             train_data[0],

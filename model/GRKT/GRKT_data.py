@@ -57,7 +57,7 @@ class GRKTModelData(QuestionModelData):
     @override
     def prepare_data(self, rc: Any) -> tuple:
         fold_idx = rc.data.fold if rc.data.fold >= 0 else None
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_question_seq_len")
         num_questions = self.data_src.get_metadata("num_questions")
         num_skills = self.data_src.get_metadata("num_skills")
 

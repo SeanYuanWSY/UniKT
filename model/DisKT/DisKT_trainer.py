@@ -91,7 +91,7 @@ class DisKTTrainer(BaseTrainer):
             num_skills,
             num_questions,
         ) = model_data.prepare_data(rc)
-        max_seq_len = data_src.get_metadata("max_seq_len")
+        max_seq_len = data_src.get_metadata("max_question_seq_len")
 
         m = rc.model
         logger.info("Initializing DisKT model...")

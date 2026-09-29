@@ -195,7 +195,7 @@ class FAKTModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        window_test_data = self.create_windowlate_iterable_dataset(rc.data.max_seq_len)
+        window_test_data = self.create_windowlate_iterable_dataset()
 
         train_dataset = FAKTDataset(*train_data)
         val_dataset = FAKTDataset(*val_data)
@@ -219,14 +219,14 @@ class FAKTModelData(SkillModelData):
 
     @override
     def create_windowlate_iterable_dataset(
-        self, max_seq_len: int, batch_read_rows: int = 200_000
+        self, batch_read_rows: int = 200_000
     ) -> FAKTWindowlateIterableDataset:
         parquet_path = os.path.join(
             self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
         )
         return FAKTWindowlateIterableDataset(
             parquet_path=parquet_path,
-            max_seq_len=max_seq_len,
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
             num_rgap=self.num_rgap,
             num_sgap=self.num_sgap,
             num_pcount=self.num_pcount,
@@ -236,7 +236,7 @@ class FAKTModelData(SkillModelData):
     def _compute_time_gaps(self):
         """从 split_skill_sequence_data 的时间戳计算 rgaps/sgaps/pcounts。"""
         data = self.load_split_data(required=("timestamp",)).to_pandas()
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_skill_seq_len")
         num_users = data["sequence_id"].nunique()
 
         users = data["sequence_id"].values

@@ -1,6 +1,8 @@
 """Tests for DataSource split-sequence building, build_* guards, add_kfold_labels."""
 
 from collections.abc import Callable
+from pathlib import Path
+from typing import ClassVar
 
 import polars as pl
 import pytest
@@ -105,8 +107,152 @@ class TestBuildSplitSequencesSkills:
 # --- _build_split_sequences: batch boundaries -----------------------------------
 
 
+# --- _build_split_sequences: interaction-unit splitting --------------------------
+#
+# One user answers questions [1, 2, 3, 4] whose skills expand to
+# [10], [11, 12, 13], [14], [15] -> 4 interactions, 6 expanded rows.
+_IU_USERS = [0] * 4
+_IU_QUESTIONS = [1, 2, 3, 4]
+_IU_LABELS = [1, 0, 1, 1]
+_IU_TIMESTAMPS = [1, 2, 3, 4]
+_IU_QS_PAIRS = [(1, 10), (2, 11), (2, 12), (2, 13), (3, 14), (4, 15)]
+
+
+class TestBuildSplitSequencesInteraction:
+    def test_skill_unit_cuts_mid_interaction(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        # max_seq_len=3 counts expanded rows: [10, 11, 12 | 13, 14, 15] --
+        # question 2's skills straddle both splits.
+        seq = make_sequence_frame(_IU_USERS, _IU_QUESTIONS, _IU_LABELS, _IU_TIMESTAMPS)
+        rel = {"question_skill": make_question_skill_frame(_IU_QS_PAIRS)}
+        ds = make_data_source(
+            sequence_data=seq, relation_data=rel, max_seq_len=3, min_seq_len=2
+        )
+        out = ds._build_split_sequences(expand_skills=True)
+
+        assert out["sequence_id"].to_list() == [0] * 3 + [1] * 3
+        assert out["skill"].to_list() == [10, 11, 12, 13, 14, 15]
+        assert out["question"].to_list() == [1, 2, 2, 2, 3, 4]
+        assert out["seq_pos"].to_list() == [0, 1, 2, 0, 1, 2]
+
+    def test_interaction_unit_keeps_interactions_whole(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        # max_seq_len=3 counts interactions: [1, 2, 3 | 4]. The first split
+        # expands to 5 rows (beyond max_seq_len); the 1-interaction tail is
+        # dropped by min_seq_len=2, so question 4 leaves the dataset.
+        seq = make_sequence_frame(_IU_USERS, _IU_QUESTIONS, _IU_LABELS, _IU_TIMESTAMPS)
+        rel = {"question_skill": make_question_skill_frame(_IU_QS_PAIRS)}
+        ds = make_data_source(
+            sequence_data=seq,
+            relation_data=rel,
+            max_seq_len=3,
+            min_seq_len=2,
+            truncation_stage="pre_expansion",
+        )
+        out = ds._build_split_sequences(expand_skills=True)
+
+        assert out["sequence_id"].to_list() == [0] * 5
+        assert out["skill"].to_list() == [10, 11, 12, 13, 14]
+        assert out["question"].to_list() == [1, 2, 2, 2, 3]
+        # seq_pos is the split-internal expanded row index and exceeds
+        # max_seq_len's budget without wrapping.
+        assert out["seq_pos"].to_list() == [0, 1, 2, 3, 4]
+
+    def test_interaction_unit_min_len_counts_interactions(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        # Same data with min_seq_len=1: the 1-interaction tail survives as a
+        # second split of a single row.
+        seq = make_sequence_frame(_IU_USERS, _IU_QUESTIONS, _IU_LABELS, _IU_TIMESTAMPS)
+        rel = {"question_skill": make_question_skill_frame(_IU_QS_PAIRS)}
+        ds = make_data_source(
+            sequence_data=seq,
+            relation_data=rel,
+            max_seq_len=3,
+            min_seq_len=1,
+            truncation_stage="pre_expansion",
+        )
+        out = ds._build_split_sequences(expand_skills=True)
+
+        assert out["sequence_id"].to_list() == [0] * 5 + [1]
+        assert out["skill"].to_list() == [10, 11, 12, 13, 14, 15]
+        assert out["seq_pos"].to_list() == [0, 1, 2, 3, 4, 0]
+
+    def test_question_mode_ignores_truncation_stage(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        # The knob only governs the skill path: question sequences split
+        # identically regardless of truncation_stage.
+        seq = make_sequence_frame(_IU_USERS, _IU_QUESTIONS, _IU_LABELS, _IU_TIMESTAMPS)
+        rel = {"question_skill": make_question_skill_frame(_IU_QS_PAIRS)}
+        out_skill = make_data_source(
+            sequence_data=seq, relation_data=rel, max_seq_len=2, min_seq_len=1
+        )._build_split_sequences(expand_skills=False)
+        out_interaction = make_data_source(
+            sequence_data=seq,
+            relation_data=rel,
+            max_seq_len=2,
+            min_seq_len=1,
+            truncation_stage="pre_expansion",
+        )._build_split_sequences(expand_skills=False)
+
+        assert_frame_equal(out_skill, out_interaction)
+        assert out_skill["sequence_id"].n_unique() == 2
+
+    def test_schema_matches_skill_unit_output(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        seq = make_sequence_frame(_IU_USERS, _IU_QUESTIONS, _IU_LABELS, _IU_TIMESTAMPS)
+        rel = {"question_skill": make_question_skill_frame(_IU_QS_PAIRS)}
+        ds = make_data_source(
+            sequence_data=seq,
+            relation_data=rel,
+            max_seq_len=3,
+            min_seq_len=1,
+            truncation_stage="pre_expansion",
+        )
+        out = ds._build_split_sequences(expand_skills=True)
+
+        assert out.columns == [
+            "user",
+            "question",
+            "label",
+            "timestamp",
+            "sequence_id",
+            "skill",
+            "seq_pos",
+        ]
+        assert out.schema == {
+            "user": pl.Int32,
+            "question": pl.Int32,
+            "label": pl.Int8,
+            "timestamp": pl.Int64,
+            "sequence_id": pl.Int32,
+            "skill": pl.Int32,
+            "seq_pos": pl.Int64,
+        }
+
+
 class TestBuildSplitSequencesBatches:
     @pytest.mark.parametrize("expand_skills", [False, True], ids=["question", "skill"])
+    @pytest.mark.parametrize("truncation_stage", ["post_expansion", "pre_expansion"])
     @pytest.mark.parametrize("limit", [1, 2, 4])
     def test_small_batch_limit_matches_single_batch(
         self,
@@ -115,16 +261,25 @@ class TestBuildSplitSequencesBatches:
         make_sequence_frame: Callable[..., pl.DataFrame],
         make_question_skill_frame: Callable[..., pl.DataFrame],
         expand_skills: bool,
+        truncation_stage: str,
         limit: int,
     ) -> None:
         seq, rel = _split_frames(make_sequence_frame, make_question_skill_frame)
 
-        ds_whole = make_data_source(sequence_data=seq, relation_data=rel, max_seq_len=2)
+        ds_whole = make_data_source(
+            sequence_data=seq,
+            relation_data=rel,
+            max_seq_len=2,
+            truncation_stage=truncation_stage,
+        )
         whole = ds_whole._build_split_sequences(expand_skills=expand_skills)
 
         monkeypatch.setattr(DataSource, "_SPLIT_BATCH_ROWS", limit)
         ds_batched = make_data_source(
-            sequence_data=seq, relation_data=rel, max_seq_len=2
+            sequence_data=seq,
+            relation_data=rel,
+            max_seq_len=2,
+            truncation_stage=truncation_stage,
         )
         batched = ds_batched._build_split_sequences(expand_skills=expand_skills)
 
@@ -355,3 +510,127 @@ class TestAddKfoldLabels:
         folds = ds.sequence_data["fold"].to_list()
         assert -1 not in folds
         assert sorted(set(folds)) == [0, 1, 2]
+
+
+# --- save_data: padded-length metadata keys --------------------------------------
+
+
+class TestSaveDataPaddedLengthMetadata:
+    """max_question_seq_len / max_skill_seq_len are real per-split maxima."""
+
+    USERS: ClassVar[list[int]] = [0] * 5 + [1] * 3
+    QUESTIONS: ClassVar[list[int]] = [1, 2, 3, 1, 2, 1, 2, 3]
+    QS_PAIRS: ClassVar[list[tuple[int, int]]] = [
+        (1, 10),
+        (2, 11),
+        (3, 13),
+    ]  # 1:1 -> skill rows == question rows
+
+    def _saved_metadata(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+        max_seq_len: int,
+    ) -> dict:
+        import json
+        import os
+
+        seq = make_sequence_frame(self.USERS, self.QUESTIONS)
+        rel = {"question_skill": make_question_skill_frame(self.QS_PAIRS)}
+        ds = make_data_source(
+            sequence_data=seq, relation_data=rel, max_seq_len=max_seq_len
+        )
+        ds.split_question_sequence_data = ds._build_split_sequences(expand_skills=False)
+        ds.split_skill_sequence_data = ds._build_split_sequences(expand_skills=True)
+        ds.save_data()
+
+        with open(os.path.join(ds.data_folder, "metadata.json")) as f:
+            return json.load(f)
+
+    def test_question_max_equals_budget_when_a_split_fills_it(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        # max_seq_len=4: user 0 splits into [4, 1] rows, user 1 into [3] ->
+        # the longest split fills the budget exactly.
+        meta = self._saved_metadata(
+            make_data_source,
+            make_sequence_frame,
+            make_question_skill_frame,
+            max_seq_len=4,
+        )
+        assert meta["max_question_seq_len"] == 4
+
+    def test_question_max_below_budget_when_all_splits_are_short(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        # max_seq_len=10 > every user: one split per user, longest is 5.
+        meta = self._saved_metadata(
+            make_data_source,
+            make_sequence_frame,
+            make_question_skill_frame,
+            max_seq_len=10,
+        )
+        assert meta["max_question_seq_len"] == 5
+        assert meta["max_question_seq_len"] < 10
+
+    def test_bare_max_seq_len_key_is_gone(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        meta = self._saved_metadata(
+            make_data_source,
+            make_sequence_frame,
+            make_question_skill_frame,
+            max_seq_len=4,
+        )
+        assert "max_seq_len" not in meta
+        # 1:1 question->skill mapping, so both real maxima coincide.
+        assert meta["max_skill_seq_len"] == meta["max_question_seq_len"]
+
+    def test_no_split_sequences_stops_before_writing(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+        tmp_path: Path,
+    ) -> None:
+        seq = make_sequence_frame([0, 0], [1, 2])
+        rel = {"question_skill": make_question_skill_frame([(1, 10), (2, 11)])}
+        ds = make_data_source(sequence_data=seq, relation_data=rel, min_seq_len=3)
+        ds.split_question_sequence_data = ds._build_split_sequences(expand_skills=False)
+        ds.split_skill_sequence_data = ds._build_split_sequences(expand_skills=True)
+
+        with pytest.raises(ValueError, match="No question or skill split sequences"):
+            ds.save_data()
+
+        assert list(tmp_path.iterdir()) == []
+
+    def test_one_empty_split_family_records_zero(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        seq = make_sequence_frame([0, 0], [1, 2])
+        rel = {
+            "question_skill": make_question_skill_frame(
+                [(1, 10), (1, 11), (2, 12), (2, 13)]
+            )
+        }
+        ds = make_data_source(sequence_data=seq, relation_data=rel, min_seq_len=3)
+        ds.split_question_sequence_data = ds._build_split_sequences(expand_skills=False)
+        ds.split_skill_sequence_data = ds._build_split_sequences(expand_skills=True)
+
+        ds.save_data()
+
+        assert ds.get_metadata("max_question_seq_len") == 0
+        assert ds.get_metadata("max_skill_seq_len") == 4

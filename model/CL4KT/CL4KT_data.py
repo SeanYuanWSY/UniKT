@@ -239,7 +239,7 @@ class CL4KTModelData(SkillModelData):
         train_s, train_r, train_m = train_split
         val_s, val_r, val_m = val_split
 
-        seq_len = rc.data.max_seq_len
+        seq_len = self.data_src.get_metadata("max_skill_seq_len")
         num_skills = self.data_src.get_metadata("num_skills")
         mask_token_id = num_skills
 
@@ -267,7 +267,7 @@ class CL4KTModelData(SkillModelData):
         )
         val_dataset = CL4KTEvalDataset(val_s, val_r, val_m)
         test_dataset = DataLoader(
-            self.create_windowlate_iterable_dataset(seq_len),
+            self.create_windowlate_iterable_dataset(),
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

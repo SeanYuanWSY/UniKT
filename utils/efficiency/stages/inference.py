@@ -58,8 +58,8 @@ def benchmark_inference(
     Event per iteration reads elapsed_time after ``end.synchronize()``, covering
     host launch through kernel completion. ``valid_tokens`` is the per-batch
     average over a full train-split pass (shuffle-order invariant); the timing
-    batch stays representative because the uniform-input override pins every
-    batch to the same padded shape.
+    batch comes from the model's normal data pipeline, with no benchmark
+    sequence-length override.
     """
     # Explicit so the exported benchmark keeps its eval-mode contract even for
     # targets whose forward does not enforce it.

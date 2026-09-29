@@ -129,10 +129,10 @@ class ATDKTTrainer(BaseTrainer):
                 f"embedding_dim ({m.embedding_dim}) must be divisible by "
                 f"num_attn_heads ({m.num_attn_heads})"
             )
-        if m.use_ik and m.ik_start >= rc.data.max_seq_len:
+        if m.use_ik and m.ik_start >= metadata["max_skill_seq_len"]:
             raise ValueError(
                 f"ik_start ({m.ik_start}) must be smaller than max_seq_len "
-                f"({rc.data.max_seq_len}), otherwise the IK auxiliary task "
+                f"({metadata['max_skill_seq_len']}), otherwise the IK auxiliary task "
                 "covers no positions"
             )
         logger.info("Initializing ATDKT model...")
@@ -140,7 +140,7 @@ class ATDKTTrainer(BaseTrainer):
             num_q=metadata["num_questions"],
             num_c=metadata["num_skills"],
             emb_size=m.embedding_dim,
-            seq_len=rc.data.max_seq_len,
+            seq_len=metadata["max_skill_seq_len"],
             dropout=m.dropout,
             use_qt=m.use_qt,
             use_ik=m.use_ik,

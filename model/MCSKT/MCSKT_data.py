@@ -217,7 +217,7 @@ class MCSKTModelData(SkillModelData):
         data = self.load_split_data(required=("timestamp",))
         if isinstance(data, pl.LazyFrame):
             data = data.collect()
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_skill_seq_len")
         num_users = data["sequence_id"].n_unique()
 
         user_timestamp = np.zeros((num_users, max_seq_len), dtype=np.float64)
@@ -296,7 +296,7 @@ class MCSKTModelData(SkillModelData):
         )
         test_dataset = MCSKTWindowlateIterableDataset(
             parquet_path=parquet_path,
-            max_seq_len=rc.data.max_seq_len,
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
             num_rgap=num_rgap,
             num_sgap=num_sgap,
             num_pcount=num_pcount,
