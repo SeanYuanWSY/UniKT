@@ -16,6 +16,7 @@ class ReKT(nn.Module):
     def __init__(
         self,
         data_metadata: dict[str, Any],
+        max_seq_len: int,
         hidden_dim: int = 128,
         dropout: float = 0.4,
         **kwargs: Any,
@@ -24,7 +25,6 @@ class ReKT(nn.Module):
 
         num_questions = data_metadata["num_questions"]
         num_skills = data_metadata["num_combined_skills"]
-        max_seq_len = data_metadata["max_seq_len"]
 
         d = hidden_dim
         p = dropout

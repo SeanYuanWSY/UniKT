@@ -83,7 +83,7 @@ class CIKTTrainer(BaseTrainer):
         m = rc.model
         logger.info(
             f"Initializing CIKT model (d_model={m.d_model}, "
-            f"seq_len={metadata['max_seq_len']}, num_questions={num_questions}, "
+            f"seq_len={metadata['max_question_seq_len']}, num_questions={num_questions}, "
             f"num_concepts={num_concepts})..."
         )
 
@@ -91,7 +91,7 @@ class CIKTTrainer(BaseTrainer):
             num_questions=num_questions,
             num_concepts=num_concepts,
             d_model=m.d_model,
-            seq_len=metadata["max_seq_len"],
+            seq_len=metadata["max_question_seq_len"],
             dropout=m.dropout,
             num_difficulty_levels=m.num_difficulty_levels,
             difficulty_table=difficulty_table,

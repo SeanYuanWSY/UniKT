@@ -153,7 +153,7 @@ UniKT 提供两个平行的 ModelData 分支，服务不同粒度的模型：
 
 **SkillModelData — KC 级模型**（``utils/model_data/skill_model_data.py`` L1）
 
-面向需要技能（Knowledge Component）序列的模型（如 DKT、GIKT）。``build_sequence_data``（）从 ``data_src.get_split_skill_sequence_data`` 构建技能序列，产出 5 个等长数组（shape 均为 ``[num_users, max_seq_len]``）：
+面向需要技能（Knowledge Component）序列的模型（如 DKT、GIKT）。``build_sequence_data``（）从 ``data_src.get_split_skill_sequence_data`` 构建技能序列，产出 5 个等长数组（shape 均为 ``[num_users, max_skill_seq_len]``）：
 
 - ``user_sequence``：技能（KC）ID 序列
 - ``user_response``：作答正误（0/1）
@@ -380,7 +380,7 @@ get_data_source("assistments09", args)
 GIKTTrainer.__init__(args, data_src, exp_manager)
  └─► GIKTModelData(data_src).prepare_data(args)
  └─► data_src.get_split_skill_sequence_data
- └─► build_sequence_data → 5个等长数组 [num_users, max_seq_len]
+ └─► build_sequence_data → 5个等长数组 [num_users, max_skill_seq_len]
  └─► split_kfold_data(arrs, fold=0) → (train, val, test) 元组
  └─► GIKT(args).to(device)
  └─► Adam optimizer, BCEWithLogitsLoss

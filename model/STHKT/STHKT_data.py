@@ -113,7 +113,7 @@ class STHKTModelData(QuestionModelData):
         num_questions = self.data_src.get_metadata("num_questions")
         num_skills = self.data_src.get_metadata("num_skills")
         num_users = self.data_src.get_metadata("num_users")
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_question_seq_len")
 
         user_sequence, user_response, user_mask, _ = self.load_sequence_data()
 
@@ -145,7 +145,7 @@ class STHKTModelData(QuestionModelData):
             "num_questions": num_questions,
             "num_skills": num_skills,
             "num_users": num_users,
-            "max_seq_len": max_seq_len,
+            "max_question_seq_len": max_seq_len,
         }
         return train_dataset, val_dataset, test_dataset, info
 

@@ -57,7 +57,9 @@ class QuestionModelData(BaseModelData):
 
         Returns:
             tuple: (user_sequence, user_response, user_mask, user_id_sequence)
-                   as numpy arrays of shape (num_users, max_seq_len).
+                   as numpy arrays of shape (num_users,
+                   max_question_seq_len) -- the padded length recorded in
+                   metadata by preprocessing.
         """
         import numpy as np
 
@@ -65,7 +67,7 @@ class QuestionModelData(BaseModelData):
 
         # Load split sequence data
         data = self.load_split_data().to_pandas()
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_question_seq_len")
         num_users = data["sequence_id"].nunique()
 
         # Build sequence arrays

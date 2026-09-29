@@ -403,7 +403,7 @@ class SGKT(nn.Module):
         super().__init__(**kwargs)
         self.num_skills = data_metadata["num_skills"]
         self.num_questions = data_metadata["num_questions"]
-        self.max_seq_len = data_metadata["max_seq_len"] - 1
+        self.max_seq_len = data_metadata["max_question_seq_len"] - 1
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
         self.keep_prob_gnn = keep_prob_gnn

@@ -28,7 +28,7 @@ class MIKT(nn.Module):
 
         pro_max = data_metadata["num_questions"]
         skill_max = data_metadata["num_skills"]
-        max_seq = data_metadata["max_seq_len"]
+        max_seq = data_metadata["max_question_seq_len"]
 
         d = embed_dim
         state_d = state_dim

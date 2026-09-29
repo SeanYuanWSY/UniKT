@@ -225,7 +225,7 @@ class AxisKTModelData(QuestionModelData):
         """
         q_data = self.load_split_data(optional=("ms_first_response", "timestamp"))
         num_users = q_data["sequence_id"].n_unique()
-        max_seq_len = int(self.data_src.get_metadata("max_seq_len"))
+        max_seq_len = int(self.data_src.get_metadata("max_question_seq_len"))
         time_seqs = np.zeros((num_users, max_seq_len), dtype=np.float64)
         user_indices = q_data["sequence_id"].to_numpy()
         seq_positions = q_data["seq_pos"].to_numpy()

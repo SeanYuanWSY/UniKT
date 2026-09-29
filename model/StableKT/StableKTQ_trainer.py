@@ -118,7 +118,7 @@ class StableKTQTrainer(BaseTrainer):
             dropout=m.dropout,
             d_ff=m.d_ff,
             n_heads=m.n_heads,
-            seq_len=data_src.get_metadata("max_seq_len"),
+            seq_len=data_src.get_metadata("max_question_seq_len"),
             kq_same=m.kq_same,
             separate_qa=bool(m.separate_qa),
             final_fc_dim=m.final_fc_dim,

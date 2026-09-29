@@ -140,7 +140,7 @@ class TCKTTrainer(BaseTrainer):
             d_a=m.d_a,
             d_e=m.d_e,
             num_heads=m.num_heads,
-            seq_len=info["max_seq_len"],
+            seq_len=info["max_question_seq_len"],
             global_dict_size=m.global_dict_size,
             dropout=m.dropout,
         )

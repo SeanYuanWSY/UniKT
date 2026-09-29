@@ -120,7 +120,11 @@ class RunDataConfig:
         kfold: Number of folds (>=2 to enable K-fold).
         test_ratio: Held-out test ratio.
         min_seq_len: Minimum sequence length.
-        max_seq_len: Maximum sequence length.
+        max_seq_len: Truncation budget for sequence splitting; runtime
+            tensors are sized from the real per-split maxima recorded in
+            metadata by preprocessing (``max_question_seq_len`` /
+            ``max_skill_seq_len`` / ``max_windowlate_seq_len``), never from
+            this budget.
         skill_split_unit: Unit that ``max_seq_len``/``min_seq_len`` count for
             skill (KC-level) sequence splitting. ``"skill"`` splits AFTER the
             KC expansion: each split holds at most ``max_seq_len`` expanded
@@ -128,8 +132,8 @@ class RunDataConfig:
             ``"interaction"`` splits BEFORE the expansion: each split holds at
             most ``max_seq_len`` original interactions whose skills stay
             together, so the expanded split may exceed ``max_seq_len`` rows
-            (the padded length actually used is recorded in metadata as
-            ``max_skill_seq_len``). Question sequences are unaffected.
+            (``max_skill_seq_len`` may thus exceed the budget). Question
+            sequences are unaffected.
         sample_size: Absolute sample count (null disables sampling).
         sample_ratio: Sample ratio 0.0-1.0 (overrides sample_size).
         sample_strategy: Sampling strategy.

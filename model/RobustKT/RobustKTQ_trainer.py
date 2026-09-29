@@ -114,7 +114,7 @@ class RobustKTQTrainer(BaseTrainer):
             num_attn_heads=m.num_attn_heads,
             d_ff=m.d_ff,
             final_fc_dim=m.final_fc_dim,
-            max_seq_len=data_src.get_metadata("max_seq_len"),
+            max_seq_len=data_src.get_metadata("max_question_seq_len"),
         )
 
         optimizer = torch.optim.Adam(

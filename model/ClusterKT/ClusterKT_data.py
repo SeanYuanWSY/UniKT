@@ -123,7 +123,7 @@ class ClusterKTModelData(QuestionModelData):
         q_to_sg, num_skill_groups = self._build_skill_group_mapping()
         self.num_skill_groups = num_skill_groups
 
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_question_seq_len")
         num_users = data_pd["sequence_id"].nunique()
 
         logger.info(

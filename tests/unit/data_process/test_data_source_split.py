@@ -1,6 +1,7 @@
 """Tests for DataSource split-sequence building, build_* guards, add_kfold_labels."""
 
 from collections.abc import Callable
+from typing import ClassVar
 
 import polars as pl
 import pytest
@@ -508,3 +509,88 @@ class TestAddKfoldLabels:
         folds = ds.sequence_data["fold"].to_list()
         assert -1 not in folds
         assert sorted(set(folds)) == [0, 1, 2]
+
+
+# --- save_data: padded-length metadata keys --------------------------------------
+
+
+class TestSaveDataPaddedLengthMetadata:
+    """max_question_seq_len / max_skill_seq_len are real per-split maxima."""
+
+    USERS: ClassVar[list[int]] = [0] * 5 + [1] * 3
+    QUESTIONS: ClassVar[list[int]] = [1, 2, 3, 1, 2, 1, 2, 3]
+    QS_PAIRS: ClassVar[list[tuple[int, int]]] = [
+        (1, 10),
+        (2, 11),
+        (3, 13),
+    ]  # 1:1 -> skill rows == question rows
+
+    def _saved_metadata(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+        max_seq_len: int,
+    ) -> dict:
+        import json
+        import os
+
+        seq = make_sequence_frame(self.USERS, self.QUESTIONS)
+        rel = {"question_skill": make_question_skill_frame(self.QS_PAIRS)}
+        ds = make_data_source(
+            sequence_data=seq, relation_data=rel, max_seq_len=max_seq_len
+        )
+        ds.split_question_sequence_data = ds._build_split_sequences(expand_skills=False)
+        ds.split_skill_sequence_data = ds._build_split_sequences(expand_skills=True)
+        ds.save_data()
+
+        with open(os.path.join(ds.data_folder, "metadata.json")) as f:
+            return json.load(f)
+
+    def test_question_max_equals_budget_when_a_split_fills_it(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        # max_seq_len=4: user 0 splits into [4, 1] rows, user 1 into [3] ->
+        # the longest split fills the budget exactly.
+        meta = self._saved_metadata(
+            make_data_source,
+            make_sequence_frame,
+            make_question_skill_frame,
+            max_seq_len=4,
+        )
+        assert meta["max_question_seq_len"] == 4
+
+    def test_question_max_below_budget_when_all_splits_are_short(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        # max_seq_len=10 > every user: one split per user, longest is 5.
+        meta = self._saved_metadata(
+            make_data_source,
+            make_sequence_frame,
+            make_question_skill_frame,
+            max_seq_len=10,
+        )
+        assert meta["max_question_seq_len"] == 5
+        assert meta["max_question_seq_len"] < 10
+
+    def test_bare_max_seq_len_key_is_gone(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        meta = self._saved_metadata(
+            make_data_source,
+            make_sequence_frame,
+            make_question_skill_frame,
+            max_seq_len=4,
+        )
+        assert "max_seq_len" not in meta
+        # 1:1 question->skill mapping, so both real maxima coincide.
+        assert meta["max_skill_seq_len"] == meta["max_question_seq_len"]

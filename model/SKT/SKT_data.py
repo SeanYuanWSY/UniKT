@@ -59,7 +59,7 @@ class SKTModelData(QuestionModelData):
             ``successor_adj`` 的字典。
         """
         num_questions = self.data_src.get_metadata("num_questions")
-        max_seq_len = self.data_src.get_metadata("max_seq_len")
+        max_seq_len = self.data_src.get_metadata("max_question_seq_len")
 
         user_sequence, user_response, user_mask, _ = self.load_sequence_data()
 
@@ -99,7 +99,7 @@ class SKTModelData(QuestionModelData):
 
         info = {
             "num_questions": num_questions,
-            "max_seq_len": max_seq_len,
+            "max_question_seq_len": max_seq_len,
             "neighbor_adj": neighbor_adj,
             "successor_adj": successor_adj,
         }
