@@ -339,13 +339,22 @@ msgstr "**Extra processing:**"
 
 #: ../../source/user-guide/data-processing.md:80
 #: 14a575d0159f489c8a7dab0e42a1eb8e
-msgid "``--extra windowlate``"
-msgstr "``--extra windowlate``"
+msgid "``--extra+ windowlate``"
+msgstr "``--extra+ windowlate``"
 
 #: ../../source/user-guide/data-processing.md:80
 #: bdca4cadf85047bb9d2d9c20e6ea13c7
 msgid "为 KC 模型的滑动窗口测试构建 windowlate 数据"
 msgstr "Build windowlate data for the sliding-window test of KC models"
+
+#: ../../source/user-guide/data-processing.md:107
+msgid ""
+"``+`` 是 jsonargparse 列表参数的官方追加语法，可重复出现（``--extra+ a "
+"--extra+ b``）；也接受 JSON 数组形式（``--extra '[\"windowlate\"]'``）。"
+msgstr ""
+"``+`` is the official append syntax of jsonargparse for list arguments and "
+"may be repeated (``--extra+ a --extra+ b``); a JSON array form is also "
+"accepted (``--extra '[\"windowlate\"]'``)."
 
 #: ../../source/user-guide/data-processing.md:108
 #: 519d8cfcb8d445ada18f7dd07619284a
