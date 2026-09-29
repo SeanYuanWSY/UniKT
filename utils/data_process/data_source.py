@@ -943,25 +943,29 @@ class DataSource(ABC):
             yield int(boundaries[start]), int(boundaries[end])
             start = end
 
-    def _assign_split_ids(
-        self, b: pl.DataFrame, min_seq_len: int, next_new_id: int
+    @staticmethod
+    def _split_batch_by_position(
+        batch: pl.DataFrame,
+        max_seq_len: int,
+        min_seq_len: int,
+        next_new_id: int,
     ) -> tuple[pl.DataFrame | None, int]:
-        """Keep splits long enough and assign dense global split ids.
+        """Split the current rows per user and assign dense IDs to retained splits."""
+        b = batch.with_columns(pl.int_range(pl.len()).over("user").alias("seq_pos"))
+        b = b.join(
+            b.group_by("user").agg(pl.len().alias("seq_len")),
+            on="user",
+            how="left",
+        )
+        b = b.with_columns(
+            (pl.col("seq_pos") // max_seq_len).alias("split_idx")
+        ).with_columns(
+            pl.when(pl.col("seq_pos") + max_seq_len >= pl.col("seq_len"))
+            .then(pl.col("seq_len") - pl.col("split_idx") * max_seq_len)
+            .otherwise(max_seq_len)
+            .alias("split_len"),
+        )
 
-        Args:
-            b: Frame carrying ``user``/``split_idx``/``split_len``, with the
-                length counted in the split unit's own terms (expanded skill
-                rows or original interactions).
-            min_seq_len: Minimum split length, in the same unit.
-            next_new_id: Running global id counter; locally-assigned ids are
-                offset by it so the dense assignment in global
-                ``(user, split_idx)`` order is preserved across batches.
-
-        Returns:
-            Tuple of (frame inner-joined with the retained splits, carrying
-            ``new_user_id``; number of retained splits). The frame is None
-            when no split survives the filter.
-        """
         valid = (
             b.filter(pl.col("split_len") >= min_seq_len)
             .select(["user", "split_idx"])
@@ -972,30 +976,20 @@ class DataSource(ABC):
         n_new = valid.height
         if n_new == 0:
             return None, 0
-        # Offset the locally-assigned ids by the running global counter so
-        # the global (user, split_idx) ordering is preserved across batches.
         valid = valid.with_columns(
             (pl.col("new_user_id").cast(pl.Int64) + next_new_id)
             .cast(pl.Int32)
             .alias("new_user_id")
         )
-        return b.join(valid, on=["user", "split_idx"], how="inner"), n_new
+        b = b.join(valid, on=["user", "split_idx"], how="inner")
+        return b.with_columns(pl.col("new_user_id").alias("sequence_id")), n_new
 
     @staticmethod
     def _expand_batch_skills(
         batch: pl.DataFrame, question_skills: pl.DataFrame
     ) -> pl.DataFrame:
-        """Expand each interaction into one row per skill, order-preserving.
-
-        The hash join does not guarantee row order, so the deterministic
-        chronological (interaction-major) order must be restored ourselves:
-        each interaction carries its position in the (already sorted) batch
-        as ``__order``; after exploding, sorting by ``(__order, skill)``
-        keeps interactions in chronological order with each interaction's
-        skills ascending. This reproduces whole-frame output exactly --
-        including users with repeated interactions (same question and
-        timestamp) -- and is independent of batch size.
-        """
+        """Expand interactions in chronological order, with skills ascending."""
+        # The join may reorder interactions, including timestamp ties.
         return (
             batch.join(question_skills, on="question", how="inner")
             .explode("skills", empty_as_null=True)
@@ -1009,52 +1003,20 @@ class DataSource(ABC):
         question_skills: pl.DataFrame | None,
         max_seq_len: int,
         min_seq_len: int,
-        seq_cols: list[str],
         next_new_id: int,
-    ) -> tuple[pl.DataFrame | None, list[pl.Expr], int]:
-        """Split one user-aligned batch by expanded row position.
-
-        Expands first (when ``question_skills`` is given), then slices every
-        ``max_seq_len`` expanded rows into a split; the length bounds count
-        rows, so one interaction's skills may straddle two splits.
-        """
+    ) -> tuple[pl.DataFrame | None, int]:
+        """Split expanded skill rows, or question rows when skills are absent."""
         if question_skills is not None:
             batch = self._expand_batch_skills(batch, question_skills)
 
-        # Per-user sequence position (0..L-1) and total length L.
-        b = batch.with_columns(pl.int_range(pl.len()).over("user").alias("seq_pos"))
-        b = b.join(
-            b.group_by("user").agg(pl.len().alias("seq_len")),
-            on="user",
-            how="left",
+        b, n_new = self._split_batch_by_position(
+            batch, max_seq_len, min_seq_len, next_new_id
         )
-
-        # Split index and per-split length (constant within a split).
-        b = b.with_columns(
-            (pl.col("seq_pos") // max_seq_len).alias("split_idx")
-        ).with_columns(
-            pl.when(pl.col("seq_pos") + max_seq_len >= pl.col("seq_len"))
-            .then(pl.col("seq_len") - pl.col("split_idx") * max_seq_len)
-            .otherwise(max_seq_len)
-            .alias("split_len"),
-        )
-
-        joined, n_new = self._assign_split_ids(b, min_seq_len, next_new_id)
-        if joined is None:
-            return None, [], n_new
-        b = joined.with_columns(
-            [
-                pl.col("new_user_id").alias("sequence_id"),
-                (pl.col("seq_pos") % max_seq_len).alias("relative_pos"),
-            ]
-        )
-
-        out_cols = [pl.col(c) for c in seq_cols]
-        out_cols.append(pl.col("sequence_id"))
-        if question_skills is not None:
-            out_cols.append(pl.col("skill"))
-        out_cols.append(pl.col("relative_pos").alias("seq_pos"))
-        return b, out_cols, n_new
+        if b is None:
+            return None, n_new
+        return b.with_columns(
+            (pl.col("seq_pos") % max_seq_len).alias("relative_pos")
+        ), n_new
 
     def _split_batch_by_interaction(
         self,
@@ -1062,91 +1024,50 @@ class DataSource(ABC):
         question_skills: pl.DataFrame,
         max_seq_len: int,
         min_seq_len: int,
-        seq_cols: list[str],
         next_new_id: int,
-    ) -> tuple[pl.DataFrame | None, list[pl.Expr], int]:
-        """Split one user-aligned batch by original interaction position.
-
-        Slices every ``max_seq_len`` raw interactions into a split BEFORE
-        expanding, so one interaction's skills never straddle two splits; the
-        length bounds count interactions, and the expanded split may exceed
-        ``max_seq_len`` rows.
-        """
-        # Per-user interaction position (0..L-1) and interaction count L.
-        b = batch.with_columns(pl.int_range(pl.len()).over("user").alias("inter_pos"))
-        b = b.join(
-            b.group_by("user").agg(pl.len().alias("inter_len")),
-            on="user",
-            how="left",
+    ) -> tuple[pl.DataFrame | None, int]:
+        """Split whole interactions before expansion; skill splits may grow longer."""
+        b, n_new = self._split_batch_by_position(
+            batch, max_seq_len, min_seq_len, next_new_id
         )
-
-        # Split index and per-split length, in interaction units.
-        b = b.with_columns(
-            (pl.col("inter_pos") // max_seq_len).alias("split_idx")
-        ).with_columns(
-            pl.when(pl.col("inter_pos") + max_seq_len >= pl.col("inter_len"))
-            .then(pl.col("inter_len") - pl.col("split_idx") * max_seq_len)
-            .otherwise(max_seq_len)
-            .alias("split_len"),
-        )
-
-        joined, n_new = self._assign_split_ids(b, min_seq_len, next_new_id)
-        if joined is None:
-            return None, [], n_new
-        b = joined.with_columns(pl.col("new_user_id").alias("sequence_id"))
-
-        # Expand inside the retained splits. Sorting by ``__order`` keeps the
-        # chronological order, so the per-split row index below is the
-        # expanded position within the split.
+        if b is None:
+            return None, n_new
         b = self._expand_batch_skills(b, question_skills)
         b = b.with_columns(
             pl.int_range(pl.len()).over("sequence_id").alias("relative_pos")
         )
-
-        out_cols = [pl.col(c) for c in seq_cols]
-        out_cols.append(pl.col("sequence_id"))
-        out_cols.append(pl.col("skill"))
-        out_cols.append(pl.col("relative_pos").alias("seq_pos"))
-        return b, out_cols, n_new
+        return b, n_new
 
     def _build_split_sequences(self, expand_skills: bool) -> pl.DataFrame:
-        """Build split sequences, processing users in memory-bounded batches.
+        """Build question or skill splits in user-aligned batches.
 
-        The split operation is independent per user, so users are processed in
-        contiguous batches aligned to user boundaries. Peak memory is bounded
-        by the batch size rather than the full (possibly skill-exploded)
-        dataset. The output is identical to whole-frame processing: every per-
-        user operation (sequence position, length, split index/length, dense
-        new-user-id assignment in global ``(user, split_idx)`` order) is
-        preserved because no user ever spans two batches.
+        Whole users stay within each batch, preserving global split IDs and
+        bounding peak memory.
 
         Args:
-            expand_skills: If True, expand each question into its skills (one
-                row per skill); the truncation stage then follows
-                ``args.truncation_stage``. If False, split the question
-                sequences unchanged.
+            expand_skills: Use ``args.truncation_stage`` for skill splits when
+                true; otherwise split the original question rows.
 
         Returns:
-            DataFrame with the original ``sequence_data`` columns (including
-            the pre-split ``user`` student id) plus a ``sequence_id`` column
-            (the dense split id assigned in global ``(user, split_idx)`` order)
-            and a ``seq_pos`` column (and an extra ``skill`` column when
-            ``expand_skills``).
+            Original sequence columns plus ``sequence_id`` and ``seq_pos``;
+            skill splits also contain ``skill``.
         """
         max_seq_len = self.args.max_seq_len
         min_seq_len = self.args.min_seq_len
         seq_cols = list(self.sequence_data.columns)
+        out_cols = [pl.col(c) for c in seq_cols]
+        out_cols.append(pl.col("sequence_id"))
+        if expand_skills:
+            out_cols.append(pl.col("skill"))
+        out_cols.append(pl.col("relative_pos").alias("seq_pos"))
 
-        # Ensure chronological order within each user, breaking timestamp ties
-        # with the remaining columns (matches the previous whole-frame sort).
+        # Break timestamp ties with the remaining columns.
         self.sequence_data = self.sequence_data.sort(self._sort_columns())
 
         question_skills = None
         if expand_skills:
             if not self.relation_data or "question_skill" not in self.relation_data:
                 raise ValueError("question_skill relation not available.")
-            # One row per question with its skills sorted ascending. Small
-            # (~num_questions rows) and reused across every batch.
             question_skills = (
                 self.relation_data["question_skill"]
                 .sort("question", "skill")
@@ -1154,8 +1075,6 @@ class DataSource(ABC):
                 .agg(pl.col("skill").sort().alias("skills"))
             )
 
-        # The truncation stage only governs the skill path: question
-        # sequences have nothing to expand.
         truncate_pre_expansion = (
             expand_skills and self.args.truncation_stage == "pre_expansion"
         )
@@ -1177,27 +1096,24 @@ class DataSource(ABC):
             self._iter_user_aligned_slices(self.sequence_data, self._SPLIT_BATCH_ROWS)
         ):
             batch = self.sequence_data.slice(start, end - start)
-            # Stamp the (already sorted) batch position once; every
-            # order-restoring sort below keys on it.
-            batch = batch.with_columns(pl.int_range(pl.len()).alias("__order"))
+            if expand_skills:
+                batch = batch.with_columns(pl.int_range(pl.len()).alias("__order"))
 
             if truncate_pre_expansion:
                 assert question_skills is not None  # set when expand_skills
-                b, out_cols, n_new = self._split_batch_by_interaction(
+                b, n_new = self._split_batch_by_interaction(
                     batch,
                     question_skills,
                     max_seq_len,
                     min_seq_len,
-                    seq_cols,
                     next_new_id,
                 )
             else:
-                b, out_cols, n_new = self._split_batch_by_rows(
+                b, n_new = self._split_batch_by_rows(
                     batch,
                     question_skills,
                     max_seq_len,
                     min_seq_len,
-                    seq_cols,
                     next_new_id,
                 )
             if b is None:
@@ -1246,15 +1162,8 @@ class DataSource(ABC):
     def build_split_skill_sequence_data(self) -> None:
         """Build split skill sequence data.
 
-        Expands question sequences into skill sequences (one question may map
-        to multiple skills), preserving the question column, then splits long
-        sequences by ``max_seq_len`` and drops splits shorter than
-        ``min_seq_len``, in the order given by ``args.truncation_stage``.
-
-        Processing is done in user-aligned batches to bound peak memory,
-        while producing output identical to whole-frame processing.
-
-        Output columns: original sequence_data columns + sequence_id + skill + seq_pos
+        Length bounds count interactions before expansion or skill rows after
+        expansion, according to ``args.truncation_stage``.
         """
         if self.sequence_data is None:
             raise ValueError(
