@@ -115,7 +115,7 @@ class UKTQTrainer(BaseTrainer):
             cl_weight=m.cl_weight,
             use_uncertainty_aug=not m.no_uncertainty_aug,
             atten_type=m.atten_type,
-            seq_len=rc.data.max_seq_len,
+            seq_len=data_src.get_metadata("max_seq_len"),
         )
 
         optimizer = torch.optim.Adam(

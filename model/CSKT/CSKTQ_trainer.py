@@ -107,7 +107,7 @@ class CSKTQTrainer(BaseTrainer):
         m = rc.model
         model = CSKT(
             num_c=num_questions,
-            max_seq_len=rc.data.max_seq_len,
+            max_seq_len=data_src.get_metadata("max_seq_len"),
             n_pid=0,
             d_model=m.d_model,
             num_blocks=m.num_blocks,
