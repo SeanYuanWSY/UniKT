@@ -160,15 +160,15 @@ def _apply_benchmark_seq_to_data_src(data_src: Any, eff_cfg: Any) -> None:
     """Propagate the benchmark seq_len override into dataset metadata.
 
     Skill-level models size their tensors and position encodings from
-    metadata (``max_skill_seq_len`` / ``windowlate_max_len``) rather than
-    ``rc.data.max_seq_len``. Call right after ``get_data_source`` so the
-    override wins; values never shrink below the dataset's real padded
+    metadata (``max_skill_seq_len`` / ``max_windowlate_seq_len``) rather
+    than ``rc.data.max_seq_len``. Call right after ``get_data_source`` so
+    the override wins; values never shrink below the dataset's real padded
     lengths, which seq_pos indexes depend on.
     """
     seq = eff_cfg.general.benchmark_seq_len
     if seq is None:
         return
-    for key in ("max_skill_seq_len", "windowlate_max_len"):
+    for key in ("max_skill_seq_len", "max_windowlate_seq_len"):
         current = data_src.get_metadata(key)
         data_src.update_metadata(key, max(seq, current))
         logger.info(

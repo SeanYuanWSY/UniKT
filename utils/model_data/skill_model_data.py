@@ -267,8 +267,8 @@ class SkillModelData(BaseModelData):
             Tuple of (user_sequence, user_response, user_mask,
             late_group_id, user_true_labels, user_question,
             user_id_sequence) as numpy arrays,
-            each of shape (num_samples, windowlate_max_len) -- the maximum
-            window row count recorded in metadata by preprocessing.
+            each of shape (num_samples, max_windowlate_seq_len) -- the
+            maximum window row count recorded in metadata by preprocessing.
             user_id_sequence (original student ids) is last, matching
             WindowlateIterableDataset.
         """
@@ -280,7 +280,7 @@ class SkillModelData(BaseModelData):
             raise ValueError(
                 "No windowlate data available. Please re-run preprocessing with K-fold labels."
             )
-        max_seq_len = self.data_src.get_metadata("windowlate_max_len")
+        max_seq_len = self.data_src.get_metadata("max_windowlate_seq_len")
 
         required_cols = [
             "sample_id",
@@ -341,7 +341,7 @@ class SkillModelData(BaseModelData):
         """Create a WindowlateIterableDataset from the windowlate parquet file.
 
         The padded length is the dataset's maximum window row count
-        (metadata ``windowlate_max_len``, recorded by preprocessing).
+        (metadata ``max_windowlate_seq_len``, recorded by preprocessing).
 
         Args:
             batch_read_rows: Number of rows to read per batch (default: 200000).
@@ -355,6 +355,6 @@ class SkillModelData(BaseModelData):
 
         return WindowlateIterableDataset(
             parquet_path=parquet_path,
-            max_seq_len=self.data_src.get_metadata("windowlate_max_len"),
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
             batch_read_rows=batch_read_rows,
         )

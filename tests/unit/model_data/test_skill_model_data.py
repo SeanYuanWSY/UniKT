@@ -231,7 +231,7 @@ class TestLoadWindowlateDataOrder:
         path = self._write_parquet(tmp_path)
         lazy = pl.scan_parquet(path)
         model_data = make_skill_model_data(
-            windowlate_data=lazy, metadata={"windowlate_max_len": 4}
+            windowlate_data=lazy, metadata={"max_windowlate_seq_len": 4}
         )
         out = model_data.load_windowlate_data()
         assert len(out) == 7
@@ -251,7 +251,7 @@ class TestLoadWindowlateDataOrder:
         self, make_skill_model_data: Callable[..., SkillModelData]
     ) -> None:
         model_data = make_skill_model_data(
-            windowlate_data=None, metadata={"windowlate_max_len": 4}
+            windowlate_data=None, metadata={"max_windowlate_seq_len": 4}
         )
         with pytest.raises(ValueError):
             model_data.load_windowlate_data()

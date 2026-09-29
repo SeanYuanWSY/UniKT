@@ -244,7 +244,7 @@ class DKTForgetModelData(SkillModelData):
         # 测试集
         test_iterable = DKTForgetWindowlateIterableDataset(
             parquet_path=self._windowlate_path(),
-            max_seq_len=self.data_src.get_metadata("windowlate_max_len"),
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
             num_rgap=self.num_rgap,
             num_sgap=self.num_sgap,
             num_pcount=self.num_pcount,

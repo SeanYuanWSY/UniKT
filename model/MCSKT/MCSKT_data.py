@@ -296,7 +296,7 @@ class MCSKTModelData(SkillModelData):
         )
         test_dataset = MCSKTWindowlateIterableDataset(
             parquet_path=parquet_path,
-            max_seq_len=self.data_src.get_metadata("windowlate_max_len"),
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
             num_rgap=num_rgap,
             num_sgap=num_sgap,
             num_pcount=num_pcount,

@@ -1292,7 +1292,7 @@ class DataSource(ABC):
         users_per_batch = getattr(self.args, "windowlate_users_per_batch", 1)
 
         # Build and save directly to file
-        windowlate_max_len = WindowlateProcessor.build(
+        max_windowlate_seq_len = WindowlateProcessor.build(
             test_data=test_data,
             question_data=self.relation_data["question_skill"],
             max_seq_len=max_seq_len,
@@ -1303,7 +1303,7 @@ class DataSource(ABC):
         # Padded length consumed by windowlate evaluation: with
         # skill_split_unit="interaction" a window keeps max_seq_len whole
         # interactions, so its row count may exceed max_seq_len.
-        self.update_metadata("windowlate_max_len", windowlate_max_len)
+        self.update_metadata("max_windowlate_seq_len", max_windowlate_seq_len)
 
     def add_kfold_labels(self, n_splits: int = 5, test_ratio: float = 0.2) -> None:
         """Add K-fold cross-validation labels with test set separation.
