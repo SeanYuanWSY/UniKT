@@ -1,6 +1,7 @@
 """Tests for DataSource split-sequence building, build_* guards, add_kfold_labels."""
 
 from collections.abc import Callable
+from pathlib import Path
 from typing import ClassVar
 
 import polars as pl
@@ -594,3 +595,42 @@ class TestSaveDataPaddedLengthMetadata:
         assert "max_seq_len" not in meta
         # 1:1 question->skill mapping, so both real maxima coincide.
         assert meta["max_skill_seq_len"] == meta["max_question_seq_len"]
+
+    def test_no_split_sequences_stops_before_writing(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+        tmp_path: Path,
+    ) -> None:
+        seq = make_sequence_frame([0, 0], [1, 2])
+        rel = {"question_skill": make_question_skill_frame([(1, 10), (2, 11)])}
+        ds = make_data_source(sequence_data=seq, relation_data=rel, min_seq_len=3)
+        ds.split_question_sequence_data = ds._build_split_sequences(expand_skills=False)
+        ds.split_skill_sequence_data = ds._build_split_sequences(expand_skills=True)
+
+        with pytest.raises(ValueError, match="No question or skill split sequences"):
+            ds.save_data()
+
+        assert list(tmp_path.iterdir()) == []
+
+    def test_one_empty_split_family_records_zero(
+        self,
+        make_data_source: Callable[..., DataSource],
+        make_sequence_frame: Callable[..., pl.DataFrame],
+        make_question_skill_frame: Callable[..., pl.DataFrame],
+    ) -> None:
+        seq = make_sequence_frame([0, 0], [1, 2])
+        rel = {
+            "question_skill": make_question_skill_frame(
+                [(1, 10), (1, 11), (2, 12), (2, 13)]
+            )
+        }
+        ds = make_data_source(sequence_data=seq, relation_data=rel, min_seq_len=3)
+        ds.split_question_sequence_data = ds._build_split_sequences(expand_skills=False)
+        ds.split_skill_sequence_data = ds._build_split_sequences(expand_skills=True)
+
+        ds.save_data()
+
+        assert ds.get_metadata("max_question_seq_len") == 0
+        assert ds.get_metadata("max_skill_seq_len") == 4

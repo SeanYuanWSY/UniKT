@@ -195,6 +195,27 @@ class DataSource(ABC):
         # Validate
         self._validate_data(self.relation_data, self.sequence_data)
 
+        # Check split lengths before writing files.
+        max_question_seq_len = int(
+            self.split_question_sequence_data.group_by("sequence_id")
+            .agg(pl.len().alias("n"))
+            .select(pl.col("n").max())
+            .item()
+            or 0
+        )
+        max_skill_seq_len = int(
+            self.split_skill_sequence_data.group_by("sequence_id")
+            .agg(pl.len().alias("n"))
+            .select(pl.col("n").max())
+            .item()
+            or 0
+        )
+        if max_question_seq_len == max_skill_seq_len == 0:
+            raise ValueError(
+                "No question or skill split sequences remain after filtering; "
+                "check the input data and min_seq_len."
+            )
+
         # Save relation tables with deterministic row order
         relation_md5s = {}
         for name, df in self.relation_data.items():
@@ -227,22 +248,9 @@ class DataSource(ABC):
         metadata = {
             "min_seq_len": self.args.min_seq_len,
             "truncation_stage": self.args.truncation_stage,
-            # Real per-split maxima per tensor family: question rows,
-            # skill-expanded rows (with truncation_stage="pre_expansion" this
-            # can exceed the max_seq_len budget). The windowlate counterpart
-            # is written by build_windowlate_data.
-            "max_question_seq_len": int(
-                self.split_question_sequence_data.group_by("sequence_id")
-                .agg(pl.len().alias("n"))
-                .select(pl.col("n").max())
-                .item()
-            ),
-            "max_skill_seq_len": int(
-                self.split_skill_sequence_data.group_by("sequence_id")
-                .agg(pl.len().alias("n"))
-                .select(pl.col("n").max())
-                .item()
-            ),
+            # Actual padded lengths; pre-expansion skill splits may exceed max_seq_len.
+            "max_question_seq_len": max_question_seq_len,
+            "max_skill_seq_len": max_skill_seq_len,
             "random_seed": self.seed,
             "sequence_data_md5": self.compute_md5(sequence_data_path),
             "split_question_sequence_data_md5": self.compute_md5(
