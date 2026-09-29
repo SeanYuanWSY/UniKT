@@ -102,7 +102,9 @@ python data_process.py process -d assistments09 --sample_size 500 --sample_strat
 
 | 参数 | 描述 |
 | --- | --- |
-| ``--extra windowlate`` | 为 KC 模型的滑动窗口测试构建 windowlate 数据 |
+| ``--extra+ windowlate`` | 为 KC 模型的滑动窗口测试构建 windowlate 数据 |
+
+``+`` 是 jsonargparse 列表参数的官方追加语法，可重复出现（``--extra+ a --extra+ b``）；也接受 JSON 数组形式（``--extra '["windowlate"]'``）。
 
 
 ## 输出结构
