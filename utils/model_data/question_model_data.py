@@ -57,9 +57,8 @@ class QuestionModelData(BaseModelData):
 
         Returns:
             tuple: (user_sequence, user_response, user_mask, user_id_sequence)
-                   as numpy arrays of shape (num_users,
-                   max_question_seq_len) -- the padded length recorded in
-                   metadata by preprocessing.
+                   as numpy arrays of shape (num_users, max_question_seq_len)
+                   -- the padded length recorded in metadata by preprocessing.
         """
         import numpy as np
 

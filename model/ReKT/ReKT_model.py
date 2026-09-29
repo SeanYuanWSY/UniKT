@@ -23,6 +23,9 @@ class ReKT(nn.Module):
     ) -> None:
         super().__init__(**kwargs)
 
+        # Explicit max_seq_len: the same model class serves both granularities
+        # (ReKT question-level, ReKTKC skill-level), so the caller picks the
+        # matching metadata padded-length key.
         num_questions = data_metadata["num_questions"]
         num_skills = data_metadata["num_combined_skills"]
 

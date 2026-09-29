@@ -227,12 +227,10 @@ class DataSource(ABC):
         metadata = {
             "min_seq_len": self.args.min_seq_len,
             "skill_split_unit": self.args.skill_split_unit,
-            # Real per-split padded lengths, one per tensor family: question
-            # rows, skill-expanded rows (with skill_split_unit="interaction"
-            # this can exceed the max_seq_len budget), and windowlate window
-            # rows (written by build_windowlate_data). Runtime consumers size
-            # tensors and position encodings from these keys, never from the
-            # rc.data.max_seq_len budget.
+            # Real per-split maxima per tensor family: question rows,
+            # skill-expanded rows (with skill_split_unit="interaction" this
+            # can exceed the max_seq_len budget). The windowlate counterpart
+            # is written by build_windowlate_data.
             "max_question_seq_len": int(
                 self.split_question_sequence_data.group_by("sequence_id")
                 .agg(pl.len().alias("n"))
