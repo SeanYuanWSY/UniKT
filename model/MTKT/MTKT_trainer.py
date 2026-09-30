@@ -130,7 +130,10 @@ class MTKTTrainer(BaseTrainer):
             num_attn_heads=m.num_attn_heads,
             final_fc_dim=m.final_fc_dim,
             final_fc_dim2=m.final_fc_dim2,
-            seq_len=metadata["max_skill_seq_len"],
+            seq_len=max(
+                metadata["max_skill_seq_len"],
+                metadata.get("max_windowlate_seq_len", 0),
+            ),
         )
 
         loss_fn = torch.nn.BCELoss()
