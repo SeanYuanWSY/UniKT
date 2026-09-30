@@ -77,8 +77,7 @@ class ReKTKCModelData(SkillModelData):
         )
         val_dataset = ReKTKCDataset(val_data[0], val_data[1], val_data[2], val_data[3])
 
-        window_test_data = self.create_windowlate_iterable_dataset()
-        test_dataset = window_test_data.create_dataloader(
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

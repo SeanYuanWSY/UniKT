@@ -194,11 +194,9 @@ class FAKTModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        window_test_data = self.create_windowlate_iterable_dataset()
-
         train_dataset = FAKTDataset(*train_data)
         val_dataset = FAKTDataset(*val_data)
-        test_dataset = window_test_data.create_dataloader(
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,
@@ -216,7 +214,7 @@ class FAKTModelData(SkillModelData):
         return train_dataset, val_dataset, test_dataset
 
     @override
-    def create_windowlate_iterable_dataset(self) -> FAKTWindowlateIterableDataset:
+    def _create_windowlate_dataset(self) -> FAKTWindowlateIterableDataset:
         parquet_path = os.path.join(
             self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
         )

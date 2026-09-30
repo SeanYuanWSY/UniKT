@@ -240,15 +240,7 @@ class DKTForgetModelData(SkillModelData):
         train_dataset = DKTForgetDataset(*train_data)
         val_dataset = DKTForgetDataset(*val_data)
 
-        # 测试集
-        test_iterable = DKTForgetWindowlateIterableDataset(
-            parquet_path=self._windowlate_path(),
-            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
-            num_rgap=self.num_rgap,
-            num_sgap=self.num_sgap,
-            num_pcount=self.num_pcount,
-        )
-        test_dataset = test_iterable.create_dataloader(
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,
@@ -263,9 +255,16 @@ class DKTForgetModelData(SkillModelData):
 
         return train_dataset, val_dataset, test_dataset
 
-    def _windowlate_path(self) -> str:
+    @override
+    def _create_windowlate_dataset(self) -> DKTForgetWindowlateIterableDataset:
         import os
 
-        return os.path.join(
-            self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
+        return DKTForgetWindowlateIterableDataset(
+            parquet_path=os.path.join(
+                self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
+            ),
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
+            num_rgap=self.num_rgap,
+            num_sgap=self.num_sgap,
+            num_pcount=self.num_pcount,
         )

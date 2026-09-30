@@ -266,7 +266,7 @@ class CL4KTModelData(SkillModelData):
             harder_skills,
         )
         val_dataset = CL4KTEvalDataset(val_s, val_r, val_m)
-        test_dataset = self.create_windowlate_iterable_dataset().create_dataloader(
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

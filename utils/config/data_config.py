@@ -26,7 +26,7 @@ class DataLoaderConfig:
         num_workers: Number of worker processes for data loading.
                      "auto" sets it to min(CPU count, 8).
                      0 disables multiprocessing.
-        pin_memory: Whether to pin tensors in CUDA memory (only effective on CUDA).
+        pin_memory: Whether to pin host memory for CUDA transfers.
         prefetch_factor: Number of batches to prefetch per worker (only effective when num_workers > 0).
         persistent_workers: Whether to keep workers alive between epochs (PyTorch >= 1.7).
     """
@@ -49,6 +49,26 @@ class DataLoaderConfig:
             cpu_count = os.cpu_count() or 1
             return min(cpu_count, max_limit)
         return self.num_workers
+
+
+def _create_dataloader(dataset: Dataset[Any], **kwargs: Any) -> DataLoader[Any]:
+    """Apply worker options and windowlate batching before constructing a loader."""
+    from torch.utils.data import DataLoader
+
+    from ..model_data.skill_model_data import (
+        WindowlateIterableDataset,
+        _WindowlateBatchDataset,
+    )
+
+    # Prefetch and persistent workers only apply to multiprocessing loaders.
+    if kwargs.get("num_workers", 0) == 0:
+        kwargs.pop("prefetch_factor", None)
+        kwargs["persistent_workers"] = False
+
+    if isinstance(dataset, WindowlateIterableDataset):
+        kwargs["collate_fn"] = dataset._collate_batch
+        dataset = _WindowlateBatchDataset(dataset)
+    return DataLoader(dataset, **kwargs)
 
 
 def create_optimized_dataloader(
@@ -86,10 +106,6 @@ def create_optimized_dataloader(
         ...     device=torch.device("cuda")
         ... )
     """
-    from torch.utils.data import DataLoader
-
-    from ..model_data.skill_model_data import WindowlateIterableDataset
-
     # Use default configuration
     if config is None:
         config = DataLoaderConfig()
@@ -122,23 +138,15 @@ def create_optimized_dataloader(
     # Override default arguments with kwargs
     loader_kwargs.update(kwargs)
 
-    # prefetch/persistent require multiprocessing; normalize after overrides
-    if loader_kwargs["num_workers"] == 0:
-        loader_kwargs.pop("prefetch_factor", None)
-        loader_kwargs["persistent_workers"] = False
-
     # Create DataLoader
-    if isinstance(dataset, WindowlateIterableDataset):
-        loader = dataset.create_dataloader(**loader_kwargs)
-    else:
-        loader = DataLoader(dataset, **loader_kwargs)
+    loader = _create_dataloader(dataset, **loader_kwargs)
 
     # Log optimization info
     logger.debug(
-        f"Created optimized DataLoader: num_workers={loader_kwargs.get('num_workers')}, "
-        f"pin_memory={loader_kwargs.get('pin_memory')}, "
-        f"prefetch_factor={loader_kwargs.get('prefetch_factor', 'N/A')}, "
-        f"persistent_workers={loader_kwargs.get('persistent_workers', 'N/A')}"
+        f"Created optimized DataLoader: num_workers={loader.num_workers}, "
+        f"pin_memory={loader.pin_memory}, "
+        f"prefetch_factor={loader.prefetch_factor}, "
+        f"persistent_workers={loader.persistent_workers}"
     )
 
     return loader

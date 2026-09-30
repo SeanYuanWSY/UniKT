@@ -70,15 +70,13 @@ class Mamba4KTModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        window_test_data = self.create_windowlate_iterable_dataset()
-
         train_dataset = Mamba4KTDataset(
             train_data[0], train_data[1], train_data[2], train_question[0]
         )
         val_dataset = Mamba4KTDataset(
             val_data[0], val_data[1], val_data[2], val_question[0]
         )
-        test_dataset = window_test_data.create_dataloader(
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

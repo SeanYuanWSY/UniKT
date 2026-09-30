@@ -16,7 +16,6 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import torch
 from torch.utils.data import (
-    DataLoader,
     IterableDataset,
     default_collate,
     get_worker_info,
@@ -24,6 +23,7 @@ from torch.utils.data import (
 
 if TYPE_CHECKING:
     import polars as pl
+    from torch.utils.data import DataLoader
 
 from utils.core import get_logger
 from utils.data_process import DataSource
@@ -215,13 +215,6 @@ class WindowlateIterableDataset(IterableDataset):
             tensors.append(tensor)
         return tensors
 
-    def create_dataloader(self, *, batch_size: int, **kwargs: Any) -> DataLoader:
-        """Create a batched windowlate loader with its dedicated collator."""
-        kwargs["collate_fn"] = self._collate_batch
-        return DataLoader(
-            _WindowlateBatchDataset(self), batch_size=batch_size, **kwargs
-        )
-
 
 class _WindowlateBatchDataset(WindowlateIterableDataset):
     """Expose raw sample views to the batch collator without changing the source."""
@@ -391,9 +384,28 @@ class SkillModelData(BaseModelData):
             user_id_sequence,
         )
 
-    def create_windowlate_iterable_dataset(self) -> WindowlateIterableDataset:
+    def create_windowlate_dataloader(
+        self, *, batch_size: int, **kwargs: Any
+    ) -> DataLoader:
+        """Create the windowlate evaluation loader.
+
+        Args:
+            batch_size: Number of windows per batch.
+            **kwargs: Worker, prefetch and other DataLoader options.
+
+        Returns:
+            A loader using the model's windowlate dataset and batch collator.
+        """
+        from utils.config.data_config import _create_dataloader
+
+        return _create_dataloader(
+            self._create_windowlate_dataset(), batch_size=batch_size, **kwargs
+        )
+
+    def _create_windowlate_dataset(self) -> WindowlateIterableDataset:
         """Create a WindowlateIterableDataset from the windowlate parquet file.
 
+        Subclasses override this hook to supply model-specific window features.
         The padded length is the dataset's maximum window row count
         (metadata ``max_windowlate_seq_len``, recorded by preprocessing).
 

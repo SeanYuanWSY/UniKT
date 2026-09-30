@@ -228,9 +228,9 @@ class MCSKTModelData(SkillModelData):
     @override
     def prepare_data(self, rc: Any) -> tuple:
         fold_idx = rc.data.fold if rc.data.fold >= 0 else None
-        num_rgap = rc.model.num_rgap
-        num_sgap = rc.model.num_sgap
-        num_pcount = rc.model.num_pcount
+        self.num_rgap = rc.model.num_rgap
+        self.num_sgap = rc.model.num_sgap
+        self.num_pcount = rc.model.num_pcount
 
         user_sequence, user_response, user_mask, _, user_question = (
             self.build_sequence_data()
@@ -242,9 +242,9 @@ class MCSKTModelData(SkillModelData):
             user_sequence,
             user_mask,
             user_timestamp,
-            num_rgap,
-            num_sgap,
-            num_pcount,
+            self.num_rgap,
+            self.num_sgap,
+            self.num_pcount,
         )
 
         if fold_idx is not None:
@@ -288,18 +288,7 @@ class MCSKTModelData(SkillModelData):
             val_data[6],
         )
 
-        import os
-
-        parquet_path = os.path.join(
-            self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
-        )
-        test_dataset = MCSKTWindowlateIterableDataset(
-            parquet_path=parquet_path,
-            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
-            num_rgap=num_rgap,
-            num_sgap=num_sgap,
-            num_pcount=num_pcount,
-        )
+        test_dataset = self._create_windowlate_dataset()
 
         logger.info(
             f"MCSKT data prepared: train={len(train_dataset)}, "
@@ -307,3 +296,17 @@ class MCSKTModelData(SkillModelData):
         )
 
         return train_dataset, val_dataset, test_dataset
+
+    @override
+    def _create_windowlate_dataset(self) -> MCSKTWindowlateIterableDataset:
+        import os
+
+        return MCSKTWindowlateIterableDataset(
+            parquet_path=os.path.join(
+                self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
+            ),
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
+            num_rgap=self.num_rgap,
+            num_sgap=self.num_sgap,
+            num_pcount=self.num_pcount,
+        )

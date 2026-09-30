@@ -62,7 +62,7 @@ class ASIKTModelData(SkillModelData):
         self.question_prior, self.question_frequency = difficulty_prior(
             train[3], train[1], train[2].astype(bool), n_question
         )
-        test = self.create_windowlate_iterable_dataset().create_dataloader(
+        test = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=0,

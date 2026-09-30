@@ -111,8 +111,7 @@ class DGMKTModelData(SkillModelData):
 
         train_dataset = DGMKTDataset(*train_data)
         val_dataset = DGMKTDataset(*val_data)
-        window_test_data = self.create_windowlate_iterable_dataset()
-        test_dataset = window_test_data.create_dataloader(
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,
