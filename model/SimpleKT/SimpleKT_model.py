@@ -255,9 +255,9 @@ class SimpleKT(nn.Module):
         embed_l = d_model
 
         # Problem ID相关嵌入（Rasch模型）
-        self.difficult_param = nn.Embedding(self.n_pid + 1, embed_l)
-        self.q_embed_diff = nn.Embedding(self.num_skills + 1, embed_l)
-        self.qa_embed_diff = nn.Embedding(2 * self.num_skills + 1, embed_l)
+        if self.n_pid > 0:
+            self.difficult_param = nn.Embedding(self.n_pid + 1, embed_l)
+            self.q_embed_diff = nn.Embedding(self.num_skills + 1, embed_l)
 
         # 技能嵌入层
         self.q_embed = nn.Embedding(num_skills, embed_l)
