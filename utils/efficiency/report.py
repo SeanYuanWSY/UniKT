@@ -32,7 +32,7 @@ _CONSOLE_ERROR_MAX_CHARS = 200
 
 @dataclass
 class EfficiencyReport:
-    """Stage-agnostic efficiency report."""
+    """Efficiency report with configured batch size and actual per-stage sizes."""
 
     model_name: str
     dataset_name: str
@@ -68,7 +68,9 @@ class EfficiencyReport:
             f"[white]{self.model_name}[/] on [white]{self.dataset_name}[/]  "
             f"({self.timestamp})"
         )
-        console.print(f"  batch_size={self.batch_size}  modes={','.join(self.modes)}")
+        console.print(
+            f"  configured batch_size={self.batch_size}  modes={','.join(self.modes)}"
+        )
         if self.sequence_lengths:
             lengths = "  ".join(
                 f"{key}={value}" for key, value in self.sequence_lengths.items()

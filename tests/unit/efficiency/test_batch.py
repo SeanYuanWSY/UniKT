@@ -7,13 +7,13 @@ the duck-typed ``_StubTarget`` double (pattern shared with
 
 from typing import Any, cast
 
+import pytest
 import torch
 
 from utils.efficiency.measures.batch import (
     batch_size_of,
     count_test_predictions,
     count_valid_interactions,
-    count_valid_interactions_split,
     to_device,
 )
 from utils.efficiency.target import BenchmarkTarget
@@ -52,16 +52,22 @@ class TestBatchSizeOf:
         assert batch_size_of([torch.zeros(7, 2)]) == 7
         assert batch_size_of({"a": torch.zeros(9, 1)}) == 9
 
-    def test_no_tensor_returns_zero(self) -> None:
-        assert batch_size_of(("meta", 42)) == 0
-        assert batch_size_of(None) == 0
+    @pytest.mark.parametrize("batch", [("meta", 42), None, torch.tensor(3)])
+    def test_no_row_tensor_raises(self, batch: Any) -> None:
+        with pytest.raises(ValueError, match="no non-scalar tensor"):
+            batch_size_of(batch)
 
-    def test_nested_list_of_tensors_not_descended(self) -> None:
-        # Depth-1 search only: the tensor inside the inner list is invisible.
-        assert batch_size_of([[torch.zeros(5, 2)]]) == 0
+    def test_nested_augmentation_views(self) -> None:
+        tensor = torch.zeros(64, 200)
+        batch = ([tensor] * 3, [tensor] * 4, [tensor] * 3)
+        assert batch_size_of(batch) == 64
 
-    def test_scalar_tensor_returns_zero(self) -> None:
-        assert batch_size_of(torch.tensor(3)) == 0
+    def test_tensor_and_nested_dict_skip_scalars(self) -> None:
+        assert batch_size_of(torch.zeros(5, 2)) == 5
+        assert (
+            batch_size_of({"step": torch.tensor(3), "views": [[torch.zeros(7, 2)]]})
+            == 7
+        )
 
 
 # --- to_device ---
@@ -111,46 +117,6 @@ class TestCountScored:
         target = _StubTarget(torch.zeros(64), torch.zeros(8))
         assert count_valid_interactions(cast(BenchmarkTarget, target), "b") == 64
         assert count_test_predictions(cast(BenchmarkTarget, target), "b") == 8
-
-
-class _SplitStubTarget:
-    """Duck-typed target whose per-batch ``y_label`` size is batch-dependent."""
-
-    def __init__(self, sizes: list[int]) -> None:
-        self.device = torch.device("cpu")
-        self.model = torch.nn.Linear(1, 1)
-        self._sizes = sizes
-        self.forward_calls = 0
-
-    def forward(self, batch: int) -> dict[str, torch.Tensor]:
-        self.forward_calls += 1
-        return {"y_label": torch.zeros(self._sizes[batch])}
-
-
-class TestCountValidInteractionsSplit:
-    def test_totals_and_batch_count_over_loader(self) -> None:
-        target = _SplitStubTarget([10, 20, 30])
-        total, batches = count_valid_interactions_split(
-            cast(BenchmarkTarget, target), [0, 1, 2]
-        )
-        assert total == 60
-        assert batches == 3
-        assert target.forward_calls == 3
-
-    def test_total_is_invariant_to_batch_order(self) -> None:
-        # Shuffle-order invariance is the point of the split count: reordering
-        # the loader changes which batch is first, never the sum.
-        assert count_valid_interactions_split(
-            cast(BenchmarkTarget, _SplitStubTarget([10, 20, 30])), [2, 0, 1]
-        ) == (
-            60,
-            3,
-        )
-
-    def test_empty_loader_returns_zero_total_and_count(self) -> None:
-        assert count_valid_interactions_split(
-            cast(BenchmarkTarget, _SplitStubTarget([])), []
-        ) == (0, 0)
 
 
 class _LazyCacheTarget:

@@ -9,6 +9,7 @@ from rich.table import Table
 
 from utils.core import get_logger, register_efficiency_stage
 
+from ..measures.batch import batch_size_of
 from ..measures.flops import (
     count_flops as _count_flops,
 )
@@ -29,6 +30,8 @@ class ModelProfile:
     model_size_mb: float = 0.0
     flops_forward: int | None = None
     op_breakdown: dict[str, int] = field(default_factory=dict)
+    data_split: str | None = None
+    batch_size: int | None = None
 
 
 @dataclass
@@ -70,10 +73,12 @@ def profile_model(
         profile.flops_forward = flops
         profile.op_breakdown = breakdown
 
-    if flops := profile.flops_forward:
-        gflops = flops / 1e9
+    if measured_flops := profile.flops_forward:
+        gflops = measured_flops / 1e9
         flops_str = (
-            f"{gflops:.2f} GFLOPs" if gflops >= 1 else f"{flops / 1e6:.2f} MFLOPs"
+            f"{gflops:.2f} GFLOPs"
+            if gflops >= 1
+            else f"{measured_flops / 1e6:.2f} MFLOPs"
         )
         logger.info(
             f"[Profile] params={total:,} trainable={trainable:,} "
@@ -97,12 +102,19 @@ class ProfileStage(EfficiencyStage):
 
     def run(self, ctx: StageContext) -> ModelProfile:
         """Measure parameter counts, disk size, and optional forward FLOPs."""
-        return profile_model(
+        count_flops = ctx.stage_cfg(self.name).flops
+        if count_flops:
+            ctx.target.model.eval()
+        profile = profile_model(
             ctx.target.model,
-            forward_fn=lambda: ctx.target.forward(ctx.sample_batch),
+            forward_fn=lambda: ctx.target.forward(ctx.inference_batch),
             device=ctx.device,
-            count_flops=ctx.stage_cfg(self.name).flops,
+            count_flops=count_flops,
         )
+        if count_flops:
+            profile.data_split = "validation"
+            profile.batch_size = batch_size_of(ctx.inference_batch)
+        return profile
 
     @classmethod
     def format_table(cls, result: ModelProfile) -> Table | None:
@@ -112,6 +124,8 @@ class ProfileStage(EfficiencyStage):
         table.add_row("Trainable params", f"{result.trainable_params:,}")
         table.add_row("Model size", f"{result.model_size_mb:.2f} MB")
         if result.flops_forward is not None:
+            table.add_row("Data split", str(result.data_split))
+            table.add_row("Batch size", str(result.batch_size))
             table.add_row("FLOPs / forward", format_flops(result.flops_forward))
         if result.op_breakdown:
             top = list(result.op_breakdown.items())[:3]

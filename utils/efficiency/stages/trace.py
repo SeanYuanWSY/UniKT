@@ -9,7 +9,7 @@ the macroscopic ``inference``/``train`` stages (latency/throughput).
 
 import contextlib
 import warnings
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -20,7 +20,7 @@ from rich.table import Table
 from utils.core import get_logger, register_efficiency_stage
 
 from ..device import DeviceBackend
-from ..measures.train_step import run_train_step
+from ..measures.batch import batch_size_of
 from ..target import BenchmarkTarget
 from .base import EfficiencyStage, StageContext, format_flops
 
@@ -47,6 +47,8 @@ class TraceMetrics:
     """One computation segment's profiling result (forward or train step)."""
 
     mode: str = ""
+    data_split: str = ""
+    batch_size: int = 0
     iters: int = 0
     total_cpu_time_us: float = 0.0
     total_cuda_time_us: float = 0.0
@@ -56,7 +58,6 @@ class TraceMetrics:
     gpu_peak_reserved_mib: float | None = None
     top_operators: list[OperatorStat] = field(default_factory=list)
     trace_path: str | None = None
-    note: str | None = None
 
 
 @dataclass
@@ -78,7 +79,8 @@ class TraceStageConfig:
 
 def benchmark_trace(
     target: BenchmarkTarget,
-    sample_batch: Any,
+    inference_batch: Any,
+    train_batch: Any,
     warmup_iters: int,
     iters: int,
     top_ops: int,
@@ -88,14 +90,13 @@ def benchmark_trace(
 ) -> TraceProfile:
     """Profile the forward pass and a training step with torch.profiler.
 
-    Each segment runs its own profiler session on the shared representative
-    batch: forward under ``inference_mode``, training under grad-enabled mode
-    mirroring ``run_train_step``. Per-segment failures degrade to a ``note``
-    rather than aborting the whole stage.
+    Each segment uses its matching data pipeline: validation forward under
+    ``inference_mode``, augmented training under grad-enabled mode mirroring
+    ``target.compute_train_step``.
     """
-    forward = _safe_segment(
+    forward = _profile_segment(
         target,
-        sample_batch,
+        inference_batch,
         warmup_iters,
         iters,
         top_ops,
@@ -104,9 +105,9 @@ def benchmark_trace(
         device,
         mode="forward",
     )
-    train = _safe_segment(
+    train = _profile_segment(
         target,
-        sample_batch,
+        train_batch,
         warmup_iters,
         iters,
         top_ops,
@@ -116,35 +117,6 @@ def benchmark_trace(
         mode="train",
     )
     return TraceProfile(forward=forward, train=train)
-
-
-def _safe_segment(
-    target: BenchmarkTarget,
-    sample_batch: Any,
-    warmup_iters: int,
-    iters: int,
-    top_ops: int,
-    export: bool,
-    output_dir: str | Path | None,
-    device: torch.device,
-    mode: str,
-) -> TraceMetrics:
-    """Run _profile_segment, degrading to a note on failure (non-fatal)."""
-    try:
-        return _profile_segment(
-            target,
-            sample_batch,
-            warmup_iters,
-            iters,
-            top_ops,
-            export,
-            output_dir,
-            device,
-            mode,
-        )
-    except Exception as e:  # non-fatal: keep the stage running
-        logger.warning(f"[Trace] {mode} segment failed (non-fatal): {e}")
-        return TraceMetrics(mode=mode, note=f"profiling failed: {e}")
 
 
 def _profile_segment(
@@ -170,7 +142,7 @@ def _profile_segment(
         if is_forward:
             target.forward(sample_batch)
         else:
-            run_train_step(target, sample_batch)
+            target.compute_train_step(sample_batch)
 
     activities = [torch.profiler.ProfilerActivity.CPU]
     if device.type == "cuda":
@@ -179,7 +151,14 @@ def _profile_segment(
     dev = DeviceBackend(device)
     # warmup outside the profiler (cuDNN autotune / clock ramp), mirroring the
     # inference and training stages so the trace reflects steady-state kernels.
-    _run_under_grad(step_fn, warmup_iters, is_forward)
+    # Forward warmup also initializes lazy caches as ordinary tensors for the
+    # later training segment. With zero configured warmup, one setup forward
+    # is still needed before inference_mode creates those caches.
+    warmup_ctx = torch.no_grad() if is_forward else contextlib.nullcontext()
+    warmup_steps = max(warmup_iters, 1) if is_forward else warmup_iters
+    with warmup_ctx:
+        for _ in range(warmup_steps):
+            step_fn()
     dev.sync()
 
     grad_ctx = torch.inference_mode() if is_forward else contextlib.nullcontext()
@@ -208,6 +187,8 @@ def _profile_segment(
 
     metrics = TraceMetrics(
         mode=mode,
+        data_split="validation" if is_forward else "train",
+        batch_size=batch_size_of(sample_batch),
         iters=iters,
         total_cpu_time_us=total_cpu,
         total_cuda_time_us=total_cuda,
@@ -245,16 +226,6 @@ def _maybe_export_trace(
         warnings.simplefilter("ignore")
         prof.export_chrome_trace(str(trace_path))
     return trace_path
-
-
-def _run_under_grad(
-    step_fn: Callable[[], None], iters: int, use_inference_mode: bool
-) -> None:
-    """Run ``step_fn`` ``iters`` times under inference_mode (forward) or default grad."""
-    ctx = torch.inference_mode() if use_inference_mode else contextlib.nullcontext()
-    with ctx:
-        for _ in range(iters):
-            step_fn()
 
 
 def _extract_operators(
@@ -330,7 +301,8 @@ class TraceStage(EfficiencyStage):
         cfg = ctx.stage_cfg(self.name)
         return benchmark_trace(
             ctx.target,
-            ctx.sample_batch,
+            ctx.inference_batch,
+            ctx.train_batch,
             ctx.general.warmup_iters,
             cfg.iters,
             cfg.top_ops,
@@ -356,6 +328,8 @@ def _add_segment_rows(table: Table, m: TraceMetrics, label: str) -> None:
     total_us = m.total_cuda_time_us if is_cuda else m.total_cpu_time_us
     kind = "CUDA" if is_cuda else "CPU"
 
+    table.add_row(f"{label} — data split", m.data_split)
+    table.add_row(f"{label} — batch size", f"{m.batch_size:,}")
     table.add_row(f"{label} — total self time", f"{total_us / 1e3:.2f} ms ({kind})")
     table.add_row(f"{label} — operators", f"{m.operator_count}")
     if m.total_flops:
@@ -372,8 +346,6 @@ def _add_segment_rows(table: Table, m: TraceMetrics, label: str) -> None:
         )
     if m.trace_path:
         table.add_row(f"{label} — trace", Path(m.trace_path).name)
-    if m.note:
-        table.add_row(f"{label} — note", m.note)
 
 
 def _pct(op: OperatorStat, total_us: float, is_cuda: bool) -> str:
