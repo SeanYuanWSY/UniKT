@@ -3,7 +3,7 @@
 Skill-level models are scored with windowlate data, where every sample carries a
 full history but is evaluated at its final position only. Their real serving cost
 is therefore one forward pass per *single* prediction, while the ``inference``
-stage measures the training-shaped path that yields a prediction per timestep.
+stage measures validation sequences that yield a prediction per timestep.
 Reporting only the latter overstates skill-level throughput by roughly the
 sequence length, so this stage measures the test path on its own terms and
 reports the amortization gap explicitly.
@@ -13,7 +13,7 @@ actually runs, and the batch is released when it finishes, so other stages never
 pay for (or measure around) the test path. Skipped (with the real reason on the
 report) when the target has no test loader, its test dataset is not windowlate —
 question-level models score dense sequences and are already covered by
-``inference`` — or the test path fails.
+``inference``. Data and forward failures propagate to the session's stage guard.
 """
 
 from dataclasses import dataclass
@@ -45,14 +45,13 @@ class WindowlateMetrics(LatencyMetricsBase):
     skip_reason: str = ""
     iters: int = 0
     repeats: int = 0
-    train_batch_size: int = 0
+    data_split: str = "test"
+    count_basis: str = "measured_batch"
+    inference_batch_size: int | None = None
     test_batch_size: int = 0
     predictions_per_batch: int = 0
-    # Per-batch average over a full train-split pass when known (float); the
-    # amortization ratio uses it only as a numerator scale, so the wider type
-    # changes no computed value.
-    train_path_tokens_per_batch: float = 0.0
-    amortization_ratio: float = 0.0
+    inference_tokens_per_batch: int | None = None
+    amortization_ratio: float | None = None
     throughput_predictions_per_sec: float = 0.0
     us_per_prediction: float = 0.0
 
@@ -68,10 +67,6 @@ class WindowlateStageConfig:
 def benchmark_windowlate(
     target: BenchmarkTarget,
     test_batch: Any,
-    train_batch_size: int,
-    test_batch_size: int,
-    predictions: int,
-    train_tokens: float,
     warmup_iters: int,
     iters: int,
     repeats: int,
@@ -84,6 +79,10 @@ def benchmark_windowlate(
     exercise and what the throughput denominator counts.
     """
     target.model.eval()
+    test_batch_size = batch_size_of(test_batch)
+    predictions = count_test_predictions(target, test_batch)
+    if predictions <= 0:
+        raise ValueError("Test forward produced no scored predictions")
     stats = benchmark_forward_loop(
         lambda: target.test_forward(test_batch),
         warmup_iters,
@@ -96,21 +95,12 @@ def benchmark_windowlate(
     us_per = (
         (wall * 1e6) / (predictions * iters) if predictions > 0 and iters > 0 else 0.0
     )
-    # How much cheaper a prediction looks when the same forward is credited with
-    # every timestep instead of the one position windowlate actually scores.
-    # Per-sample on both sides: the train and test loaders may batch differently.
-    amortization = (
-        (train_tokens / train_batch_size) / (predictions / test_batch_size)
-        if predictions > 0 and train_batch_size > 0 and test_batch_size > 0
-        else 0.0
-    )
-
     logger.info(
         f"[Windowlate] latency_mean={stats.latency_mean_ms:.3f}ms "
         f"latency_p95={stats.latency_p95_ms:.3f}ms "
         f"repeat_cv={stats.latency_repeat_cv:.3f} | "
         f"throughput={throughput:,.0f} pred/s "
-        f"| {predictions} pred/batch (per-sample amortization x{amortization:,.1f})"
+        f"| {predictions} pred/batch"
         + (
             f" | gpu_peak={stats.gpu_peak_allocated_mib:.0f} MiB"
             if stats.gpu_peak_allocated_mib is not None
@@ -121,11 +111,8 @@ def benchmark_windowlate(
     return WindowlateMetrics(
         iters=iters,
         repeats=repeats,
-        train_batch_size=train_batch_size,
         test_batch_size=test_batch_size,
         predictions_per_batch=predictions,
-        train_path_tokens_per_batch=train_tokens,
-        amortization_ratio=amortization,
         throughput_predictions_per_sec=throughput,
         us_per_prediction=us_per,
         **LatencyMetricsBase.stats_kwargs(stats),
@@ -158,44 +145,28 @@ class WindowlateStage(EfficiencyStage):
         # them resident, polluting later stages' resource sampling.
         probe = DataLoader(
             dataset,
-            batch_size=getattr(loader, "batch_size", None) or 1,
+            batch_size=loader.batch_size,
             num_workers=0,
+            collate_fn=loader.collate_fn,
         )
-        try:
-            batch = to_device(next(iter(probe)), ctx.device)
-        except StopIteration:
-            return self._skip("test loader is empty")
-        except Exception as exc:
-            return self._skip(f"test loader failed: {exc}")
-
-        test_batch_size = batch_size_of(batch)
-        if test_batch_size <= 0:
-            return self._skip("test batch has no tensor rows")
-        try:
-            predictions = count_test_predictions(ctx.target, batch)
-        except Exception as exc:
-            return self._skip(f"test forward failed: {exc}")
-        if predictions <= 0:
-            return self._skip("test forward produced no scored predictions")
-
-        try:
-            cfg = ctx.stage_cfg(self.name)
-            return benchmark_windowlate(
-                ctx.target,
-                batch,
-                ctx.batch_size,
-                test_batch_size,
-                predictions,
-                ctx.valid_tokens,
-                ctx.general.warmup_iters,
-                cfg.iters,
-                cfg.repeats,
-                ctx.device,
-            )
-        except Exception as exc:
-            # The session has no per-stage guard; a supplemental stage must not
-            # take training/trace down with it.
-            return self._skip(f"benchmark failed: {exc}")
+        batch = to_device(next(iter(probe)), ctx.device)
+        cfg = ctx.stage_cfg(self.name)
+        result = benchmark_windowlate(
+            ctx.target,
+            batch,
+            ctx.general.warmup_iters,
+            cfg.iters,
+            cfg.repeats,
+            ctx.device,
+        )
+        inference = ctx.results.get("inference")
+        if inference is not None:
+            result.inference_batch_size = inference.batch_size
+            result.inference_tokens_per_batch = inference.valid_tokens_per_batch
+            result.amortization_ratio = (
+                inference.valid_tokens_per_batch / inference.batch_size
+            ) / (result.predictions_per_batch / result.test_batch_size)
+        return result
 
     @staticmethod
     def _skip(reason: str) -> WindowlateMetrics:
@@ -210,18 +181,15 @@ class WindowlateStage(EfficiencyStage):
             table.add_row("Skipped", result.skip_reason)
             return table
         table.add_row("Iterations", f"{result.iters} x {result.repeats}")
-        table.add_row(
-            "Train / test batch size",
-            f"{result.train_batch_size:,} / {result.test_batch_size:,}",
-        )
+        table.add_row("Data split", result.data_split)
+        table.add_row("Batch size", f"{result.test_batch_size:,}")
+        table.add_row("Count basis", result.count_basis)
         table.add_row("Predictions / batch", f"{result.predictions_per_batch:,}")
-        table.add_row(
-            "Train-path tokens / batch", f"{result.train_path_tokens_per_batch:,.1f}"
-        )
-        table.add_row(
-            "Amortization vs train path",
-            f"x{result.amortization_ratio:,.1f} per sample",
-        )
+        if result.amortization_ratio is not None:
+            table.add_row(
+                "Amortization vs inference path",
+                f"x{result.amortization_ratio:,.1f} per sample",
+            )
         cls.add_latency_rows(table, result)
         table.add_row(
             "Throughput (sustained)",

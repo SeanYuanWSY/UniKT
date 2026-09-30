@@ -32,16 +32,21 @@ class BenchmarkTarget(Protocol):
         ...
 
     @property
+    def inference_data(self) -> Any:
+        """The validation DataLoader used by the trainer's eval forward path."""
+        ...
+
+    @property
     def test_data(self) -> Any:
         """The test DataLoader, or ``None`` when the target has no test split."""
         ...
 
     def forward(self, batch: Any) -> Any:
-        """One forward pass in eval mode; the caller chooses the grad context."""
+        """Evaluation forward; the stage selects model mode and grad context."""
         ...
 
     def test_forward(self, batch: Any) -> Any:
-        """One forward pass over a test batch (test-specific alignment)."""
+        """Test forward; the stage selects model mode and grad context."""
         ...
 
     def compute_train_step(self, batch: Any) -> tuple[dict, torch.Tensor]:
@@ -80,23 +85,26 @@ class TrainerBenchmarkAdapter:
         return self._t.train_data
 
     @property
+    def inference_data(self) -> Any:
+        """The trainer's validation DataLoader, with its evaluation collator."""
+        return self._t.val_data
+
+    @property
     def test_data(self) -> Any:
         """The trainer's test DataLoader (``None`` when not built)."""
-        return getattr(self._t, "test_data", None)
+        return self._t.test_data
 
     def forward(self, batch: Any) -> Any:
-        """Run one forward pass in eval mode (caller wraps inference_mode if needed).
+        """Run an evaluation forward with the stage's mode and grad context.
 
         Left grad-agnostic so the FLOPs profile can run it grad-enabled
         (FlopCounterMode needs ``grad_fn``); inference/trace stages wrap it in
         ``inference_mode`` themselves.
         """
-        self._t.model.eval()
         return self._t.forward_pass(batch)
 
     def test_forward(self, batch: Any) -> Any:
         """Run one test forward pass via the trainer's ``test_forward_pass``."""
-        self._t.model.eval()
         return self._t.test_forward_pass(batch)
 
     def compute_train_step(self, batch: Any) -> tuple[dict, torch.Tensor]:

@@ -55,13 +55,12 @@ class TestCountFlops:
         assert flops == 48
         assert breakdown.get("addmm") == 48
 
-    def test_exception_returns_none_and_empty(self) -> None:
+    def test_forward_exception_propagates(self) -> None:
         def boom() -> None:
             raise RuntimeError("kernel gone")
 
-        flops, breakdown = count_flops(boom, torch.device("cpu"))
-        assert flops is None
-        assert breakdown == {}
+        with pytest.raises(RuntimeError, match="kernel gone"):
+            count_flops(boom, torch.device("cpu"))
 
 
 class TestFormatBreakdown:
@@ -80,6 +79,7 @@ class TestFormatBreakdown:
         counter = _FakeFlopCounter({"Global": {"aten::add": 5}})
         assert format_breakdown(counter) == {"aten::add": 5}
 
-    def test_exception_returns_empty_dict(self) -> None:
+    def test_counter_exception_propagates(self) -> None:
         counter = _FakeFlopCounter(error=ValueError("no counts"))
-        assert format_breakdown(counter) == {}
+        with pytest.raises(ValueError, match="no counts"):
+            format_breakdown(counter)

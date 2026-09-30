@@ -8,12 +8,13 @@ from rich.table import Table
 
 from utils.core import get_logger, register_efficiency_stage
 
+from ..measures.batch import batch_size_of, count_valid_interactions
 from ..measures.timing import (
     LatencyMetricsBase,
     benchmark_forward_loop,
 )
 from ..target import BenchmarkTarget
-from .base import EfficiencyStage, StageContext, format_valid_tokens
+from .base import EfficiencyStage, StageContext
 
 logger = get_logger(__name__)
 
@@ -25,9 +26,9 @@ class InferenceMetrics(LatencyMetricsBase):
     iters: int = 0
     repeats: int = 0
     batch_size: int = 0
-    valid_tokens_per_batch: float = 0.0
-    valid_tokens_total: int = 0
-    valid_tokens_batches: int = 0
+    data_split: str = "validation"
+    count_basis: str = "measured_batch"
+    valid_tokens_per_batch: int = 0
     throughput_interactions_per_sec: float = 0.0
     ns_per_interaction: float = 0.0
 
@@ -43,10 +44,6 @@ class InferenceStageConfig:
 def benchmark_inference(
     target: BenchmarkTarget,
     sample_batch: Any,
-    batch_size: int,
-    valid_tokens: float,
-    valid_tokens_total: int,
-    valid_tokens_batches: int,
     warmup_iters: int,
     iters: int,
     repeats: int,
@@ -56,14 +53,13 @@ def benchmark_inference(
 
     Reuses the prefetched ``sample_batch`` to avoid DataLoader IPC noise; a CUDA
     Event per iteration reads elapsed_time after ``end.synchronize()``, covering
-    host launch through kernel completion. ``valid_tokens`` is the per-batch
-    average over a full train-split pass (shuffle-order invariant); the timing
-    batch comes from the model's normal data pipeline, with no benchmark
-    sequence-length override.
+    host launch through kernel completion. ``valid_tokens`` counts the scored
+    interactions in this exact validation batch, using the trainer's normal
+    evaluation pipeline with no sequence-length override.
     """
-    # Explicit so the exported benchmark keeps its eval-mode contract even for
-    # targets whose forward does not enforce it.
     target.model.eval()
+    batch_size = batch_size_of(sample_batch)
+    valid_tokens = count_valid_interactions(target, sample_batch)
     stats = benchmark_forward_loop(
         lambda: target.forward(sample_batch),
         warmup_iters,
@@ -95,8 +91,6 @@ def benchmark_inference(
         repeats=repeats,
         batch_size=batch_size,
         valid_tokens_per_batch=valid_tokens,
-        valid_tokens_total=valid_tokens_total,
-        valid_tokens_batches=valid_tokens_batches,
         throughput_interactions_per_sec=throughput,
         ns_per_interaction=ns_per,
         **LatencyMetricsBase.stats_kwargs(stats),
@@ -116,11 +110,7 @@ class InferenceStage(EfficiencyStage):
         cfg = ctx.stage_cfg(self.name)
         return benchmark_inference(
             ctx.target,
-            ctx.sample_batch,
-            ctx.batch_size,
-            ctx.valid_tokens,
-            ctx.valid_tokens_total,
-            ctx.valid_tokens_batches,
+            ctx.inference_batch,
             ctx.general.warmup_iters,
             cfg.iters,
             cfg.repeats,
@@ -132,14 +122,10 @@ class InferenceStage(EfficiencyStage):
         """Render inference latency/throughput as a Rich table."""
         table = cls.make_kv_table("Inference")
         table.add_row("Iterations", f"{result.iters} x {result.repeats}")
-        table.add_row(
-            "Valid tokens / batch",
-            format_valid_tokens(
-                result.valid_tokens_per_batch,
-                result.valid_tokens_total,
-                result.valid_tokens_batches,
-            ),
-        )
+        table.add_row("Data split", result.data_split)
+        table.add_row("Batch size", f"{result.batch_size:,}")
+        table.add_row("Count basis", result.count_basis)
+        table.add_row("Valid tokens / batch", f"{result.valid_tokens_per_batch:,}")
         cls.add_latency_rows(table, result)
         table.add_row(
             "Throughput (sustained)",

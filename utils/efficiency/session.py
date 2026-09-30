@@ -28,11 +28,6 @@ if TYPE_CHECKING:
 
 from .device import reclaim_memory
 from .environment import ResourceSampler, collect_environment
-from .measures.batch import (
-    batch_size_of,
-    count_valid_interactions_split,
-    to_device,
-)
 from .report import EfficiencyReport
 from .stages.base import BenchmarkTarget, EfficiencyStage, StageContext
 from .target import TrainerBenchmarkAdapter
@@ -106,46 +101,17 @@ class EfficiencySession:
         self.target.prepare(device)
         environment = collect_environment(device, self.target.model)
 
-        # Prefetch one representative batch; timing loops reuse it to avoid
-        # DataLoader IPC noise.
-        sample_batch = to_device(next(iter(self.target.train_data)), device)
-        batch_size = batch_size_of(sample_batch)
-
-        # Throughput numerators use the per-batch average over a full train-split
-        # pass, not the prefetched batch's count: the sum over all batches is
-        # invariant to the loader's shuffle order, so the average depends only on
-        # the dataset and the model's data granularity. The counting forwards
-        # also warm lazily built seq-len constants (AKT family) under no_grad;
-        # timing loops still reuse sample_batch; standard model datasets pad
-        # sequences to the lengths recorded by preprocessing.
-        valid_tokens_total, valid_tokens_batches = count_valid_interactions_split(
-            self.target, self.target.train_data
-        )
-        valid_tokens = valid_tokens_total / valid_tokens_batches
-        logger.info(
-            f"[Setup] batch_size={batch_size} "
-            f"padded_lengths={self.sequence_lengths} "
-            f"valid_tokens={valid_tokens:.1f}/batch "
-            f"(split mean: {valid_tokens_total} over "
-            f"{valid_tokens_batches} batches)"
-        )
-
         ctx = StageContext(
             target=self.target,
             device=device,
-            sample_batch=sample_batch,
-            batch_size=batch_size,
-            valid_tokens=valid_tokens,
             cfg=self.cfg,
             environment=environment,
             output_dir=self.output_dir,
-            valid_tokens_total=valid_tokens_total,
-            valid_tokens_batches=valid_tokens_batches,
         )
 
         sampler = ResourceSampler(device, self.cfg.general.resource_sample_interval)
         sampler.start()
-        results: dict[str, Any] = {}
+        results = ctx.results
         errors: dict[str, str] = {}
         resources: dict[str, Any] = {}
         last_exc: Exception | None = None
@@ -175,7 +141,7 @@ class EfficiencySession:
             model_name=self.rc.experiment.model_name,
             dataset_name=self.rc.data.dataset,
             timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            batch_size=batch_size,
+            batch_size=self.rc.model.batch_size,
             sequence_lengths=self.sequence_lengths,
             modes=[name for name, _ in self.stages],
             config=config_to_dict(self.cfg),

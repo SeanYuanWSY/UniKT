@@ -8,7 +8,8 @@ serializable result to the report.
 """
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from functools import cached_property
 from pathlib import Path
 from typing import Any, ClassVar
 
@@ -16,6 +17,7 @@ import torch
 from rich.table import Table
 
 from ..environment import EnvironmentInfo
+from ..measures.batch import to_device
 from ..measures.formatting import (  # noqa: F401  — re-exported for stages
     format_duration,
     format_flops,
@@ -37,16 +39,20 @@ class StageContext:
 
     target: BenchmarkTarget
     device: torch.device
-    sample_batch: Any
-    batch_size: int
-    valid_tokens: float
     cfg: Any
     environment: EnvironmentInfo
     output_dir: Path | None = None
-    # Provenance for ``valid_tokens`` when it is a full-split mean: total valid
-    # interactions and the batch count the mean divides.
-    valid_tokens_total: int = 0
-    valid_tokens_batches: int = 0
+    results: dict[str, Any] = field(default_factory=dict)
+
+    @cached_property
+    def train_batch(self) -> Any:
+        """Fetch training input only when a training stage needs it."""
+        return to_device(next(iter(self.target.train_data)), self.device)
+
+    @cached_property
+    def inference_batch(self) -> Any:
+        """Fetch evaluation input using the validation data pipeline."""
+        return to_device(next(iter(self.target.inference_data)), self.device)
 
     @property
     def general(self) -> Any:
@@ -104,8 +110,3 @@ class EfficiencyStage(ABC):
             table.add_row(
                 "GPU peak (reserved)", f"{result.gpu_peak_reserved_mib:,.0f} MiB"
             )
-
-
-def format_valid_tokens(mean: float, total: int, batches: int) -> str:
-    """Render a throughput numerator with its full-split provenance."""
-    return f"{mean:,.1f} (split mean: {total:,} over {batches} batches)"
