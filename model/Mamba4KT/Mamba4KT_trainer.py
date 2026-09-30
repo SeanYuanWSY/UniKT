@@ -23,6 +23,8 @@ class Mamba4KTConfig(ModelConfig):
         expand: Mamba internal expansion factor (Conv1D out channels = expand*d_model).
         dropout: Dropout probability.
         use_rasch: Whether to enable the Rasch problem-id difficulty model (True=yes).
+        separate_qa: 1 uses a joint (concept, response) interaction embedding table;
+            0 (default) uses additive qa_embed(response) + q_embed(sequence).
         l2: L2 regularization coefficient for Rasch difficulty parameter (lambda in Eq.11).
         epochs: Number of training epochs.
         learning_rate: Learning rate (paper: {0.003,0.002,0.001,0.0001}).
@@ -55,6 +57,7 @@ class Mamba4KTConfig(ModelConfig):
         metadata={"optuna": {"type": "float", "low": 0.0, "high": 0.5}},
     )
     use_rasch: bool = True
+    separate_qa: int = 0
     l2: float = 1e-5
     epochs: int = 150
     learning_rate: float = field(
@@ -103,6 +106,7 @@ class Mamba4KTTrainer(BaseTrainer):
             expand=m.expand,
             dropout=m.dropout,
             l2=m.l2,
+            separate_qa=bool(m.separate_qa),
         )
 
         loss_fn = torch.nn.BCELoss()

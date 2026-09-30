@@ -85,6 +85,8 @@ class Mamba4KT(nn.Module):
         expand: Mamba 内部扩展系数（Conv1D 输出通道数 = expand * d_model）
         dropout: Dropout 概率
         l2: Rasch 难度参数 μ 的 L2 正则化系数（论文 Eq. 11 中的 λ）
+        separate_qa: True 时交互嵌入查 (concept, response) 联合索引表；
+            False 时为 qa_embed(response) + q_embed(sequence) 相加
     """
 
     def __init__(
@@ -98,20 +100,23 @@ class Mamba4KT(nn.Module):
         expand: int = 2,
         dropout: float = 0.1,
         l2: float = 1e-5,
+        separate_qa: bool = False,
     ):
         super().__init__()
         self.model_name = "mamba4kt"
         self.num_c = num_c
         self.n_pid = n_pid
         self.l2 = l2
+        self.separate_qa = separate_qa
         embed_l = d_model
 
         # Rasch model embed-based Embeddings（论文 Eq. 4）
         # 基础嵌入
         self.q_embed = nn.Embedding(num_c, embed_l)  # c_{c_t}
-        self.qa_embed = nn.Embedding(
-            2 * num_c + 1, embed_l
-        )  # e_{r_t}（按 concept-response 编码）
+        if separate_qa:
+            self.qa_embed = nn.Embedding(2 * num_c + 1, embed_l)
+        else:
+            self.qa_embed = nn.Embedding(2, embed_l)
 
         if self.n_pid > 0:
             # μ_{q_t}：题目难度标量
@@ -119,7 +124,10 @@ class Mamba4KT(nn.Module):
             # d_{c_t}：题目对所属 concept 的偏移向量
             self.q_embed_diff = nn.Embedding(num_c, embed_l)
             # f(c_t, r_t)：concept-result 配对的变差向量
-            self.qa_embed_diff = nn.Embedding(2 * num_c + 1, embed_l)
+            if separate_qa:
+                self.qa_embed_diff = nn.Embedding(2 * num_c + 1, embed_l)
+            else:
+                self.qa_embed_diff = nn.Embedding(2, embed_l)
             self.reset()
 
         # Mamba Block
@@ -163,15 +171,19 @@ class Mamba4KT(nn.Module):
         """
         c_reg_loss = torch.tensor(0.0, device=sequence.device)
 
-        # concept-response 联合索引：c + num_c * r
-        qa_data = sequence + self.num_c * response
-
         q_embed_data = self.q_embed(sequence)  # c_{c_t}
-        qa_embed_data = self.qa_embed(qa_data)  # e_{r_t}（含 concept 信息）
+        if self.separate_qa:
+            # concept-response 联合索引：c + num_c * r
+            qa_data = sequence + self.num_c * response
+            qa_embed_data = self.qa_embed(qa_data)  # e_{r_t}（含 concept 信息）
+        else:
+            qa_embed_data = self.qa_embed(response) + q_embed_data
 
         if self.n_pid > 0 and pid_data is not None:
             q_diff = self.q_embed_diff(sequence)  # d_{c_t}
-            qa_diff = self.qa_embed_diff(qa_data)  # f(c_t, r_t)
+            qa_diff = self.qa_embed_diff(
+                qa_data if self.separate_qa else response
+            )  # f(c_t, r_t)
             mu = self.difficult_param(pid_data)  # μ_{q_t}
 
             # Q_t = c_{c_t} + μ_{q_t} · d_{c_t}
