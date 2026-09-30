@@ -3,7 +3,7 @@
 from typing import Any
 
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -83,8 +83,7 @@ class KQNModelData(SkillModelData):
             train_data[0], train_data[1], train_data[2], train_data[3]
         )
         val_dataset = KQNDataset(val_data[0], val_data[1], val_data[2], val_data[3])
-        test_dataset = DataLoader(
-            window_test_data,
+        test_dataset = window_test_data.create_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

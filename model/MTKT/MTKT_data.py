@@ -132,9 +132,8 @@ class MTKTWindowlateIterableDataset(WindowlateIterableDataset):
         num_rgap: int,
         num_sgap: int,
         num_pcount: int,
-        batch_read_rows: int = 200_000,
     ):
-        super().__init__(parquet_path, max_seq_len, batch_read_rows)
+        super().__init__(parquet_path, max_seq_len)
         self.num_rgap = num_rgap
         self.num_sgap = num_sgap
         self.num_pcount = num_pcount

@@ -3,7 +3,7 @@ from typing import Any
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -97,9 +97,8 @@ class FAKTWindowlateIterableDataset(WindowlateIterableDataset):
         num_rgap: int,
         num_sgap: int,
         num_pcount: int,
-        batch_read_rows: int = 200_000,
     ):
-        super().__init__(parquet_path, max_seq_len, batch_read_rows)
+        super().__init__(parquet_path, max_seq_len)
         self.num_rgap = num_rgap
         self.num_sgap = num_sgap
         self.num_pcount = num_pcount
@@ -199,8 +198,7 @@ class FAKTModelData(SkillModelData):
 
         train_dataset = FAKTDataset(*train_data)
         val_dataset = FAKTDataset(*val_data)
-        test_dataset = DataLoader(
-            window_test_data,
+        test_dataset = window_test_data.create_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,
@@ -218,9 +216,7 @@ class FAKTModelData(SkillModelData):
         return train_dataset, val_dataset, test_dataset
 
     @override
-    def create_windowlate_iterable_dataset(
-        self, batch_read_rows: int = 200_000
-    ) -> FAKTWindowlateIterableDataset:
+    def create_windowlate_iterable_dataset(self) -> FAKTWindowlateIterableDataset:
         parquet_path = os.path.join(
             self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
         )
@@ -230,7 +226,6 @@ class FAKTModelData(SkillModelData):
             num_rgap=self.num_rgap,
             num_sgap=self.num_sgap,
             num_pcount=self.num_pcount,
-            batch_read_rows=batch_read_rows,
         )
 
     def _compute_time_gaps(self):

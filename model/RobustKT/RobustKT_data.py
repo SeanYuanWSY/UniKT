@@ -3,7 +3,7 @@
 from typing import Any
 
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -65,8 +65,7 @@ class RobustKTModelData(SkillModelData):
         )
         window_test_data = self.create_windowlate_iterable_dataset()
         test_batch_size = getattr(rc.model, "test_batch_size", rc.model.batch_size)
-        test_dataset = DataLoader(
-            window_test_data,
+        test_dataset = window_test_data.create_dataloader(
             batch_size=test_batch_size,
             shuffle=False,
             num_workers=4,

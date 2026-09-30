@@ -3,7 +3,7 @@
 from typing import Any
 
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -76,8 +76,7 @@ class TFKTModelData(SkillModelData):
             pin_memory = rc.general.device == "cuda" or (
                 rc.general.device is None and torch.cuda.is_available()
             )
-        test_dataset = DataLoader(
-            window_test_data,
+        test_dataset = window_test_data.create_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=0,

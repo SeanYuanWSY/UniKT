@@ -3,7 +3,7 @@
 from typing import Any
 
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -110,8 +110,7 @@ class GKTModelData(SkillModelData):
 
         train_dataset = GKTDataset(train_data[0], train_data[1], train_data[2])
         val_dataset = GKTDataset(val_data[0], val_data[1], val_data[2])
-        test_dataset = DataLoader(
-            window_test_data,
+        test_dataset = window_test_data.create_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

@@ -83,8 +83,6 @@ class DGMKTModelData(SkillModelData):
 
     @override
     def prepare_data(self, rc: Any) -> tuple:
-        from torch.utils.data import DataLoader
-
         user_sequence, user_response, user_mask, user_id_sequence, _ = (
             self.build_sequence_data()
         )
@@ -114,8 +112,7 @@ class DGMKTModelData(SkillModelData):
         train_dataset = DGMKTDataset(*train_data)
         val_dataset = DGMKTDataset(*val_data)
         window_test_data = self.create_windowlate_iterable_dataset()
-        test_dataset = DataLoader(
-            window_test_data,
+        test_dataset = window_test_data.create_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

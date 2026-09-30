@@ -2,7 +2,7 @@
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 
 from utils.model_data import SkillModelData
 
@@ -62,8 +62,7 @@ class ASIKTModelData(SkillModelData):
         self.question_prior, self.question_frequency = difficulty_prior(
             train[3], train[1], train[2].astype(bool), n_question
         )
-        test = DataLoader(
-            self.create_windowlate_iterable_dataset(),
+        test = self.create_windowlate_iterable_dataset().create_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=0,

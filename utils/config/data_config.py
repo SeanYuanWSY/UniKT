@@ -88,6 +88,8 @@ def create_optimized_dataloader(
     """
     from torch.utils.data import DataLoader
 
+    from ..model_data.skill_model_data import WindowlateIterableDataset
+
     # Use default configuration
     if config is None:
         config = DataLoaderConfig()
@@ -126,7 +128,10 @@ def create_optimized_dataloader(
         loader_kwargs["persistent_workers"] = False
 
     # Create DataLoader
-    loader = DataLoader(dataset, **loader_kwargs)
+    if isinstance(dataset, WindowlateIterableDataset):
+        loader = dataset.create_dataloader(**loader_kwargs)
+    else:
+        loader = DataLoader(dataset, **loader_kwargs)
 
     # Log optimization info
     logger.debug(

@@ -8,14 +8,19 @@ and iterable dataset streaming from parquet files.
 from __future__ import annotations
 
 import os
-from collections.abc import Iterator
-from typing import TYPE_CHECKING
+from collections.abc import Iterable, Iterator
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 import torch
-from torch.utils.data import IterableDataset, get_worker_info
+from torch.utils.data import (
+    DataLoader,
+    IterableDataset,
+    default_collate,
+    get_worker_info,
+)
 
 if TYPE_CHECKING:
     import polars as pl
@@ -34,19 +39,16 @@ class WindowlateIterableDataset(IterableDataset):
         self,
         parquet_path: str,
         max_seq_len: int,
-        batch_read_rows: int = 200_000,
     ):
         """Initialise the iterable dataset.
 
         Args:
             parquet_path: Path to the parquet file containing windowlate data.
             max_seq_len: Maximum sequence length (window size).
-            batch_read_rows: Number of rows to read per batch (default: 200000).
         """
         super().__init__()
         self.parquet_path = parquet_path
         self.max_seq_len = max_seq_len
-        self.batch_read_rows = batch_read_rows
         self._num_samples: int | None = None
         self._num_row_groups = None
 
@@ -120,7 +122,7 @@ class WindowlateIterableDataset(IterableDataset):
         return {col: table.column(col).to_numpy() for col in table.column_names}
 
     def _iter_row_groups(
-        self, row_group_indices: list[int]
+        self, row_group_indices: Iterable[int]
     ) -> Iterator[dict[str, np.ndarray]]:
         """Iterate over specified row groups, yielding batched data.
 
@@ -136,17 +138,11 @@ class WindowlateIterableDataset(IterableDataset):
             table = parquet_file.read_row_group(rg_idx)
             yield self._read_batch_arrays(table)
 
-    def _process_batch(
-        self, batch: dict[str, np.ndarray]
-    ) -> Iterator[tuple[torch.Tensor, ...]]:
-        """Process a batch of data, yielding individual samples.
-
-        Args:
-            batch: Dictionary of column arrays for one row group.
-
-        Yields:
-            Tensors for each sample in the batch.
-        """
+    @staticmethod
+    def _split_samples(
+        batch: dict[str, np.ndarray],
+    ) -> Iterator[dict[str, np.ndarray]]:
+        """Yield sample views without allocating padded tensors."""
         sample_ids = batch["sample_id"]
         if sample_ids.size == 0:
             return
@@ -158,27 +154,88 @@ class WindowlateIterableDataset(IterableDataset):
         keys = [k for k in batch if k != "sample_id"]
 
         for start, end in zip(starts, ends, strict=False):
-            sample = {k: batch[k][start:end] for k in keys}
-            yield self._build_single_tensor(sample)
+            yield {k: batch[k][start:end] for k in keys}
 
-    def __iter__(self) -> Iterator[tuple[torch.Tensor, ...]]:
-        """Iterate over samples, with multi-worker data loading support."""
+    def _iter_worker_arrays(self) -> Iterator[dict[str, np.ndarray]]:
+        """Read this worker's row groups in their original order."""
         self._init_metadata()
         assert self._num_row_groups is not None, (
             "metadata init must set _num_row_groups"
         )
         worker_info = get_worker_info()
 
-        if worker_info is not None and worker_info.num_workers > 0:
-            worker_id = worker_info.id
-            num_workers = worker_info.num_workers
-            all_row_groups = list(range(self._num_row_groups))
-            row_group_indices = all_row_groups[worker_id::num_workers]
-        else:
-            row_group_indices = list(range(self._num_row_groups))
+        row_group_indices = range(self._num_row_groups)
+        if worker_info is not None:
+            row_group_indices = row_group_indices[
+                worker_info.id :: worker_info.num_workers
+            ]
 
-        for batch in self._iter_row_groups(row_group_indices):
-            yield from self._process_batch(batch)
+        yield from self._iter_row_groups(row_group_indices)
+
+    def __iter__(self) -> Iterator[tuple[torch.Tensor, ...]]:
+        """Iterate over padded samples, preserving the single-sample interface."""
+        for batch in self._iter_worker_arrays():
+            for sample in self._split_samples(batch):
+                yield self._build_single_tensor(sample)
+
+    def _collate_batch(
+        self, samples: list[dict[str, np.ndarray]]
+    ) -> list[torch.Tensor]:
+        """Allocate and scatter a full batch, retaining custom sample builders."""
+        if (
+            type(self)._build_single_tensor
+            is not WindowlateIterableDataset._build_single_tensor
+        ):
+            # Model-specific builders own their extra features and tuple order.
+            return default_collate([self._build_single_tensor(s) for s in samples])
+
+        positions = np.concatenate([s["position"] for s in samples])
+        rows = np.repeat(np.arange(len(samples)), [len(s["position"]) for s in samples])
+        fields = (
+            "skill",
+            "response",
+            "mask",
+            "group_id",
+            "true_label",
+            "question",
+            "user_id",
+        )
+        tensors = []
+        in_worker = get_worker_info() is not None
+        for field in fields:
+            dtype = torch.bool if field == "mask" else torch.int64
+            tensor = torch.empty(
+                (len(samples), self.max_seq_len), dtype=dtype, device="cpu"
+            )
+            if in_worker:
+                tensor.share_memory_()
+            array = tensor.numpy()
+            array.fill(-1 if field == "group_id" else 0)
+            array[rows, positions] = np.concatenate([s[field] for s in samples])
+            tensors.append(tensor)
+        return tensors
+
+    def create_dataloader(self, *, batch_size: int, **kwargs: Any) -> DataLoader:
+        """Create a batched windowlate loader with its dedicated collator."""
+        kwargs["collate_fn"] = self._collate_batch
+        return DataLoader(
+            _WindowlateBatchDataset(self), batch_size=batch_size, **kwargs
+        )
+
+
+class _WindowlateBatchDataset(WindowlateIterableDataset):
+    """Expose raw sample views to the batch collator without changing the source."""
+
+    def __init__(self, source: WindowlateIterableDataset):
+        super().__init__(source.parquet_path, source.max_seq_len)
+        self.source = source
+
+    def __len__(self) -> int:
+        return len(self.source)
+
+    def __iter__(self) -> Iterator[Any]:
+        for arrays in self.source._iter_worker_arrays():
+            yield from self.source._split_samples(arrays)
 
 
 class SkillModelData(BaseModelData):
@@ -334,17 +391,11 @@ class SkillModelData(BaseModelData):
             user_id_sequence,
         )
 
-    def create_windowlate_iterable_dataset(
-        self,
-        batch_read_rows: int = 200_000,
-    ) -> WindowlateIterableDataset:
+    def create_windowlate_iterable_dataset(self) -> WindowlateIterableDataset:
         """Create a WindowlateIterableDataset from the windowlate parquet file.
 
         The padded length is the dataset's maximum window row count
         (metadata ``max_windowlate_seq_len``, recorded by preprocessing).
-
-        Args:
-            batch_read_rows: Number of rows to read per batch (default: 200000).
 
         Returns:
             A configured WindowlateIterableDataset instance.
@@ -356,5 +407,4 @@ class SkillModelData(BaseModelData):
         return WindowlateIterableDataset(
             parquet_path=parquet_path,
             max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
-            batch_read_rows=batch_read_rows,
         )
