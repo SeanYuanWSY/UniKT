@@ -26,6 +26,8 @@ class Mamba4KTQConfig(ModelConfig):
         d_conv: Conv1D kernel width in Mamba block.
         expand: Mamba internal expansion factor.
         dropout: Dropout probability.
+        separate_qa: 1 uses a joint (question, response) interaction embedding table;
+            0 (default) uses additive qa_embed(response) + q_embed(question).
         epochs: Number of training epochs.
         learning_rate: Learning rate for optimizer.
         weight_decay: Weight decay for optimizer.
@@ -56,6 +58,7 @@ class Mamba4KTQConfig(ModelConfig):
         default=0.1,
         metadata={"optuna": {"type": "float", "low": 0.0, "high": 0.5}},
     )
+    separate_qa: int = 0
     epochs: int = 150
     learning_rate: float = field(
         default=1e-3,
@@ -103,6 +106,7 @@ class Mamba4KTQTrainer(BaseTrainer):
             d_conv=m.d_conv,
             expand=m.expand,
             dropout=m.dropout,
+            separate_qa=bool(m.separate_qa),
         )
 
         optimizer = torch.optim.Adam(
