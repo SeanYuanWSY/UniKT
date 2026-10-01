@@ -7,7 +7,7 @@ from typing import Any
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -266,8 +266,7 @@ class CL4KTModelData(SkillModelData):
             harder_skills,
         )
         val_dataset = CL4KTEvalDataset(val_s, val_r, val_m)
-        test_dataset = DataLoader(
-            self.create_windowlate_iterable_dataset(),
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

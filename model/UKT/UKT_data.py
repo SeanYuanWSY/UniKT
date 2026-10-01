@@ -4,7 +4,7 @@ from typing import Any
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -159,8 +159,6 @@ class UKTModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        window_test_data = self.create_windowlate_iterable_dataset()
-
         train_dataset = UKTDataset(
             train_data[0],
             train_data[1],
@@ -175,8 +173,7 @@ class UKTModelData(SkillModelData):
             questions=val_data[3],
             response_aug=build_ukt_response_aug(val_data[1], val_data[2]),
         )
-        test_dataset = DataLoader(
-            window_test_data,
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,

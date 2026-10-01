@@ -3,7 +3,7 @@
 from typing import Any
 
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -72,7 +72,6 @@ class DeepIRTModelData(SkillModelData):
         train_dataset = DeepIRTDataset(train_data[0], train_data[1], train_data[2])
         val_dataset = DeepIRTDataset(val_data[0], val_data[1], val_data[2])
 
-        window_test_data = self.create_windowlate_iterable_dataset()
         test_batch_size = getattr(rc.model, "test_batch_size", rc.model.batch_size)
         test_num_workers = getattr(rc.model, "test_num_workers", 4)
         test_loader_kwargs = {
@@ -82,9 +81,9 @@ class DeepIRTModelData(SkillModelData):
             "pin_memory": getattr(rc.model, "test_pin_memory", True),
         }
         test_prefetch_factor = getattr(rc.model, "test_prefetch_factor", 2)
-        if test_num_workers > 0 and test_prefetch_factor is not None:
+        if test_prefetch_factor is not None:
             test_loader_kwargs["prefetch_factor"] = test_prefetch_factor
-        test_dataset = DataLoader(window_test_data, **test_loader_kwargs)
+        test_dataset = self.create_windowlate_dataloader(**test_loader_kwargs)
 
         logger.debug(
             "DeepIRT data prepared: "

@@ -5,7 +5,7 @@ from typing import Any
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -102,9 +102,8 @@ class DKTForgetWindowlateIterableDataset(WindowlateIterableDataset):
         num_rgap: int,
         num_sgap: int,
         num_pcount: int,
-        batch_read_rows: int = 200_000,
     ):
-        super().__init__(parquet_path, max_seq_len, batch_read_rows)
+        super().__init__(parquet_path, max_seq_len)
         self.num_rgap = num_rgap
         self.num_sgap = num_sgap
         self.num_pcount = num_pcount
@@ -241,16 +240,7 @@ class DKTForgetModelData(SkillModelData):
         train_dataset = DKTForgetDataset(*train_data)
         val_dataset = DKTForgetDataset(*val_data)
 
-        # 测试集
-        test_iterable = DKTForgetWindowlateIterableDataset(
-            parquet_path=self._windowlate_path(),
-            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
-            num_rgap=self.num_rgap,
-            num_sgap=self.num_sgap,
-            num_pcount=self.num_pcount,
-        )
-        test_dataset = DataLoader(
-            test_iterable,
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,
@@ -265,9 +255,16 @@ class DKTForgetModelData(SkillModelData):
 
         return train_dataset, val_dataset, test_dataset
 
-    def _windowlate_path(self) -> str:
+    @override
+    def _create_windowlate_dataset(self) -> DKTForgetWindowlateIterableDataset:
         import os
 
-        return os.path.join(
-            self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
+        return DKTForgetWindowlateIterableDataset(
+            parquet_path=os.path.join(
+                self.data_src.data_folder, f"{self.data_src.dataset}_windowlate.parquet"
+            ),
+            max_seq_len=self.data_src.get_metadata("max_windowlate_seq_len"),
+            num_rgap=self.num_rgap,
+            num_sgap=self.num_sgap,
+            num_pcount=self.num_pcount,
         )

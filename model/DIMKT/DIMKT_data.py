@@ -5,7 +5,7 @@ from typing import Any
 import numpy as np
 import polars as pl
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from typing_extensions import override
 
 from utils.core import get_logger
@@ -146,14 +146,11 @@ class DIMKTModelData(SkillModelData):
         else:
             raise ValueError("K-fold cross-validation is not enabled.")
 
-        stream_dataset = self.create_windowlate_iterable_dataset()
-
         train_dataset = DIMKTDataset(
             train_data[0], train_data[1], train_data[2], train_data[3]
         )
         val_dataset = DIMKTDataset(val_data[0], val_data[1], val_data[2], val_data[3])
-        test_dataset = DataLoader(
-            stream_dataset,
+        test_dataset = self.create_windowlate_dataloader(
             batch_size=rc.model.batch_size,
             shuffle=False,
             num_workers=4,
