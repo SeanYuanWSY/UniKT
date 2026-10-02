@@ -1,0 +1,5 @@
+# API call archives contain raw model outputs; keep out of git
+archive/
+# Per-run experiment outputs (packs, reports, records) are research artifacts
+results/
+__pycache__/
