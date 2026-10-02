@@ -14,8 +14,11 @@
 | DKVMN×GLM×behavior | 0.257 | 0.110 | — | — | — | 0.98% |
 | SAKT×GLM×behavior | 0.193 | 0.043 | — | — | — | 1.85% |
 | AKT×GLM×behavior | 0.214 | 0.065 | — | — | — | 2.84% |
+| DKT×Kimi×full | 0.057 | −0.095 | 0.159 | 0.019 | 0.423 | **0.00%** |
 
-解析成功率 113/113 全条件（Kimi 条件完成后补）。敏感性（不加权/中位/k≥5）方向一致，见 finalize 输出。
+解析成功率 113/113 全条件（含 Kimi）。敏感性（不加权/中位/k≥5）方向一致，见 finalize 输出。
+
+**跨 LLM 稳健性（描述性）**：DKT 上 GLM 0.120 vs Kimi 0.057，均低于抄表基线（方向一致、结论同）；Kimi 接地违规率 0%（GLM 0.28%）。Kimi 被迫 temp=1，视为单次抽样。
 
 ## 2. 主终点（confirmatory）
 
@@ -33,7 +36,9 @@ DKT×GLM×full：ρ̂=0.120，单侧 95% 下界 −0.031，**未超过 acc 抄�
 
 ## 5. NLI 交叉裁判
 
-dev 阶段（5 生，Kimi 判 GLM）：supports 31 / unverifiable 52 / contradicts 15（98 条，此前日志 71 为笔误）。holdout 全量裁判与人工校准列入待办（未完成项，如实披露）。
+- dev（5 生，Kimi 判 GLM，v1 prompt）：supports 31 / unverifiable 52 / contradicts 15（98 条）。
+- holdout（修复版 prompt）：GLM 报告×Kimi 判（5 生 29 条）= 15 supports / 14 unverifiable / **0 contradicts**；Kimi 报告×GLM 判（3 生 20 条）= 15 / 4 / 1。
+- 人工校准（50–100 条）仍未做，列入待办；contradicts 率暂不用于忠实性结论。
 
 ## 6. 结论措辞（按 freeze addendum 约束）
 
