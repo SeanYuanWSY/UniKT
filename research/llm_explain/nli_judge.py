@@ -63,6 +63,7 @@ def judge_report(
             purpose="nli_judge",
             user_id=pack.user_id,
             condition="judge",
+            max_tokens=16384,  # kimi reasoning-only: budget must cover CoT + answer
         )
         v = call.parsed if call.parse_ok else None
         verdicts.append(

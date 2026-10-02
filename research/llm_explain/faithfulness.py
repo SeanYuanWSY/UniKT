@@ -36,8 +36,16 @@ class Verification:
         return len(self.violations) / self.n_claims if self.n_claims else 0.0
 
 
-def _fmt(value: float) -> str:
-    return f"{round(float(value), 2):.2f}"
+def _fmt(value) -> str:
+    if value is None:
+        return "—"
+    try:
+        fv = float(value)
+    except (TypeError, ValueError):
+        return "—"
+    if fv != fv:  # NaN
+        return "—"
+    return f"{round(fv, 2):.2f}"
 
 
 def verify_report(parsed: dict[str, Any], pack: EvidencePack) -> Verification:

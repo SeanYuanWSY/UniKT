@@ -49,8 +49,11 @@ def stratified_sample(samples: list[WindowSample], n: int, seed: int = 42) -> li
 
 
 def spearman(a: list[float], b: list[float]) -> float:
-    if len(a) < 3:
+    pairs = [(x, y) for x, y in zip(a, b) if x == x and y == y]  # drop NaN
+    if len(pairs) < 3:
         return float("nan")
+    a = [p[0] for p in pairs]
+    b = [p[1] for p in pairs]
     ra = np.argsort(np.argsort(a)).astype(float)
     rb = np.argsort(np.argsort(b)).astype(float)
     if ra.std() == 0 or rb.std() == 0:

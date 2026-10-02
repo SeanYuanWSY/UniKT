@@ -61,13 +61,17 @@ def _chat_once(
     payload: dict[str, Any] = {
         "model": model,
         "messages": messages,
-        "temperature": 0,
         "max_tokens": max_tokens,
     }
     if "glm" in model:
+        payload["temperature"] = 0
         # glm-5.x are reasoning models; disable thinking so max_tokens covers
-        # the JSON answer itself (kimi-for-coding cannot disable it).
+        # the JSON answer itself.
         payload["thinking"] = {"type": "disabled"}
+    else:
+        # kimi-for-coding only accepts temperature=1 (reasoning-only model);
+        # omit it entirely rather than send 0 (400 Bad Request otherwise).
+        pass
     body = json.dumps(payload).encode()
     req = urllib.request.Request(
         f"{base_url.rstrip('/')}/chat/completions",

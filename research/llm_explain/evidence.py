@@ -55,9 +55,12 @@ class EvidencePack:
             "| KC | 名称 | 尝试次数 | 正确率 | 模型预测均值 | 模型就绪度 | 最近5次正确率 |",
             "|----|------|---------|--------|-------------|-----------|--------------|",
         ]
+        def _num(v) -> str:
+            return "—" if v is None or (isinstance(v, float) and np.isnan(v)) else f"{v:.2f}"
+
         for r in sorted(self.kcs, key=lambda x: x.kc):
             lines.append(
-                f"| {r.kc} | {r.name} | {r.attempts} | {r.acc:.2f} | {r.pred_mean:.2f} | {r.readiness:.2f} | {r.recent5:.2f} |"
+                f"| {r.kc} | {r.name} | {r.attempts} | {_num(r.acc)} | {_num(r.pred_mean)} | {_num(r.readiness)} | {_num(r.recent5)} |"
             )
         lines.append("")
         lines.append("E2 模型意外事件（|模型预测 − 实际| 最大的步骤）：")
