@@ -170,20 +170,24 @@ def load_user_samples(
     user_folds = md._build_user_folds(len(seq))  # noqa: SLF001
     val_idx = np.where(user_folds == fold)[0]
 
-    samples: list[WindowSample] = []
+    # One split row per (sequence_id, user); the same original student may span
+    # multiple split rows -- keep only the longest trajectory per user.
+    best: dict[int, WindowSample] = {}
     for i in val_idx:
         valid = np.where(mask[i] == 1)[0]
         n = len(valid)
         ev_len = int(round(n * (1 - holdout_ratio)))
         if ev_len < min_evidence or n - ev_len < 3:
             continue
-        samples.append(
-            WindowSample(
-                user_id=int(uid[i][valid][0]),
-                sequence=seq[i][valid].astype(np.int64),
-                response=resp[i][valid].astype(np.int64),
-                question=q[i][valid].astype(np.int64),
-                holdout_idx=np.arange(ev_len, n),
-            )
+        user = int(uid[i][valid][0])
+        ws = WindowSample(
+            user_id=user,
+            sequence=seq[i][valid].astype(np.int64),
+            response=resp[i][valid].astype(np.int64),
+            question=q[i][valid].astype(np.int64),
+            holdout_idx=np.arange(ev_len, n),
         )
-    return sorted(samples, key=lambda s: s.user_id)
+        old = best.get(user)
+        if old is None or len(ws.sequence) > len(old.sequence):
+            best[user] = ws
+    return [best[u] for u in sorted(best)]

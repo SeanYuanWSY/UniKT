@@ -39,13 +39,37 @@ class Verification:
 def _fmt(value) -> str:
     if value is None:
         return "—"
+    if isinstance(value, str):
+        v = value.strip()
+        if v.endswith("%"):  # normalise "45%" -> 0.45 (pre-registered rule)
+            try:
+                v = str(float(v[:-1]) / 100)
+            except ValueError:
+                return "—"
+    else:
+        v = value
     try:
-        fv = float(value)
+        fv = float(v)
     except (TypeError, ValueError):
         return "—"
     if fv != fv:  # NaN
         return "—"
     return f"{round(fv, 2):.2f}"
+
+
+def _kc_int(kc) -> int | None:
+    """Best-effort KC id from an LLM citation value ('5', 5, 'KC 5', None)."""
+    if kc is None:
+        return None
+    if isinstance(kc, int):
+        return kc
+    s = str(kc).strip()
+    for token in s.replace("KC", " ").replace("kc", " ").split():
+        try:
+            return int(token)
+        except ValueError:
+            continue
+    return None
 
 
 def verify_report(parsed: dict[str, Any], pack: EvidencePack) -> Verification:
@@ -67,7 +91,11 @@ def verify_report(parsed: dict[str, Any], pack: EvidencePack) -> Verification:
             continue
         for cit in cits:
             kc, fld, val = cit.get("kc"), cit.get("field"), cit.get("value")
-            row = pack.kc_row(int(kc)) if kc is not None else None
+            kc_i = _kc_int(kc)
+            if kc_i is None:
+                violations.append({"type": "kc_unparseable", "claim_index": ci, "kc": kc})
+                continue
+            row = pack.kc_row(kc_i)
             if row is None:
                 violations.append({"type": "kc_not_in_e1", "claim_index": ci, "kc": kc})
                 continue
@@ -77,7 +105,10 @@ def verify_report(parsed: dict[str, Any], pack: EvidencePack) -> Verification:
                 continue
             actual = getattr(row, attr)
             if attr == "attempts":
-                ok = int(val) == int(actual)
+                try:
+                    ok = int(float(str(val).strip())) == int(actual)
+                except (TypeError, ValueError):
+                    ok = False
             else:
                 ok = _fmt(val) == _fmt(actual)
             if not ok:

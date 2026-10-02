@@ -49,16 +49,14 @@ def stratified_sample(samples: list[WindowSample], n: int, seed: int = 42) -> li
 
 
 def spearman(a: list[float], b: list[float]) -> float:
+    """Spearman with proper midranks (ties averaged) via scipy; NaN-dropped."""
+    from scipy.stats import spearmanr
+
     pairs = [(x, y) for x, y in zip(a, b) if x == x and y == y]  # drop NaN
     if len(pairs) < 3:
         return float("nan")
-    a = [p[0] for p in pairs]
-    b = [p[1] for p in pairs]
-    ra = np.argsort(np.argsort(a)).astype(float)
-    rb = np.argsort(np.argsort(b)).astype(float)
-    if ra.std() == 0 or rb.std() == 0:
-        return float("nan")
-    return float(np.corrcoef(ra, rb)[0, 1])
+    r = spearmanr([p[0] for p in pairs], [p[1] for p in pairs]).statistic
+    return float(r)
 
 
 def score_student(parsed: dict, pack: EvidencePack, actuals: dict[int, dict[str, float]]) -> dict:
@@ -89,10 +87,12 @@ def main() -> None:
     ap.add_argument("--out", required=True)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--resume", action="store_true", help="skip users already in records.jsonl")
     args = ap.parse_args()
 
     rm: RestoredModel = restore(args.run_dir, device=args.device)
-    samples = load_user_samples(rm.data_src, fold=0)
+    fold = int(rm.rc.data.fold) if int(rm.rc.data.fold) >= 0 else 0
+    samples = load_user_samples(rm.data_src, fold=fold)
     # Main-analysis filter: at least 10 distinct KCs learned in evidence
     samples = [
         s
@@ -109,47 +109,42 @@ def main() -> None:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     rng = np.random.default_rng(args.seed)
-
-    records = []
-    for i, ws in enumerate(pool):
-        pack = build_pack(rm, ws)
-        if args.condition == "behavior-only":
-            for r in pack.kcs:
-                r.readiness = float("nan")
-        if args.condition == "permuted":
-            pack = permute_readiness(pack, rng)
-        md = pack.to_markdown()
-        (out / f"pack_U{ws.user_id}.md").write_text(md)
-
-        call = call_llm(
-            args.provider,
-            build_messages(md),
-            purpose="diagnosis",
-            user_id=ws.user_id,
-            condition=args.condition,
-        )
-        if not call.parse_ok:
-            records.append({"user_id": ws.user_id, "parse_ok": False})
-            continue
-
-        ver = verify_report(call.parsed, pack)
-        actuals = holdout_actuals(rm, ws)
-        scores = score_student(call.parsed, pack, actuals)
-        (out / f"report_U{ws.user_id}.json").write_text(
-            json.dumps(call.parsed, ensure_ascii=False, indent=2)
-        )
-        records.append(
+    (out / "run_meta.json").write_text(
+        json.dumps(
             {
-                "user_id": ws.user_id,
-                "parse_ok": True,
-                "violation_rate": ver.violation_rate,
-                "violations": ver.violations,
-                "holdout_coverage": ver.holdout_coverage,
-                "weakest_valid": ver.weakest_valid,
-                **scores,
-            }
+                "run_dir": args.run_dir,
+                "model": rm.model_name,
+                "provider": args.provider,
+                "condition": args.condition,
+                "split": args.split,
+                "seed": args.seed,
+                "fold": fold,
+            },
+            ensure_ascii=False,
+            indent=2,
         )
-        print(f"[{i+1}/{len(pool)}] U{ws.user_id} rho={scores['llm_holdout_rho']:.2f} viol={ver.violation_rate:.2%}", flush=True)
+    )
+
+    records_path = out / "records.jsonl"
+    records: list[dict] = []
+    if records_path.exists() and args.resume:
+        records = [json.loads(l) for l in open(records_path)]
+        done = {r["user_id"] for r in records}
+        pool = [s for s in pool if s.user_id not in done]
+        print(f"resume: {len(done)} done, {len(pool)} to go", flush=True)
+
+    with open(records_path, "a") as rec_f:
+        for i, ws in enumerate(pool):
+            try:
+                rec = _process_student(rm, ws, args, rng, out)
+            except Exception as e:  # noqa: BLE001 - one bad report must not kill the run
+                rec = {"user_id": ws.user_id, "parse_ok": False, "error": repr(e)[:200]}
+            records.append(rec)
+            rec_f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            rec_f.flush()
+            rho = rec.get("llm_holdout_rho")
+            rho_s = f"{rho:.2f}" if isinstance(rho, float) and rho == rho else "nan"
+            print(f"[{i+1}/{len(pool)}] U{ws.user_id} rho={rho_s} viol={rec.get('violation_rate', 0):.2%}", flush=True)
 
     rhos = [r["llm_holdout_rho"] for r in records if r.get("parse_ok") and not math.isnan(r.get("llm_holdout_rho", float("nan")))]
     summary = {
@@ -162,11 +157,46 @@ def main() -> None:
         "mean_rho": float(np.mean(rhos)) if rhos else None,
         "mean_violation_rate": float(np.mean([r["violation_rate"] for r in records if r.get("parse_ok")])),
     }
-    with open(out / "records.jsonl", "w") as f:
-        for r in records:
-            f.write(json.dumps(r, ensure_ascii=False) + "\n")
     (out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2))
     print(json.dumps(summary, ensure_ascii=False))
+
+
+def _process_student(rm, ws, args, rng, out: Path) -> dict:
+    """Build pack, call LLM, verify, score -- one student, exception-contained."""
+    pack = build_pack(rm, ws)
+    if args.condition == "behavior-only":
+        for r in pack.kcs:
+            r.readiness = float("nan")
+    if args.condition == "permuted":
+        pack = permute_readiness(pack, rng)
+    md = pack.to_markdown()
+    (out / f"pack_U{ws.user_id}.md").write_text(md)
+
+    call = call_llm(
+        args.provider,
+        build_messages(md, has_readiness=args.condition != "behavior-only"),
+        purpose="diagnosis",
+        user_id=ws.user_id,
+        condition=args.condition,
+    )
+    if not call.parse_ok:
+        return {"user_id": ws.user_id, "parse_ok": False, "parse_error": True}
+
+    ver = verify_report(call.parsed, pack)
+    actuals = holdout_actuals(rm, ws)
+    scores = score_student(call.parsed, pack, actuals)
+    (out / f"report_U{ws.user_id}.json").write_text(
+        json.dumps(call.parsed, ensure_ascii=False, indent=2)
+    )
+    return {
+        "user_id": ws.user_id,
+        "parse_ok": True,
+        "violation_rate": ver.violation_rate,
+        "violations": ver.violations,
+        "holdout_coverage": ver.holdout_coverage,
+        "weakest_valid": ver.weakest_valid,
+        **scores,
+    }
 
 
 if __name__ == "__main__":

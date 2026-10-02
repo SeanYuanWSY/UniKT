@@ -40,10 +40,10 @@ E3 全局：共 17 步，总体正确率 0.53，模型平均预测 0.55，模型
 待预测知识点: 3, 8"""
 
 FEWSHOT_ASSISTANT = """{
-  "summary": "该生分数乘法较稳，分数加法薄弱：尝试多但正确率低，最近5次正确率下滑到0.20，且模型在第11步以0.71预测其做对却做错，说明模型此前高估了该生的分数加法状态。",
+  "summary": "该生分数乘法较稳（正确率0.80、就绪度0.74）；分数加法薄弱（正确率0.42），且最近5次正确率0.20呈下滑趋势，模型当前就绪度0.41也印证其准备不足。",
   "claims": [
     {"type": "薄弱", "statement": "分数加法薄弱，正确率仅0.42且最近5次正确率0.20呈下滑趋势", "citations": [{"kc": 3, "field": "正确率", "value": 0.42}, {"kc": 3, "field": "最近5次正确率", "value": 0.2}]},
-    {"type": "预测", "statement": "模型曾高估该生的分数加法：第11步预测0.71但实际做错", "citations": [{"kc": 3, "field": "模型预测均值", "value": 0.44}]},
+    {"type": "预测", "statement": "模型当前对分数加法的就绪度仅0.41，低于其历史预测均值0.44，状态在走低", "citations": [{"kc": 3, "field": "模型就绪度", "value": 0.41}, {"kc": 3, "field": "模型预测均值", "value": 0.44}]},
     {"type": "掌握", "statement": "分数乘法相对掌握，正确率0.80，模型就绪度0.74", "citations": [{"kc": 8, "field": "正确率", "value": 0.8}, {"kc": 8, "field": "模型就绪度", "value": 0.74}]},
     {"type": "建议", "statement": "针对分数加法安排复习（其证据显示正确率低且在下滑）", "citations": [{"kc": 3, "field": "尝试次数", "value": 12}]}
   ],
@@ -51,11 +51,17 @@ FEWSHOT_ASSISTANT = """{
   "weakest_kcs": [3]
 }"""
 
+SYSTEM_PROMPT_NO_READINESS = SYSTEM_PROMPT.replace(
+    "；\n- \"模型就绪度\"= 冻结模型对该生此刻若遇到该 KC 题目的预测正确概率，它反映模型内部状态，优先以它为掌握度依据",
+    "；\n- 本证据包不含\"模型就绪度\"列（以 \"—\" 标示），请基于行为统计（正确率/最近5次正确率/尝试次数/模型预测均值）判断",
+)
 
-def build_messages(pack_markdown: str) -> list[dict]:
+
+def build_messages(pack_markdown: str, has_readiness: bool = True) -> list[dict]:
     """Assemble the chat messages for one student's evidence pack."""
+    system = SYSTEM_PROMPT if has_readiness else SYSTEM_PROMPT_NO_READINESS
     return [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": system},
         {"role": "user", "content": FEWSHOT_USER},
         {"role": "assistant", "content": FEWSHOT_ASSISTANT},
         {"role": "user", "content": pack_markdown},
