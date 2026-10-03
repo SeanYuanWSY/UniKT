@@ -83,7 +83,7 @@ def main() -> None:
     ap.add_argument("--provider", default="glm", choices=["glm", "kimi"])
     ap.add_argument("--n", type=int, default=30)
     ap.add_argument("--split", default="dev", choices=["dev", "holdout"])
-    ap.add_argument("--condition", default="full", choices=["full", "behavior-only", "permuted"])
+    ap.add_argument("--condition", default="full", choices=["full", "behavior-only", "permuted", "llm-direct"])
     ap.add_argument("--out", required=True)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--seed", type=int, default=42)
@@ -167,6 +167,14 @@ def _process_student(rm, ws, args, rng, out: Path) -> dict:
     if args.condition == "behavior-only":
         for r in pack.kcs:
             r.readiness = float("nan")
+    if args.condition == "llm-direct":
+        # No deep-model signals at all: pure behaviour statistics for the
+        # frozen-LLM-direct baseline (design v2 §6).
+        for r in pack.kcs:
+            r.readiness = float("nan")
+            r.pred_mean = float("nan")
+        pack.global_stats["pred_mean"] = float("nan")
+        pack.global_stats["auc"] = float("nan")
     if args.condition == "permuted":
         pack = permute_readiness(pack, rng)
     md = pack.to_markdown()
@@ -174,7 +182,7 @@ def _process_student(rm, ws, args, rng, out: Path) -> dict:
 
     call = call_llm(
         args.provider,
-        build_messages(md, has_readiness=args.condition != "behavior-only"),
+        build_messages(md, has_readiness=args.condition in ("full", "permuted")),
         purpose="diagnosis",
         user_id=ws.user_id,
         condition=args.condition,
