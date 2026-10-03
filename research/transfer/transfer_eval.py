@@ -151,13 +151,14 @@ def main() -> None:
     ap.add_argument("--identity", action="store_true",
                     help="ignore --alignment; map every target KC to itself "
                     "(same-dataset sanity check of the eval wiring)")
+    ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
 
     from llm_explain_restore_shim import restore_any  # noqa: PLC0415
     from restore import load_user_samples  # noqa: PLC0415
     from utils.data_process import get_data_source  # noqa: PLC0415
 
-    rm = restore_any(args.source_run)
+    rm = restore_any(args.source_run, device=args.device)
     if args.identity:
         from kc_tables import build_kc_table  # noqa: PLC0415
 

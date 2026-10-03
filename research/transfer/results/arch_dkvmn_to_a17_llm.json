@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/DKVMN_assistments09_20261003-024801_fold0_bs128",
+  "target": "assistments17",
+  "alignment": "assistments09__to__assistments17__llm__glm__rep0",
+  "n_students": 120,
+  "drop_rate": 0.6899,
+  "holdout_retry_rate": 0.0474,
+  "within_student_auc": 0.4422
+}
