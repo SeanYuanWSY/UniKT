@@ -1,0 +1,8 @@
+{
+  "source_run": "runs/normal/DKT_assistments17_20261003-144042_fold0_bs128",
+  "target": "assistments17",
+  "alignment": "none",
+  "n_students": 150,
+  "drop_rate": 0.0,
+  "within_student_auc": 0.8235
+}

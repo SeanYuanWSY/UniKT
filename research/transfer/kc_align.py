@@ -41,7 +41,8 @@ ALIGN_SYSTEM = """你是教育领域的知识点对齐专家。给你两个数�
 
 
 def align_chunk_llm(
-    source_md: str, target_md: str, provider: str = "glm", replicate: int = 0
+    source_md: str, target_md: str, provider: str = "glm", replicate: int = 0,
+    temperature: float = 0.0,
 ) -> dict:
     messages = [
         {"role": "system", "content": ALIGN_SYSTEM},
@@ -57,6 +58,7 @@ def align_chunk_llm(
         user_id=replicate,
         condition=f"rep{replicate}",
         max_tokens=8192,
+        temperature=temperature,
     )
     if not call.parse_ok:
         return {"error": True, "attempts": len(call.attempts)}
@@ -70,16 +72,22 @@ def align_llm(
     replicate: int = 0,
     chunk_size: int = 25,
     top_k: int = 3,
-) -> dict[int, list[dict]]:
-    """LLM alignment: target_kc -> list of {source_kc, score, relation}."""
+    temperature: float = 0.0,
+) -> tuple[dict[int, list[dict]], list[list[int]]]:
+    """LLM alignment: target_kc -> list of {source_kc, score, relation} (sorted,
+    filtered, top-k). Returns (alignment, failed_chunks)."""
     source_md = kc_table_markdown(source_table)
     targets = sorted(target_table)
     out: dict[int, list[dict]] = {}
+    failed_chunks: list[list[int]] = []
     for i in range(0, len(targets), chunk_size):
         chunk = targets[i : i + chunk_size]
         target_md = kc_table_markdown({k: target_table[k] for k in chunk})
-        parsed = align_chunk_llm(source_md, target_md, provider, replicate)
+        parsed = align_chunk_llm(source_md, target_md, provider, replicate, temperature)
+        if parsed.get("error"):  # chunk-level retry once (review P1)
+            parsed = align_chunk_llm(source_md, target_md, provider, replicate, temperature)
         if parsed.get("error"):
+            failed_chunks.append(chunk)
             for k in chunk:
                 out[k] = []
             continue
@@ -90,7 +98,7 @@ def align_llm(
                 continue
             if tk in chunk and not row.get("no_match"):
                 ms = []
-                for m in row.get("matches", [])[:top_k]:
+                for m in row.get("matches", []):
                     try:
                         ms.append(
                             {
@@ -101,13 +109,19 @@ def align_llm(
                         )
                     except (KeyError, TypeError, ValueError):
                         continue
-                out[tk] = [m for m in ms if m["source_kc"] in source_table and m["score"] >= 0.5]
+                # sort by score first, then filter, then slice (review P1)
+                ms.sort(key=lambda m: -m["score"])
+                out[tk] = [
+                    m
+                    for m in ms[:top_k]
+                    if m["source_kc"] in source_table and m["score"] >= 0.5
+                ]
             elif tk in chunk:
                 out[tk] = []
-        for k in chunk:  # fill misses as no_match
+        for k in chunk:
             out.setdefault(k, [])
         time.sleep(0.5)
-    return out
+    return out, failed_chunks
 
 
 def align_edit_distance(
@@ -163,17 +177,19 @@ def random_occupancy_matched(
     return out
 
 
-def save_alignment(name: str, alignment: dict) -> None:
+def save_alignment(name: str, alignment: dict, meta: dict | None = None) -> None:
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    key = str(alignment) if not isinstance(alignment, dict) else None
     (CACHE_DIR / f"{name}.json").write_text(
-        json.dumps(alignment, ensure_ascii=False, indent=1)
+        json.dumps({"alignment": alignment, "meta": meta or {}}, ensure_ascii=False, indent=1)
     )
 
 
 def load_alignment(name: str) -> dict | None:
     p = CACHE_DIR / f"{name}.json"
-    return json.loads(p.read_text()) if p.exists() else None
+    if not p.exists():
+        return None
+    d = json.loads(p.read_text())
+    return d["alignment"] if "alignment" in d else d
 
 
 def main() -> None:
@@ -183,6 +199,10 @@ def main() -> None:
     ap.add_argument("--method", default="llm", choices=["llm", "edit"])
     ap.add_argument("--provider", default="glm")
     ap.add_argument("--replicates", type=int, default=1)
+    ap.add_argument("--temperature", type=float, default=0.0,
+                    help=">0 for replicate variation (glm only; kimi is temp=1)")
+    ap.add_argument("--chunk-size", type=int, default=25)
+    ap.add_argument("--top-k", type=int, default=3)
     args = ap.parse_args()
 
     src_t = build_kc_table(args.source)
@@ -190,17 +210,27 @@ def main() -> None:
     print(f"source {args.source}: {len(src_t)} KCs; target {args.target}: {len(tgt_t)} KCs", flush=True)
 
     for rep in range(args.replicates):
-        name = f"{args.source}__to__{args.target}__{args.method}__{args.provider}__rep{rep}"
+        name = (
+            f"{args.source}__to__{args.target}__{args.method}__{args.provider}"
+            f"__c{args.chunk_size}k{args.top_k}__rep{rep}"
+        )
         if load_alignment(name) is not None:
             print(f"cache hit {name}")
             continue
         if args.method == "llm":
-            al = align_llm(src_t, tgt_t, args.provider, rep)
+            al, failed = align_llm(
+                src_t, tgt_t, args.provider, rep,
+                chunk_size=args.chunk_size, top_k=args.top_k,
+                temperature=args.temperature if rep > 0 else 0.0,
+            )
+            save_alignment(name, al, meta={"failed_chunks": failed, "temperature": args.temperature})
+            matched = sum(1 for v in al.values() if v)
+            print(f"[{name}] matched {matched}/{len(al)} failed_chunks={len(failed)}", flush=True)
         else:
-            al = align_edit_distance(src_t, tgt_t)
-        save_alignment(name, al)
-        matched = sum(1 for v in al.values() if v)
-        print(f"[{name}] matched {matched}/{len(al)}", flush=True)
+            al = align_edit_distance(src_t, tgt_t, top_k=args.top_k)
+            save_alignment(name, al)
+            matched = sum(1 for v in al.values() if v)
+            print(f"[{name}] matched {matched}/{len(al)}", flush=True)
 
 
 if __name__ == "__main__":

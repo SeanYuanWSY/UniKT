@@ -117,6 +117,10 @@ def build_skill_names(data_src: Any) -> dict[int, str]:
     data_src.transform_data()
     skill_map: dict[str, int] = data_src._id_mappings["skill"]  # noqa: SLF001
 
+    if data_src.dataset != "assistments09":
+        # Other datasets: the skill string itself is the display name.
+        return {dense: str(skill_str) for skill_str, dense in skill_map.items()}
+
     pairs = data_src.raw_data.select(["skill_id", "skill_name"]).unique().collect()
     part_to_name: dict[str, str] = {}
     for sid, sname in zip(pairs["skill_id"].to_list(), pairs["skill_name"].to_list()):
@@ -126,9 +130,9 @@ def build_skill_names(data_src: Any) -> dict[int, str]:
         name_parts = str(sname).split("_")
         if len(id_parts) == len(name_parts):
             for a, b in zip(id_parts, name_parts):
-                part_to_name.setdefault(a, b)
+                part_to_name.setdefault(a, b.strip())
         elif len(id_parts) == 1:
-            part_to_name.setdefault(str(sid), str(sname))
+            part_to_name.setdefault(str(sid), str(sname).strip())
 
     return {
         dense: (part_to_name.get(skill_str, "").strip() or f"KC {skill_str}")
@@ -176,7 +180,13 @@ def load_user_samples(
     for i in val_idx:
         valid = np.where(mask[i] == 1)[0]
         n = len(valid)
+        q_valid = q[i][valid]
         ev_len = int(round(n * (1 - holdout_ratio)))
+        # Snap the boundary to an interaction boundary: a multi-KC question
+        # expands to consecutive rows sharing one label; no interaction may
+        # straddle evidence/holdout (label-leakage guard, user-mandated).
+        while 0 < ev_len < n and q_valid[ev_len] == q_valid[ev_len - 1]:
+            ev_len += 1
         if ev_len < min_evidence or n - ev_len < 3:
             continue
         user = int(uid[i][valid][0])
@@ -184,7 +194,7 @@ def load_user_samples(
             user_id=user,
             sequence=seq[i][valid].astype(np.int64),
             response=resp[i][valid].astype(np.int64),
-            question=q[i][valid].astype(np.int64),
+            question=q_valid.astype(np.int64),
             holdout_idx=np.arange(ev_len, n),
         )
         old = best.get(user)

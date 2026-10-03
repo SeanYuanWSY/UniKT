@@ -56,7 +56,8 @@ class LLMCall:
 
 
 def _chat_once(
-    base_url: str, api_key: str, model: str, messages: list[dict], max_tokens: int
+    base_url: str, api_key: str, model: str, messages: list[dict], max_tokens: int,
+    temperature: float = 0.0,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "model": model,
@@ -64,7 +65,7 @@ def _chat_once(
         "max_tokens": max_tokens,
     }
     if "glm" in model:
-        payload["temperature"] = 0
+        payload["temperature"] = temperature
         # glm-5.x are reasoning models; disable thinking so max_tokens covers
         # the JSON answer itself.
         payload["thinking"] = {"type": "disabled"}
@@ -122,6 +123,7 @@ def call_llm(
     keys_file: str = DEFAULT_KEYS_FILE,
     max_tokens: int = 4096,
     max_retries: int = 2,
+    temperature: float = 0.0,
     archive: bool = True,
 ) -> LLMCall:
     """Call a provider, parse JSON, retry parse failures, archive everything."""
@@ -134,7 +136,7 @@ def call_llm(
 
     for attempt in range(1 + max_retries):
         try:
-            raw = _chat_once(base, key, model, messages, max_tokens)
+            raw = _chat_once(base, key, model, messages, max_tokens, temperature)
         except Exception as e:  # noqa: BLE001 - archive and retry any transport error
             call.attempts.append({"attempt": attempt, "error": repr(e)})
             time.sleep(2)

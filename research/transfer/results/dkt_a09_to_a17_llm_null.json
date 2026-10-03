@@ -1,0 +1,13 @@
+{
+  "source_run": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+  "target": "assistments17",
+  "alignment": "assistments09__to__assistments17__llm__glm__rep0",
+  "n_students": 122,
+  "drop_rate": 0.6899,
+  "within_student_auc": 0.4324,
+  "obs_auc": 0.4324,
+  "null_mean": 0.4297,
+  "null_std": 0.0239,
+  "perm_p": 0.475,
+  "B": 199
+}
