@@ -62,7 +62,7 @@ def collect(rm, samples):
                     "pred": float(probs[j]),
                     "kc": kc,
                     "q": int(q[j]),
-                    "repeat": int(q[j]) in ev_q,
+                    "repeat": int(q[j]) in ev_q_out,
                     "ev_q_out": ev_q_out.get(int(q[j])),
                     "recent_kc": rec_kc,
                 }
