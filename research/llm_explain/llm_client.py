@@ -58,6 +58,7 @@ class LLMCall:
 def _chat_once(
     base_url: str, api_key: str, model: str, messages: list[dict], max_tokens: int,
     temperature: float = 0.0,
+    kimi_effort: str | None = None,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "model": model,
@@ -70,9 +71,9 @@ def _chat_once(
         # the JSON answer itself.
         payload["thinking"] = {"type": "disabled"}
     else:
-        # kimi-for-coding only accepts temperature=1 (reasoning-only model);
-        # omit it entirely rather than send 0 (400 Bad Request otherwise).
-        pass
+        # kimi models only accept temperature=1 (reasoning-only); omit it.
+        budget = {"low": 1024, "high": 8192, "max": 16384}.get(kimi_effort or "low", 1024)
+        payload["thinking"] = {"type": "enabled", "budget_tokens": budget}
     body = json.dumps(payload).encode()
     req = urllib.request.Request(
         f"{base_url.rstrip('/')}/chat/completions",
@@ -125,18 +126,20 @@ def call_llm(
     max_retries: int = 2,
     temperature: float = 0.0,
     archive: bool = True,
+    model_override: str | None = None,
+    kimi_effort: str | None = None,
 ) -> LLMCall:
     """Call a provider, parse JSON, retry parse failures, archive everything."""
     env = load_keys(keys_file)
     spec = PROVIDERS[provider]
     base, key = env[spec["env_base"]], env[spec["env_key"]]
-    model = spec["model"]
+    model = model_override or spec["model"]
 
     call = LLMCall(provider=provider, model=model, purpose=purpose, user_id=user_id, condition=condition)
 
     for attempt in range(1 + max_retries):
         try:
-            raw = _chat_once(base, key, model, messages, max_tokens, temperature)
+            raw = _chat_once(base, key, model, messages, max_tokens, temperature, kimi_effort)
         except Exception as e:  # noqa: BLE001 - archive and retry any transport error
             call.attempts.append({"attempt": attempt, "error": repr(e)})
             time.sleep(2)
