@@ -129,6 +129,7 @@ def main() -> None:
     for st in students:
         for kc, hist in st["kc_hist"].items():
             g_sum[kc] += float(sum(hist)); g_cnt[kc] += len(hist)
+    alpha_grid = [0.0, 0.25, 0.5, 0.75, 1.0]
     ev_scores = {}
     for alpha in alpha_grid:
         rows = []
