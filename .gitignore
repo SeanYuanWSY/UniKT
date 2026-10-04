@@ -48,3 +48,6 @@ web/frontend/dist/
 docs/_build/
 docs/source/_build/
 docs/source/**/*.mo
+
+# Personal research docs stay local (user rule 2026-10-04): only code goes to GitHub
+research/*.md
