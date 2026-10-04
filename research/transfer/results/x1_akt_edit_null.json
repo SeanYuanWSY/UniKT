@@ -1,0 +1,14 @@
+{
+  "source_run": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+  "target": "assistments17",
+  "alignment": "assistments09__to__assistments17__edit__glm__c25k3__rep0",
+  "n_students": 249,
+  "drop_rate": 0.265,
+  "holdout_retry_rate": 0.0603,
+  "within_student_auc": 0.5302,
+  "obs_auc": 0.5302,
+  "null_mean": 0.4978,
+  "null_std": 0.0127,
+  "perm_p": 0.009,
+  "B": 999
+}
