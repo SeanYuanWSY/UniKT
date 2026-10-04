@@ -1,0 +1,33 @@
+{
+  "dataset": "junyi2015",
+  "n_users": 250,
+  "n_kc": 38,
+  "DKT": {
+    "identity_auc": 0.4515,
+    "kc_shuffle_auc_mean": 0.4422,
+    "kc_shuffle_auc_std": 0.0139,
+    "shuffle_shuffles": [
+      0.4509,
+      0.4405,
+      0.4245,
+      0.4636,
+      0.4316
+    ],
+    "response_shuffle_auc": 0.3728,
+    "ratio": 0.9794
+  },
+  "AKT": {
+    "identity_auc": 0.4475,
+    "kc_shuffle_auc_mean": 0.4418,
+    "kc_shuffle_auc_std": 0.0252,
+    "shuffle_shuffles": [
+      0.4526,
+      0.4303,
+      0.4592,
+      0.4686,
+      0.3981
+    ],
+    "response_shuffle_auc": 0.3708,
+    "ratio": 0.9871
+  }
+}

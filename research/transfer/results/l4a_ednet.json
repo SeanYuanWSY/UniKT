@@ -1,0 +1,33 @@
+{
+  "dataset": "ednet_kt1",
+  "n_users": 250,
+  "n_kc": 176,
+  "DKT": {
+    "identity_auc": 0.8676,
+    "kc_shuffle_auc_mean": 0.5541,
+    "kc_shuffle_auc_std": 0.054,
+    "shuffle_shuffles": [
+      0.5413,
+      0.4852,
+      0.5807,
+      0.5208,
+      0.6427
+    ],
+    "response_shuffle_auc": 0.4353,
+    "ratio": 0.6387
+  },
+  "AKT": {
+    "identity_auc": 0.8587,
+    "kc_shuffle_auc_mean": 0.5987,
+    "kc_shuffle_auc_std": 0.0239,
+    "shuffle_shuffles": [
+      0.5952,
+      0.5559,
+      0.6176,
+      0.6239,
+      0.6012
+    ],
+    "response_shuffle_auc": 0.4786,
+    "ratio": 0.6973
+  }
+}

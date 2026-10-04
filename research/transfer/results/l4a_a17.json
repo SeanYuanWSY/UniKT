@@ -1,0 +1,33 @@
+{
+  "dataset": "assistments17",
+  "n_users": 250,
+  "n_kc": 96,
+  "DKT": {
+    "identity_auc": 0.8192,
+    "kc_shuffle_auc_mean": 0.5759,
+    "kc_shuffle_auc_std": 0.0142,
+    "shuffle_shuffles": [
+      0.5954,
+      0.5899,
+      0.5667,
+      0.5687,
+      0.5587
+    ],
+    "response_shuffle_auc": 0.4746,
+    "ratio": 0.703
+  },
+  "AKT": {
+    "identity_auc": 0.7465,
+    "kc_shuffle_auc_mean": 0.6116,
+    "kc_shuffle_auc_std": 0.0163,
+    "shuffle_shuffles": [
+      0.61,
+      0.6081,
+      0.592,
+      0.6416,
+      0.6063
+    ],
+    "response_shuffle_auc": 0.4793,
+    "ratio": 0.8193
+  }
+}
