@@ -1,0 +1,28 @@
+{
+  "a17_paired": {
+    "deep_auc": 0.5329,
+    "deep_platt_auc": 0.5304,
+    "b1_auc": 0.5473,
+    "n_paired": 265,
+    "delta_b1_minus_deep": 0.0145,
+    "ci95_b1_minus_deep": [
+      -0.0084,
+      0.0363
+    ],
+    "delta_platt_minus_deep": -0.0025,
+    "ci95_platt_minus_deep": [
+      -0.0161,
+      0.0107
+    ]
+  },
+  "a17_freq_preserving_shuffle_AKT": {
+    "identity": 0.7465,
+    "freq_preserved_shuffle_mean": 0.5993,
+    "shuffles": [
+      0.5938,
+      0.6222,
+      0.5818
+    ],
+    "ratio": 0.8028
+  }
+}
