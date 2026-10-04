@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/AKT_ednet_kt1_20261003-190537_fold0_bs64",
+  "target": "ednet_kt1",
+  "alignment": "none",
+  "n_students": 245,
+  "drop_rate": 0.0,
+  "holdout_retry_rate": 0.0359,
+  "within_student_auc": 0.8542
+}

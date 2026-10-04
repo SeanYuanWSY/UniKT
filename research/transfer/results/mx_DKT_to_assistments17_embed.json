@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+  "target": "assistments17",
+  "alignment": "assistments09__to__assistments17__embed__bge_m3__rep0",
+  "n_students": 261,
+  "drop_rate": 0.2493,
+  "holdout_retry_rate": 0.0649,
+  "within_student_auc": 0.4852
+}

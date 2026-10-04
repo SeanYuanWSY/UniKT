@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+  "target": "ednet_kt1",
+  "alignment": "assistments09__to__ednet_kt1__edit__glm__c25k3__rep0",
+  "n_students": 201,
+  "drop_rate": 0.7139,
+  "holdout_retry_rate": 0.0386,
+  "within_student_auc": 0.4512
+}

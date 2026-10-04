@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+  "target": "junyi2015",
+  "alignment": "assistments09__to__junyi2015__embed__bge_m3__rep0",
+  "n_students": 208,
+  "drop_rate": 0.0084,
+  "holdout_retry_rate": 0.3293,
+  "within_student_auc": 0.4438
+}

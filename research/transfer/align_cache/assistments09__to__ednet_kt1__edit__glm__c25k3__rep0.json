@@ -1,0 +1,716 @@
+{
+ "alignment": {
+  "0": [],
+  "1": [],
+  "2": [
+   {
+    "source_kc": 1,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   },
+   {
+    "source_kc": 19,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 5,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "3": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "4": [
+   {
+    "source_kc": 2,
+    "score": 0.6666666666666666,
+    "relation": "string"
+   },
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "5": [
+   {
+    "source_kc": 3,
+    "score": 0.6666666666666666,
+    "relation": "string"
+   },
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "6": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "7": [
+   {
+    "source_kc": 4,
+    "score": 0.6666666666666666,
+    "relation": "string"
+   },
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "8": [
+   {
+    "source_kc": 5,
+    "score": 0.6666666666666666,
+    "relation": "string"
+   },
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "9": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "10": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "11": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "12": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "13": [
+   {
+    "source_kc": 2,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "14": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "15": [],
+  "16": [],
+  "17": [],
+  "18": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "19": [],
+  "20": [],
+  "21": [],
+  "22": [],
+  "23": [],
+  "24": [
+   {
+    "source_kc": 3,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "25": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "26": [],
+  "27": [],
+  "28": [],
+  "29": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "30": [],
+  "31": [],
+  "32": [],
+  "33": [],
+  "34": [
+   {
+    "source_kc": 20,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 17,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "35": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "36": [],
+  "37": [],
+  "38": [],
+  "39": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "40": [
+   {
+    "source_kc": 70,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "41": [],
+  "42": [
+   {
+    "source_kc": 77,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "43": [],
+  "44": [
+   {
+    "source_kc": 10,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   },
+   {
+    "source_kc": 4,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "45": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "46": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "47": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "48": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "49": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "50": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "51": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "52": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "53": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "54": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "55": [
+   {
+    "source_kc": 5,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "56": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "57": [],
+  "58": [],
+  "59": [
+   {
+    "source_kc": 93,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "60": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "61": [],
+  "62": [],
+  "63": [],
+  "64": [],
+  "65": [],
+  "66": [],
+  "67": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "68": [],
+  "69": [],
+  "70": [],
+  "71": [
+   {
+    "source_kc": 98,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "72": [],
+  "73": [],
+  "74": [],
+  "75": [],
+  "76": [
+   {
+    "source_kc": 101,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "77": [
+   {
+    "source_kc": 17,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "78": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "79": [],
+  "80": [],
+  "81": [
+   {
+    "source_kc": 17,
+    "score": 0.6666666666666666,
+    "relation": "string"
+   }
+  ],
+  "82": [
+   {
+    "source_kc": 103,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "83": [],
+  "84": [
+   {
+    "source_kc": 105,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "85": [],
+  "86": [],
+  "87": [],
+  "88": [],
+  "89": [
+   {
+    "source_kc": 1,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "90": [],
+  "91": [],
+  "92": [],
+  "93": [
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "94": [],
+  "95": [],
+  "96": [
+   {
+    "source_kc": 20,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 19,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "97": [
+   {
+    "source_kc": 119,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 10,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "98": [
+   {
+    "source_kc": 120,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "99": [],
+  "100": [],
+  "101": [
+   {
+    "source_kc": 57,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 27,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "102": [],
+  "103": [
+   {
+    "source_kc": 27,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "104": [],
+  "105": [],
+  "106": [],
+  "107": [],
+  "108": [],
+  "109": [],
+  "110": [],
+  "111": [],
+  "112": [],
+  "113": [],
+  "114": [
+   {
+    "source_kc": 57,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "115": [
+   {
+    "source_kc": 57,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "116": [],
+  "117": [],
+  "118": [
+   {
+    "source_kc": 70,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   },
+   {
+    "source_kc": 79,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "119": [
+   {
+    "source_kc": 75,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "120": [
+   {
+    "source_kc": 77,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   },
+   {
+    "source_kc": 79,
+    "score": 0.5,
+    "relation": "string"
+   },
+   {
+    "source_kc": 75,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "121": [],
+  "122": [],
+  "123": [],
+  "124": [],
+  "125": [],
+  "126": [],
+  "127": [],
+  "128": [],
+  "129": [],
+  "130": [],
+  "131": [],
+  "132": [],
+  "133": [],
+  "134": [],
+  "135": [],
+  "136": [],
+  "137": [],
+  "138": [
+   {
+    "source_kc": 93,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "139": [],
+  "140": [],
+  "141": [],
+  "142": [],
+  "143": [],
+  "144": [],
+  "145": [],
+  "146": [],
+  "147": [],
+  "148": [],
+  "149": [],
+  "150": [
+   {
+    "source_kc": 98,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "151": [],
+  "152": [],
+  "153": [
+   {
+    "source_kc": 75,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "154": [],
+  "155": [
+   {
+    "source_kc": 101,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "156": [],
+  "157": [],
+  "158": [],
+  "159": [],
+  "160": [
+   {
+    "source_kc": 17,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "161": [
+   {
+    "source_kc": 103,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "162": [
+   {
+    "source_kc": 79,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "163": [
+   {
+    "source_kc": 105,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "164": [],
+  "165": [],
+  "166": [],
+  "167": [],
+  "168": [],
+  "169": [],
+  "170": [],
+  "171": [],
+  "172": [],
+  "173": [],
+  "174": [],
+  "175": [],
+  "176": [],
+  "177": [],
+  "178": [],
+  "179": [
+   {
+    "source_kc": 19,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "180": [
+   {
+    "source_kc": 117,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "181": [],
+  "182": [
+   {
+    "source_kc": 20,
+    "score": 0.5,
+    "relation": "string"
+   }
+  ],
+  "183": [
+   {
+    "source_kc": 119,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "184": [],
+  "185": [
+   {
+    "source_kc": 120,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "186": [
+   {
+    "source_kc": 121,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ],
+  "187": [],
+  "188": [
+   {
+    "source_kc": 122,
+    "score": 0.5714285714285714,
+    "relation": "string"
+   }
+  ]
+ },
+ "meta": {}
+}

@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/DKT_junyi2015_20261004-195512_fold0_bs128",
+  "target": "junyi2015",
+  "alignment": "none",
+  "n_students": 213,
+  "drop_rate": 0.0,
+  "holdout_retry_rate": 0.3274,
+  "within_student_auc": 0.4527
+}

@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/AKT_assistments17_20261003-145008_fold0_bs64",
+  "target": "assistments17",
+  "alignment": "none",
+  "n_students": 273,
+  "drop_rate": 0.0,
+  "holdout_retry_rate": 0.061,
+  "within_student_auc": 0.7453
+}

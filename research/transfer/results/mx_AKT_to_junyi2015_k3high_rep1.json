@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+  "target": "junyi2015",
+  "alignment": "assistments09__to__junyi2015__llm__k3-high__c25k3__rep1",
+  "n_students": 194,
+  "drop_rate": 0.0936,
+  "holdout_retry_rate": 0.3384,
+  "within_student_auc": 0.458
+}

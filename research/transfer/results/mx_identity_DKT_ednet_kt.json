@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/DKT_ednet_kt1_20261003-190327_fold0_bs128",
+  "target": "ednet_kt1",
+  "alignment": "none",
+  "n_students": 245,
+  "drop_rate": 0.0,
+  "holdout_retry_rate": 0.0359,
+  "within_student_auc": 0.8595
+}

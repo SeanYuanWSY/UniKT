@@ -1,0 +1,456 @@
+{
+ "alignment": {
+  "0": [],
+  "1": [],
+  "2": [
+   {
+    "source_kc": 1,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "3": [],
+  "4": [
+   {
+    "source_kc": 2,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "5": [
+   {
+    "source_kc": 3,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "6": [],
+  "7": [
+   {
+    "source_kc": 4,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "8": [
+   {
+    "source_kc": 5,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "9": [],
+  "10": [],
+  "11": [],
+  "12": [],
+  "13": [],
+  "14": [],
+  "15": [],
+  "16": [],
+  "17": [],
+  "18": [],
+  "19": [],
+  "20": [],
+  "21": [],
+  "22": [],
+  "23": [],
+  "24": [],
+  "25": [],
+  "26": [],
+  "27": [],
+  "28": [],
+  "29": [],
+  "30": [],
+  "31": [],
+  "32": [],
+  "33": [],
+  "34": [],
+  "35": [],
+  "36": [],
+  "37": [],
+  "38": [],
+  "39": [],
+  "40": [],
+  "41": [],
+  "42": [],
+  "43": [],
+  "44": [
+   {
+    "source_kc": 10,
+    "score": 0.95,
+    "relation": "equivalent"
+   }
+  ],
+  "45": [],
+  "46": [],
+  "47": [],
+  "48": [],
+  "49": [],
+  "50": [],
+  "51": [],
+  "52": [],
+  "53": [],
+  "54": [],
+  "55": [],
+  "56": [],
+  "57": [],
+  "58": [],
+  "59": [],
+  "60": [],
+  "61": [],
+  "62": [],
+  "63": [],
+  "64": [],
+  "65": [],
+  "66": [],
+  "67": [],
+  "68": [],
+  "69": [],
+  "70": [],
+  "71": [],
+  "72": [],
+  "73": [],
+  "74": [],
+  "75": [],
+  "76": [],
+  "77": [],
+  "78": [],
+  "79": [],
+  "80": [],
+  "81": [
+   {
+    "source_kc": 17,
+    "score": 0.5,
+    "relation": "related"
+   }
+  ],
+  "82": [],
+  "83": [],
+  "84": [],
+  "85": [],
+  "86": [],
+  "87": [],
+  "88": [],
+  "89": [],
+  "90": [],
+  "91": [],
+  "92": [],
+  "93": [],
+  "94": [],
+  "95": [],
+  "96": [],
+  "97": [],
+  "98": [],
+  "99": [
+   {
+    "source_kc": 21,
+    "score": 0.5,
+    "relation": "related"
+   }
+  ],
+  "100": [],
+  "101": [],
+  "102": [],
+  "103": [],
+  "104": [],
+  "105": [],
+  "106": [],
+  "107": [],
+  "108": [],
+  "109": [],
+  "110": [],
+  "111": [],
+  "112": [],
+  "113": [],
+  "114": [],
+  "115": [],
+  "116": [],
+  "117": [],
+  "118": [],
+  "119": [],
+  "120": [],
+  "121": [],
+  "122": [],
+  "123": [],
+  "124": [],
+  "125": [
+   {
+    "source_kc": 41,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "126": [
+   {
+    "source_kc": 42,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "127": [
+   {
+    "source_kc": 43,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "128": [
+   {
+    "source_kc": 44,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "129": [
+   {
+    "source_kc": 45,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "130": [
+   {
+    "source_kc": 46,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "131": [
+   {
+    "source_kc": 47,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "132": [
+   {
+    "source_kc": 48,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "133": [
+   {
+    "source_kc": 49,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "134": [
+   {
+    "source_kc": 5,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "135": [
+   {
+    "source_kc": 50,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "136": [
+   {
+    "source_kc": 51,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "137": [
+   {
+    "source_kc": 52,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "138": [
+   {
+    "source_kc": 53,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "139": [
+   {
+    "source_kc": 54,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "140": [
+   {
+    "source_kc": 55,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "141": [
+   {
+    "source_kc": 56,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "142": [
+   {
+    "source_kc": 57,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "143": [
+   {
+    "source_kc": 58,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "144": [
+   {
+    "source_kc": 59,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "145": [
+   {
+    "source_kc": 6,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "146": [
+   {
+    "source_kc": 60,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "147": [
+   {
+    "source_kc": 61,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "148": [
+   {
+    "source_kc": 62,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "149": [
+   {
+    "source_kc": 63,
+    "score": 1.0,
+    "relation": "equivalent"
+   }
+  ],
+  "150": [
+   {
+    "source_kc": 98,
+    "score": 0.55,
+    "relation": "related"
+   }
+  ],
+  "151": [],
+  "152": [],
+  "153": [],
+  "154": [],
+  "155": [
+   {
+    "source_kc": 101,
+    "score": 0.55,
+    "relation": "related"
+   }
+  ],
+  "156": [],
+  "157": [],
+  "158": [],
+  "159": [],
+  "160": [],
+  "161": [
+   {
+    "source_kc": 103,
+    "score": 0.55,
+    "relation": "related"
+   }
+  ],
+  "162": [],
+  "163": [
+   {
+    "source_kc": 105,
+    "score": 0.55,
+    "relation": "related"
+   }
+  ],
+  "164": [],
+  "165": [],
+  "166": [],
+  "167": [],
+  "168": [],
+  "169": [],
+  "170": [],
+  "171": [],
+  "172": [],
+  "173": [],
+  "174": [],
+  "175": [],
+  "176": [],
+  "177": [],
+  "178": [
+   {
+    "source_kc": 116,
+    "score": 0.95,
+    "relation": "equivalent"
+   }
+  ],
+  "179": [],
+  "180": [
+   {
+    "source_kc": 117,
+    "score": 0.95,
+    "relation": "equivalent"
+   }
+  ],
+  "181": [],
+  "182": [],
+  "183": [
+   {
+    "source_kc": 119,
+    "score": 0.95,
+    "relation": "equivalent"
+   }
+  ],
+  "184": [],
+  "185": [
+   {
+    "source_kc": 120,
+    "score": 0.95,
+    "relation": "equivalent"
+   }
+  ],
+  "186": [
+   {
+    "source_kc": 121,
+    "score": 0.95,
+    "relation": "equivalent"
+   }
+  ],
+  "187": [],
+  "188": [
+   {
+    "source_kc": 122,
+    "score": 0.95,
+    "relation": "equivalent"
+   }
+  ]
+ },
+ "meta": {
+  "failed_chunks": [],
+  "model": "k3",
+  "effort": "high"
+ }
+}

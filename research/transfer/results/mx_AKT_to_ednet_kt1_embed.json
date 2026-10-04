@@ -1,0 +1,9 @@
+{
+  "source_run": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+  "target": "ednet_kt1",
+  "alignment": "assistments09__to__ednet_kt1__embed__bge_m3__rep0",
+  "n_students": 85,
+  "drop_rate": 0.8605,
+  "holdout_retry_rate": 0.0378,
+  "within_student_auc": 0.4114
+}
