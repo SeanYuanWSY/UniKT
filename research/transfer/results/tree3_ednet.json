@@ -1,0 +1,29 @@
+{
+  "dataset": "ednet_kt1",
+  "alignment_keepset": "assistments09__to__ednet_kt1__llm__k3-high__c25k3__rep0",
+  "n_students": 84,
+  "deep_ref_auc": 0.5086,
+  "B1_kc_prior": {
+    "auc": 0.5424
+  },
+  "B2_recent5": {
+    "auc": 0.5613
+  },
+  "B3_mixed": {
+    "auc": 0.5613,
+    "alpha_star": 0.0,
+    "anchor_auc": 0.5575,
+    "evidence_alpha_scores": {
+      "0.0": 0.6718,
+      "0.25": 0.6588,
+      "0.5": 0.6646,
+      "0.75": 0.6715,
+      "1.0": 0.5343
+    }
+  },
+  "B4_logreg": {
+    "auc": 0.5658,
+    "n_train_rows": 306
+  },
+  "note": "alpha chosen leak-free on evidence histories (last-3-attempt CV); all baselines scored on the deep cell's exact keep set"
+}

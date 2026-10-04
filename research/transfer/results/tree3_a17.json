@@ -1,0 +1,29 @@
+{
+  "dataset": "assistments17",
+  "alignment_keepset": "assistments09__to__assistments17__llm__k3-high__c25k3__rep0",
+  "n_students": 264,
+  "deep_ref_auc": 0.534,
+  "B1_kc_prior": {
+    "auc": 0.5463
+  },
+  "B2_recent5": {
+    "auc": 0.5216
+  },
+  "B3_mixed": {
+    "auc": 0.529,
+    "alpha_star": 0.25,
+    "anchor_auc": 0.5342,
+    "evidence_alpha_scores": {
+      "0.0": 0.6002,
+      "0.25": 0.6042,
+      "0.5": 0.6038,
+      "0.75": 0.599,
+      "1.0": 0.5383
+    }
+  },
+  "B4_logreg": {
+    "auc": 0.5148,
+    "n_train_rows": 16659
+  },
+  "note": "alpha chosen leak-free on evidence histories (last-3-attempt CV); all baselines scored on the deep cell's exact keep set"
+}
