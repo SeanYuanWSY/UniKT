@@ -1,0 +1,28 @@
+{
+  "ednet_kt1": {
+    "has_timestamp": true,
+    "identity_native": {
+      "withA": 0.8542,
+      "A_excluded": 0.4635
+    },
+    "frozen_transfer": {
+      "withA": 0.407,
+      "A_excluded": 0.4359
+    },
+    "table_full_withA": 0.5454,
+    "table_full": 0.5454
+  },
+  "junyi2015": {
+    "has_timestamp": true,
+    "identity_native": {
+      "withA": 0.4494,
+      "A_excluded": 0.484
+    },
+    "frozen_transfer": {
+      "withA": 0.4529,
+      "A_excluded": 0.4923
+    },
+    "table_full_withA": 0.5624,
+    "table_full": 0.5624
+  }
+}
