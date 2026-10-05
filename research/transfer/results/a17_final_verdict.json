@@ -1,0 +1,23 @@
+{
+  "n": 273,
+  "keep_scope": {
+    "table_mean": 0.5463,
+    "deep_mean": 0.5329,
+    "paired_delta(table-deep)": 0.0134,
+    "ci95": [
+      -0.009,
+      0.0361
+    ],
+    "verdict": "tie"
+  },
+  "full_scope": {
+    "table_mean": 0.5402,
+    "deep_mean": 0.5449,
+    "paired_delta(table-deep)": -0.0047,
+    "ci95": [
+      -0.023,
+      0.0136
+    ],
+    "verdict": "tie"
+  }
+}
