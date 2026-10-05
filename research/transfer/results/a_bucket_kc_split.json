@@ -1,0 +1,62 @@
+{
+  "assistments17": {
+    "identity": {
+      "withA": 0.7465,
+      "A_excluded": 0.5572,
+      "A1only_excluded": 0.5867,
+      "A1_explode_suspect_auc": 0.903,
+      "A2_true_repeat_auc": 0.5982
+    },
+    "transfer": {
+      "withA": 0.5348,
+      "A_excluded": 0.4274,
+      "A1only_excluded": 0.3928,
+      "A1_explode_suspect_auc": 0.6039,
+      "A2_true_repeat_auc": 0.2469
+    },
+    "A_bucket_split": {
+      "A1_share": 0.7108,
+      "A2_share": 0.2892
+    }
+  },
+  "ednet_kt1": {
+    "identity": {
+      "withA": 0.8587,
+      "A_excluded": 0.4604,
+      "A1only_excluded": 0.4612,
+      "A1_explode_suspect_auc": 1.0,
+      "A2_true_repeat_auc": null
+    },
+    "transfer": {
+      "withA": 0.4055,
+      "A_excluded": 0.4473,
+      "A1only_excluded": 0.4383,
+      "A1_explode_suspect_auc": 0.3583,
+      "A2_true_repeat_auc": null
+    },
+    "A_bucket_split": {
+      "A1_share": 0.9965,
+      "A2_share": 0.0035
+    }
+  },
+  "junyi2015": {
+    "identity": {
+      "withA": 0.4475,
+      "A_excluded": 0.4828,
+      "A1only_excluded": 0.4475,
+      "A1_explode_suspect_auc": null,
+      "A2_true_repeat_auc": 0.4265
+    },
+    "transfer": {
+      "withA": 0.4503,
+      "A_excluded": 0.4911,
+      "A1only_excluded": 0.4503,
+      "A1_explode_suspect_auc": null,
+      "A2_true_repeat_auc": 0.4763
+    },
+    "A_bucket_split": {
+      "A1_share": 0.0,
+      "A2_share": 1.0
+    }
+  }
+}
