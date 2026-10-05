@@ -1,0 +1,98 @@
+{
+  "ednet_kt1": {
+    "DKT": {
+      "bucket_A_auc": 1.0,
+      "bucket_A_n": 157,
+      "bucket_B_auc": 0.3981,
+      "bucket_B_n": 9,
+      "bucket_C_auc": 0.5362,
+      "bucket_C_n": 207,
+      "A_excluded_auc": 0.5376,
+      "A_excluded_n": 207,
+      "shares": {
+        "A": 0.5259,
+        "B": 0.0099,
+        "C": 0.4643
+      }
+    },
+    "AKT": {
+      "bucket_A_auc": 1.0,
+      "bucket_A_n": 157,
+      "bucket_B_auc": 0.6204,
+      "bucket_B_n": 9,
+      "bucket_C_auc": 0.4597,
+      "bucket_C_n": 207,
+      "A_excluded_auc": 0.4604,
+      "A_excluded_n": 207,
+      "shares": {
+        "A": 0.5259,
+        "B": 0.0099,
+        "C": 0.4643
+      }
+    }
+  },
+  "assistments17": {
+    "DKT": {
+      "bucket_A_auc": 0.8892,
+      "bucket_A_n": 248,
+      "bucket_B_auc": 0.58,
+      "bucket_B_n": 129,
+      "bucket_C_auc": 0.5831,
+      "bucket_C_n": 206,
+      "A_excluded_auc": 0.5979,
+      "A_excluded_n": 226,
+      "shares": {
+        "A": 0.6255,
+        "B": 0.143,
+        "C": 0.2315
+      }
+    },
+    "AKT": {
+      "bucket_A_auc": 0.8148,
+      "bucket_A_n": 248,
+      "bucket_B_auc": 0.4659,
+      "bucket_B_n": 129,
+      "bucket_C_auc": 0.5593,
+      "bucket_C_n": 206,
+      "A_excluded_auc": 0.5572,
+      "A_excluded_n": 226,
+      "shares": {
+        "A": 0.6255,
+        "B": 0.143,
+        "C": 0.2315
+      }
+    }
+  },
+  "junyi2015": {
+    "DKT": {
+      "bucket_A_auc": 0.4215,
+      "bucket_A_n": 135,
+      "bucket_B_auc": 0.4436,
+      "bucket_B_n": 98,
+      "bucket_C_auc": 0.7033,
+      "bucket_C_n": 61,
+      "A_excluded_auc": 0.5095,
+      "A_excluded_n": 150,
+      "shares": {
+        "A": 0.6829,
+        "B": 0.2298,
+        "C": 0.0873
+      }
+    },
+    "AKT": {
+      "bucket_A_auc": 0.4265,
+      "bucket_A_n": 135,
+      "bucket_B_auc": 0.4014,
+      "bucket_B_n": 98,
+      "bucket_C_auc": 0.6187,
+      "bucket_C_n": 61,
+      "A_excluded_auc": 0.4828,
+      "A_excluded_n": 150,
+      "shares": {
+        "A": 0.6829,
+        "B": 0.2298,
+        "C": 0.0873
+      }
+    }
+  }
+}

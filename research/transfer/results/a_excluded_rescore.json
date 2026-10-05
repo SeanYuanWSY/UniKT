@@ -1,0 +1,21 @@
+{
+  "runs": {
+    "seed42": {
+      "deep_keep_auc": 0.5314,
+      "deep_keep_Aexcluded": 0.4306
+    },
+    "seed43": {
+      "deep_keep_auc": 0.51,
+      "deep_keep_Aexcluded": 0.4374
+    },
+    "seed44": {
+      "deep_keep_auc": 0.5082,
+      "deep_keep_Aexcluded": 0.4364
+    }
+  },
+  "table": {
+    "keep_auc": 0.5472,
+    "keep_Aexcluded": 0.5509
+  },
+  "A_share_of_keep_holdout": 0.6591
+}
