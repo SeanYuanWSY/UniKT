@@ -1,0 +1,65 @@
+{
+  "assistments17": {
+    "n_eval_students": 99,
+    "deep_ref": 0.532,
+    "B2_recency": 0.5055,
+    "pool_10": {
+      "auc": 0.4924,
+      "kc_coverage_of_rows": 0.9871
+    },
+    "pool_30": {
+      "auc": 0.4963,
+      "kc_coverage_of_rows": 0.9952
+    },
+    "pool_100": {
+      "auc": 0.5195,
+      "kc_coverage_of_rows": 1.0
+    },
+    "pool_174": {
+      "auc": 0.5262,
+      "kc_coverage_of_rows": 1.0
+    }
+  },
+  "junyi2015": {
+    "n_eval_students": 82,
+    "deep_ref": 0.466,
+    "B2_recency": 0.5405,
+    "pool_10": {
+      "auc": 0.5489,
+      "kc_coverage_of_rows": 0.9479
+    },
+    "pool_30": {
+      "auc": 0.5653,
+      "kc_coverage_of_rows": 0.96
+    },
+    "pool_100": {
+      "auc": 0.5713,
+      "kc_coverage_of_rows": 1.0
+    },
+    "pool_131": {
+      "auc": 0.5718,
+      "kc_coverage_of_rows": 1.0
+    }
+  },
+  "ednet_kt1": {
+    "n_eval_students": 83,
+    "deep_ref": 0.509,
+    "B2_recency": 0.5219,
+    "pool_10": {
+      "auc": 0.4794,
+      "kc_coverage_of_rows": 0.9902
+    },
+    "pool_30": {
+      "auc": 0.5373,
+      "kc_coverage_of_rows": 1.0
+    },
+    "pool_100": {
+      "auc": 0.5465,
+      "kc_coverage_of_rows": 1.0
+    },
+    "pool_300": {
+      "auc": 0.578,
+      "kc_coverage_of_rows": 1.0
+    }
+  }
+}
