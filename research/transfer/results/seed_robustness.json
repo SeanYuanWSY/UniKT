@@ -1,0 +1,21 @@
+{
+  "table_keep": 0.546,
+  "n": 254,
+  "seed42": {
+    "run": "AKT_assistments09_20261003-025410_fold0_bs64",
+    "deep_keep_auc": 0.5314,
+    "n": 255
+  },
+  "seed43": {
+    "run": "AKT_assistments09_20261006-031502_fold0_bs64",
+    "deep_keep_auc": 0.51,
+    "n": 255
+  },
+  "seed44": {
+    "run": "AKT_assistments09_20261006-041756_fold0_bs64",
+    "deep_keep_auc": 0.5082,
+    "n": 255
+  },
+  "seed_spread": 0.0232,
+  "seed_mean": 0.5165
+}

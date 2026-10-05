@@ -1,0 +1,23 @@
+{
+  "junyi2015": {
+    "n_orders": 10,
+    "llm_delta_mean": 0.0084,
+    "llm_delta_std": 0.0195,
+    "random_delta_mean": -0.0749,
+    "random_delta_std": 0.0306
+  },
+  "assistments17": {
+    "n_orders": 10,
+    "llm_delta_mean": -0.028,
+    "llm_delta_std": 0.0192,
+    "random_delta_mean": -0.0366,
+    "random_delta_std": 0.0143
+  },
+  "ednet_kt1": {
+    "n_orders": 10,
+    "llm_delta_mean": -0.0142,
+    "llm_delta_std": 0.0069,
+    "random_delta_mean": -0.0148,
+    "random_delta_std": 0.0062
+  }
+}
