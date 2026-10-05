@@ -1,0 +1,17 @@
+{
+  "assistments17": {
+    "B1_withA": 0.5373,
+    "B1_A1excluded": 0.5427,
+    "B2_A1excluded": 0.5205
+  },
+  "junyi2015": {
+    "B1_withA": 0.513,
+    "B1_A1excluded": 0.513,
+    "B2_A1excluded": 0.5101
+  },
+  "ednet_kt1": {
+    "B1_withA": 0.5629,
+    "B1_A1excluded": 0.552,
+    "B2_A1excluded": 0.5615
+  }
+}
