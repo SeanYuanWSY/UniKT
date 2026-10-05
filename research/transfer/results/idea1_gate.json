@@ -1,0 +1,11 @@
+{
+  "n": 250,
+  "k": 5,
+  "neighbour_kc_jaccard": 0.2375,
+  "random_kc_jaccard": 0.2309,
+  "neighbour_accdiff": 0.1083,
+  "random_accdiff": 0.1412,
+  "gate_jaccard_lift": 0.0066,
+  "gate_accdiff_drop": 0.0329,
+  "note": "1-D embedding proxy (mean prob); upgrade to true hidden state if borderline"
+}
