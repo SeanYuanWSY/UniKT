@@ -1,0 +1,35 @@
+{
+  "junyi2015": {
+    "n_eval_students": 252,
+    "cold_rows": 423,
+    "total_rows": 4627,
+    "auc_default": 0.5658,
+    "auc_llm_coldonly": 0.5816,
+    "auc_pure05": 0.5504,
+    "auc_random_coldonly": 0.5397,
+    "delta_llm": 0.0158,
+    "delta_random": -0.0261
+  },
+  "ednet_kt1": {
+    "n_eval_students": 300,
+    "cold_rows": 1600,
+    "total_rows": 5820,
+    "auc_default": 0.5142,
+    "auc_llm_coldonly": 0.5173,
+    "auc_pure05": 0.5074,
+    "auc_random_coldonly": 0.5171,
+    "delta_llm": 0.0031,
+    "delta_random": 0.0029
+  },
+  "assistments17": {
+    "n_eval_students": 274,
+    "cold_rows": 550,
+    "total_rows": 9937,
+    "auc_default": 0.5678,
+    "auc_llm_coldonly": 0.5817,
+    "auc_pure05": 0.5453,
+    "auc_random_coldonly": 0.5614,
+    "delta_llm": 0.0139,
+    "delta_random": -0.0064
+  }
+}
