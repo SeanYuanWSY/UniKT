@@ -1,0 +1,11 @@
+{
+  "n": 200,
+  "dim": 60,
+  "k": 5,
+  "neighbour_kc_jaccard": 0.2665,
+  "random_kc_jaccard": 0.2286,
+  "neighbour_accdiff": 0.0896,
+  "random_accdiff": 0.1422,
+  "gate_jaccard_lift": 0.0378,
+  "gate_accdiff_drop": 0.0526
+}
