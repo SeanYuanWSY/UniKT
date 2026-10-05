@@ -1,0 +1,23 @@
+{
+  "assistments17": {
+    "best_m": 4.0,
+    "loo_auc": 0.8256,
+    "full_auc": 0.7636,
+    "keep_auc": 0.7905,
+    "n_students": 272
+  },
+  "junyi2015": {
+    "best_m": 32.0,
+    "loo_auc": 0.7112,
+    "full_auc": 0.5694,
+    "keep_auc": 0.5595,
+    "n_students": 181
+  },
+  "ednet_kt1": {
+    "best_m": 2.0,
+    "loo_auc": 0.9378,
+    "full_auc": 0.8488,
+    "keep_auc": 0.7313,
+    "n_students": 275
+  }
+}
