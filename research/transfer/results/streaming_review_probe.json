@@ -1,0 +1,662 @@
+{
+  "junyi2015": {
+    "n_students": 213,
+    "n_users_requested": 252,
+    "time_check": {
+      "n_users_matched": 252,
+      "spearman_userid_vs_firstts": 0.134,
+      "spearman_userid_vs_meants": 0.127,
+      "ts_range": [
+        7760758252.0,
+        68516213721.0
+      ]
+    },
+    "prefix": {
+      "10": {
+        "cold_rows": 253,
+        "share_of_holdout": 0.0609,
+        "students_with_ge1": 26,
+        "students_with_ge5": 16,
+        "students_with_ge10": 7,
+        "median_cold_rows_pos_student": 7,
+        "cold_label_mean": 0.672,
+        "n_distinct_cold_kcs": 26
+      },
+      "20": {
+        "cold_rows": 402,
+        "share_of_holdout": 0.0968,
+        "students_with_ge1": 45,
+        "students_with_ge5": 23,
+        "students_with_ge10": 12,
+        "median_cold_rows_pos_student": 5,
+        "cold_label_mean": 0.687,
+        "n_distinct_cold_kcs": 31
+      },
+      "30": {
+        "cold_rows": 458,
+        "share_of_holdout": 0.1103,
+        "students_with_ge1": 52,
+        "students_with_ge5": 28,
+        "students_with_ge10": 13,
+        "median_cold_rows_pos_student": 5,
+        "cold_label_mean": 0.664,
+        "n_distinct_cold_kcs": 32
+      },
+      "total_holdout_rows": 4151,
+      "unseen_rows_share": 0.0357,
+      "cold20_mass_by_decile": [
+        201,
+        39,
+        65,
+        25,
+        27,
+        28,
+        1,
+        15,
+        0,
+        1
+      ]
+    },
+    "top_cold_kcs": [
+      {
+        "kc": 31,
+        "name": "statistics",
+        "cold_rows": 48,
+        "global_n": 223,
+        "global_acc": 0.749
+      },
+      {
+        "kc": 3,
+        "name": "area-perimeter-and-volume",
+        "cold_rows": 36,
+        "global_n": 516,
+        "global_acc": 0.645
+      },
+      {
+        "kc": 23,
+        "name": "quadrilaterals-and-polygons",
+        "cold_rows": 35,
+        "global_n": 79,
+        "global_acc": 0.608
+      },
+      {
+        "kc": 27,
+        "name": "segments-and-angles",
+        "cold_rows": 28,
+        "global_n": 599,
+        "global_acc": 0.841
+      },
+      {
+        "kc": 30,
+        "name": "solving-linear-equations-and-inequalities",
+        "cold_rows": 25,
+        "global_n": 257,
+        "global_acc": 0.728
+      },
+      {
+        "kc": 20,
+        "name": "polynomials",
+        "cold_rows": 24,
+        "global_n": 337,
+        "global_acc": 0.763
+      },
+      {
+        "kc": 17,
+        "name": "multiplication-division",
+        "cold_rows": 22,
+        "global_n": 2052,
+        "global_acc": 0.931
+      },
+      {
+        "kc": 7,
+        "name": "circle-properties",
+        "cold_rows": 18,
+        "global_n": 55,
+        "global_acc": 0.636
+      },
+      {
+        "kc": 15,
+        "name": "linear-equations-and-inequalitie",
+        "cold_rows": 16,
+        "global_n": 74,
+        "global_acc": 0.797
+      },
+      {
+        "kc": 12,
+        "name": "exponents-radicals",
+        "cold_rows": 15,
+        "global_n": 232,
+        "global_acc": 0.707
+      },
+      {
+        "kc": 24,
+        "name": "quadtratics",
+        "cold_rows": 13,
+        "global_n": 102,
+        "global_acc": 0.422
+      },
+      {
+        "kc": 8,
+        "name": "complex-numbers",
+        "cold_rows": 13,
+        "global_n": 16,
+        "global_acc": 0.562
+      },
+      {
+        "kc": 21,
+        "name": "probability",
+        "cold_rows": 12,
+        "global_n": 36,
+        "global_acc": 0.611
+      },
+      {
+        "kc": 19,
+        "name": "parallel-and-perpendicular-lines",
+        "cold_rows": 11,
+        "global_n": 175,
+        "global_acc": 0.869
+      },
+      {
+        "kc": 37,
+        "name": "unit-conversion",
+        "cold_rows": 11,
+        "global_n": 62,
+        "global_acc": 0.758
+      }
+    ],
+    "identity": {
+      "n_kc_total": 38,
+      "n_kc_ever_cold20": 31,
+      "mean_global_acc_cold": 0.653,
+      "mean_global_acc_warm_ge100": 0.77,
+      "mean_namelen_cold": 17.6,
+      "mean_namelen_warm": 17.8
+    },
+    "self_inclusive": {
+      "10": {
+        "cold_rows": 170,
+        "share_of_holdout": 0.041,
+        "students_with_ge1": 21,
+        "students_with_ge5": 12,
+        "students_with_ge10": 6,
+        "median_cold_rows_pos_student": 7,
+        "cold_label_mean": 0.612,
+        "n_distinct_cold_kcs": 19
+      },
+      "20": {
+        "cold_rows": 285,
+        "share_of_holdout": 0.0687,
+        "students_with_ge1": 41,
+        "students_with_ge5": 19,
+        "students_with_ge10": 8,
+        "median_cold_rows_pos_student": 4,
+        "cold_label_mean": 0.649,
+        "n_distinct_cold_kcs": 26
+      },
+      "30": {
+        "cold_rows": 328,
+        "share_of_holdout": 0.079,
+        "students_with_ge1": 46,
+        "students_with_ge5": 22,
+        "students_with_ge10": 10,
+        "median_cold_rows_pos_student": 4,
+        "cold_label_mean": 0.659,
+        "n_distinct_cold_kcs": 28
+      },
+      "total_holdout_rows": 4151,
+      "unseen_rows_share": 0.0207,
+      "cold20_mass_by_decile": [
+        108,
+        38,
+        65,
+        25,
+        20,
+        12,
+        1,
+        15,
+        0,
+        1
+      ]
+    }
+  },
+  "ednet_kt1": {
+    "n_students": 245,
+    "n_users_requested": 300,
+    "time_check": {
+      "n_users_matched": 300,
+      "spearman_userid_vs_firstts": -0.149,
+      "spearman_userid_vs_meants": -0.306,
+      "ts_range": [
+        22691817693.0,
+        74187887373.0
+      ]
+    },
+    "prefix": {
+      "10": {
+        "cold_rows": 546,
+        "share_of_holdout": 0.0852,
+        "students_with_ge1": 51,
+        "students_with_ge5": 31,
+        "students_with_ge10": 17,
+        "median_cold_rows_pos_student": 6,
+        "cold_label_mean": 0.56,
+        "n_distinct_cold_kcs": 152
+      },
+      "20": {
+        "cold_rows": 924,
+        "share_of_holdout": 0.1441,
+        "students_with_ge1": 99,
+        "students_with_ge5": 45,
+        "students_with_ge10": 34,
+        "median_cold_rows_pos_student": 3,
+        "cold_label_mean": 0.588,
+        "n_distinct_cold_kcs": 166
+      },
+      "30": {
+        "cold_rows": 1531,
+        "share_of_holdout": 0.2388,
+        "students_with_ge1": 158,
+        "students_with_ge5": 83,
+        "students_with_ge10": 54,
+        "median_cold_rows_pos_student": 5,
+        "cold_label_mean": 0.587,
+        "n_distinct_cold_kcs": 168
+      },
+      "total_holdout_rows": 6410,
+      "unseen_rows_share": 0.025,
+      "cold20_mass_by_decile": [
+        595,
+        195,
+        73,
+        16,
+        10,
+        4,
+        1,
+        6,
+        13,
+        11
+      ]
+    },
+    "top_cold_kcs": [
+      {
+        "kc": 22,
+        "name": "118",
+        "cold_rows": 22,
+        "global_n": 26,
+        "global_acc": 0.538
+      },
+      {
+        "kc": 146,
+        "name": "60",
+        "cold_rows": 18,
+        "global_n": 17,
+        "global_acc": 0.588
+      },
+      {
+        "kc": 62,
+        "name": "156",
+        "cold_rows": 18,
+        "global_n": 88,
+        "global_acc": 0.523
+      },
+      {
+        "kc": 141,
+        "name": "56",
+        "cold_rows": 15,
+        "global_n": 33,
+        "global_acc": 0.636
+      },
+      {
+        "kc": 11,
+        "name": "108",
+        "cold_rows": 15,
+        "global_n": 31,
+        "global_acc": 0.645
+      },
+      {
+        "kc": 90,
+        "name": "181",
+        "cold_rows": 12,
+        "global_n": 1114,
+        "global_acc": 0.668
+      },
+      {
+        "kc": 33,
+        "name": "129",
+        "cold_rows": 12,
+        "global_n": 43,
+        "global_acc": 0.674
+      },
+      {
+        "kc": 139,
+        "name": "54",
+        "cold_rows": 11,
+        "global_n": 227,
+        "global_acc": 0.441
+      },
+      {
+        "kc": 29,
+        "name": "124",
+        "cold_rows": 11,
+        "global_n": 30,
+        "global_acc": 0.767
+      },
+      {
+        "kc": 85,
+        "name": "177",
+        "cold_rows": 11,
+        "global_n": 377,
+        "global_acc": 0.408
+      },
+      {
+        "kc": 7,
+        "name": "104",
+        "cold_rows": 11,
+        "global_n": 46,
+        "global_acc": 0.565
+      },
+      {
+        "kc": 94,
+        "name": "185",
+        "cold_rows": 10,
+        "global_n": 1095,
+        "global_acc": 0.559
+      },
+      {
+        "kc": 142,
+        "name": "57",
+        "cold_rows": 10,
+        "global_n": 200,
+        "global_acc": 0.445
+      },
+      {
+        "kc": 140,
+        "name": "55",
+        "cold_rows": 10,
+        "global_n": 223,
+        "global_acc": 0.583
+      },
+      {
+        "kc": 138,
+        "name": "53",
+        "cold_rows": 10,
+        "global_n": 426,
+        "global_acc": 0.286
+      }
+    ],
+    "identity": {
+      "n_kc_total": 176,
+      "n_kc_ever_cold20": 166,
+      "mean_global_acc_cold": 0.622,
+      "mean_global_acc_warm_ge100": 0.53,
+      "mean_namelen_cold": 2.4,
+      "mean_namelen_warm": 2.2
+    },
+    "self_inclusive": {
+      "10": {
+        "cold_rows": 474,
+        "share_of_holdout": 0.0739,
+        "students_with_ge1": 49,
+        "students_with_ge5": 25,
+        "students_with_ge10": 15,
+        "median_cold_rows_pos_student": 5,
+        "cold_label_mean": 0.568,
+        "n_distinct_cold_kcs": 146
+      },
+      "20": {
+        "cold_rows": 869,
+        "share_of_holdout": 0.1356,
+        "students_with_ge1": 99,
+        "students_with_ge5": 44,
+        "students_with_ge10": 32,
+        "median_cold_rows_pos_student": 3,
+        "cold_label_mean": 0.585,
+        "n_distinct_cold_kcs": 163
+      },
+      "30": {
+        "cold_rows": 1452,
+        "share_of_holdout": 0.2265,
+        "students_with_ge1": 157,
+        "students_with_ge5": 80,
+        "students_with_ge10": 52,
+        "median_cold_rows_pos_student": 5,
+        "cold_label_mean": 0.582,
+        "n_distinct_cold_kcs": 168
+      },
+      "total_holdout_rows": 6410,
+      "unseen_rows_share": 0.0125,
+      "cold20_mass_by_decile": [
+        565,
+        173,
+        70,
+        16,
+        10,
+        4,
+        1,
+        6,
+        13,
+        11
+      ]
+    }
+  },
+  "assistments17": {
+    "n_students": 273,
+    "n_users_requested": 274,
+    "time_check": {
+      "n_users_matched": 274,
+      "spearman_userid_vs_firstts": -0.06,
+      "spearman_userid_vs_meants": -0.068,
+      "ts_range": [
+        5000.0,
+        47606849000.0
+      ]
+    },
+    "prefix": {
+      "10": {
+        "cold_rows": 293,
+        "share_of_holdout": 0.0296,
+        "students_with_ge1": 45,
+        "students_with_ge5": 17,
+        "students_with_ge10": 10,
+        "median_cold_rows_pos_student": 2,
+        "cold_label_mean": 0.433,
+        "n_distinct_cold_kcs": 50
+      },
+      "20": {
+        "cold_rows": 489,
+        "share_of_holdout": 0.0494,
+        "students_with_ge1": 64,
+        "students_with_ge5": 29,
+        "students_with_ge10": 18,
+        "median_cold_rows_pos_student": 4,
+        "cold_label_mean": 0.407,
+        "n_distinct_cold_kcs": 66
+      },
+      "30": {
+        "cold_rows": 625,
+        "share_of_holdout": 0.0631,
+        "students_with_ge1": 84,
+        "students_with_ge5": 38,
+        "students_with_ge10": 24,
+        "median_cold_rows_pos_student": 4,
+        "cold_label_mean": 0.432,
+        "n_distinct_cold_kcs": 79
+      },
+      "total_holdout_rows": 9900,
+      "unseen_rows_share": 0.0091,
+      "cold20_mass_by_decile": [
+        340,
+        78,
+        38,
+        17,
+        3,
+        6,
+        2,
+        1,
+        2,
+        2
+      ]
+    },
+    "top_cold_kcs": [
+      {
+        "kc": 47,
+        "name": "linear-area-volume-conversion",
+        "cold_rows": 39,
+        "global_n": 208,
+        "global_acc": 0.351
+      },
+      {
+        "kc": 45,
+        "name": "isosceles-triangle",
+        "cold_rows": 27,
+        "global_n": 147,
+        "global_acc": 0.422
+      },
+      {
+        "kc": 19,
+        "name": "combinatorics",
+        "cold_rows": 25,
+        "global_n": 579,
+        "global_acc": 0.42
+      },
+      {
+        "kc": 41,
+        "name": "inequality-solving",
+        "cold_rows": 20,
+        "global_n": 245,
+        "global_acc": 0.363
+      },
+      {
+        "kc": 91,
+        "name": "subtraction",
+        "cold_rows": 20,
+        "global_n": 143,
+        "global_acc": 0.545
+      },
+      {
+        "kc": 55,
+        "name": "multiplication",
+        "cold_rows": 19,
+        "global_n": 737,
+        "global_acc": 0.4
+      },
+      {
+        "kc": 52,
+        "name": "measurement",
+        "cold_rows": 17,
+        "global_n": 214,
+        "global_acc": 0.294
+      },
+      {
+        "kc": 76,
+        "name": "rate",
+        "cold_rows": 16,
+        "global_n": 93,
+        "global_acc": 0.344
+      },
+      {
+        "kc": 43,
+        "name": "interpreting-linear-equations",
+        "cold_rows": 14,
+        "global_n": 1183,
+        "global_acc": 0.34
+      },
+      {
+        "kc": 59,
+        "name": "noskill",
+        "cold_rows": 13,
+        "global_n": 6269,
+        "global_acc": 0.426
+      },
+      {
+        "kc": 101,
+        "name": "venn-diagram",
+        "cold_rows": 13,
+        "global_n": 503,
+        "global_acc": 0.292
+      },
+      {
+        "kc": 38,
+        "name": "graph-shape",
+        "cold_rows": 13,
+        "global_n": 511,
+        "global_acc": 0.425
+      },
+      {
+        "kc": 96,
+        "name": "symbolization-articulation",
+        "cold_rows": 12,
+        "global_n": 583,
+        "global_acc": 0.376
+      },
+      {
+        "kc": 66,
+        "name": "percent-of",
+        "cold_rows": 10,
+        "global_n": 660,
+        "global_acc": 0.305
+      },
+      {
+        "kc": 89,
+        "name": "substitution",
+        "cold_rows": 9,
+        "global_n": 651,
+        "global_acc": 0.335
+      }
+    ],
+    "identity": {
+      "n_kc_total": 96,
+      "n_kc_ever_cold20": 66,
+      "mean_global_acc_cold": 0.394,
+      "mean_global_acc_warm_ge100": 0.367,
+      "mean_namelen_cold": 16.5,
+      "mean_namelen_warm": 17.0
+    },
+    "self_inclusive": {
+      "10": {
+        "cold_rows": 237,
+        "share_of_holdout": 0.0239,
+        "students_with_ge1": 43,
+        "students_with_ge5": 16,
+        "students_with_ge10": 8,
+        "median_cold_rows_pos_student": 2,
+        "cold_label_mean": 0.473,
+        "n_distinct_cold_kcs": 43
+      },
+      "20": {
+        "cold_rows": 428,
+        "share_of_holdout": 0.0432,
+        "students_with_ge1": 63,
+        "students_with_ge5": 27,
+        "students_with_ge10": 16,
+        "median_cold_rows_pos_student": 4,
+        "cold_label_mean": 0.397,
+        "n_distinct_cold_kcs": 59
+      },
+      "30": {
+        "cold_rows": 572,
+        "share_of_holdout": 0.0578,
+        "students_with_ge1": 81,
+        "students_with_ge5": 37,
+        "students_with_ge10": 23,
+        "median_cold_rows_pos_student": 4,
+        "cold_label_mean": 0.428,
+        "n_distinct_cold_kcs": 77
+      },
+      "total_holdout_rows": 9900,
+      "unseen_rows_share": 0.0037,
+      "cold20_mass_by_decile": [
+        286,
+        71,
+        38,
+        17,
+        3,
+        6,
+        2,
+        1,
+        2,
+        2
+      ]
+    }
+  }
+}
