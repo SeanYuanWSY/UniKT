@@ -1,0 +1,16 @@
+{
+  "n_students": 265,
+  "deep_AKT": 0.5329,
+  "table": 0.5473,
+  "F1_alpha_fusion": {
+    "alpha": 0.8,
+    "auc": 0.5433
+  },
+  "F2_stack2": 0.5429,
+  "F4_stack3": 0.5432,
+  "preregistered_gate": {
+    "continue_threshold": 0.5673,
+    "strong_threshold": 0.5873,
+    "best_fusion": 0.5433
+  }
+}

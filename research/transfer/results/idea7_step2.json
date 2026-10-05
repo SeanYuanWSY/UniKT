@@ -1,0 +1,23 @@
+{
+  "assistments17": {
+    "n_students": 273,
+    "b1_with_0.5_fallback": 0.5402,
+    "b1_with_llm_fallback": 0.5402,
+    "delta": 0.0,
+    "gate_rho_k3": 0.148
+  },
+  "junyi2015": {
+    "n_students": 213,
+    "b1_with_0.5_fallback": 0.5624,
+    "b1_with_llm_fallback": 0.5624,
+    "delta": 0.0,
+    "gate_rho_k3": 0.61
+  },
+  "ednet_kt1": {
+    "n_students": 245,
+    "b1_with_0.5_fallback": 0.5454,
+    "b1_with_llm_fallback": 0.5454,
+    "delta": 0.0,
+    "gate_rho_k3": 0.05
+  }
+}
