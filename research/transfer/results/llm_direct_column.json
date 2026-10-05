@@ -1,0 +1,10 @@
+{
+  "model": "glm-5.3-flash",
+  "n_students_scored": 99,
+  "n_rows_scored": 3565,
+  "within_student_auc": 0.5181,
+  "references": {
+    "table_keep": 0.546,
+    "deep_keep": 0.533
+  }
+}
