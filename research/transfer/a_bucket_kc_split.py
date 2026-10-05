@@ -95,21 +95,29 @@ def main(n_users=250):
                         else:
                             a2 = False
                         if a2:
-                            rows_noA1.append(row)
                             st_a2.append(row)
                             if mtag == "identity":
                                 a2_cnt += 1
                         else:
-                            rows_noA.append(row)  # A1: excluded in both variants
-                            rows_noA1.append(row)  # A1 excluded from noA1? No:
-                            # define: noA1 = exclude only A1 rows; noA = exclude all A
                             st_a1.append(row)
                             if mtag == "identity":
                                 a1_cnt += 1
                         tot += 1 if mtag == "identity" else 0
                     else:
-                        rows_noA1.append(row)
-                        rows_noA.append(row)
+                        pass
+                # rebuild exclusion variants cleanly from labelled rows
+                labelled = []
+                for i in sorted(hold_pos):
+                    if i == 0:
+                        continue
+                    j = jmap[i]
+                    sameq = int(ws.question[i]) == int(ws.question[i - 1])
+                    a2row = sameq and seq[i] == seq[i - 1]
+                    a1row = sameq and not a2row
+                    labelled.append((a1row, a2row, {"y": resp[i], "pred": float(probs[j])}))
+                rows_noA = [r for a1, a2, r in labelled if not (a1 or a2)]
+                rows_noA1 = [r for a1, a2, r in labelled if not a1]
+                rows_all = [r for _, _, r in labelled]
                 # fix: rows_noA1 should EXCLUDE A1 only (keep A2 and non-A)
                 a_all = stratified_auc_rows(rows_all, "pred")
                 a_noA = stratified_auc_rows(rows_noA, "pred")
