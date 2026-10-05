@@ -1,0 +1,16 @@
+{
+  "n_kc": 96,
+  "n_buckets": 10,
+  "identity": 0.7465,
+  "degree_preserving_mean": 0.6104,
+  "degree_preserving_shuffles": [
+    0.6115,
+    0.6127,
+    0.6071
+  ],
+  "ratio": 0.8177,
+  "reference": {
+    "unconstrained": 0.612,
+    "freq_preserved": 0.599
+  }
+}
