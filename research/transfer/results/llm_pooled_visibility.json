@@ -1,0 +1,29 @@
+{
+  "assistments17": {
+    "n_rows": 1904,
+    "n_students_scored": 95,
+    "pooled_auc_llm": 0.5321,
+    "pooled_p_perm": 0.1244,
+    "ge": 24,
+    "per_student_auc_mean": 0.5246,
+    "per_student_p_perm_ref": 0.0995
+  },
+  "ednet_kt1": {
+    "n_rows": 928,
+    "n_students_scored": 83,
+    "pooled_auc_llm": 0.5893,
+    "pooled_p_perm": 0.0249,
+    "ge": 4,
+    "per_student_auc_mean": 0.5496,
+    "per_student_p_perm_ref": 0.0448
+  },
+  "junyi2015": {
+    "n_rows": 1844,
+    "n_students_scored": 82,
+    "pooled_auc_llm": 0.6645,
+    "pooled_p_perm": 0.0149,
+    "ge": 2,
+    "per_student_auc_mean": 0.5456,
+    "per_student_p_perm_ref": 0.0647
+  }
+}
