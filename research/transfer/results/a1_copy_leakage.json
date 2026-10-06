@@ -1,0 +1,32 @@
+{
+  "assistments17": {
+    "n_students": 274,
+    "copy_prev_auc_a1only": 0.4704,
+    "copy_prev2_auc_a1only": 0.4609,
+    "copy_prev_kept_auc_a1only": 0.4919,
+    "copy_prev_auc_withA": 0.6458,
+    "kept_adj_eq_rate": 0.5394,
+    "removed_adj_eq_rate": 0.9035,
+    "base_rate_maxp": 0.6269
+  },
+  "ednet_kt1": {
+    "n_students": 683,
+    "copy_prev_auc_a1only": 0.4557,
+    "copy_prev2_auc_a1only": 0.443,
+    "copy_prev_kept_auc_a1only": 0.4451,
+    "copy_prev_auc_withA": 0.7089,
+    "kept_adj_eq_rate": 0.5843,
+    "removed_adj_eq_rate": 0.9982,
+    "base_rate_maxp": 0.5258
+  },
+  "junyi2015": {
+    "n_students": 252,
+    "copy_prev_auc_a1only": 0.5141,
+    "copy_prev2_auc_a1only": 0.498,
+    "copy_prev_kept_auc_a1only": 0.5008,
+    "copy_prev_auc_withA": 0.5141,
+    "kept_adj_eq_rate": 0.7618,
+    "removed_adj_eq_rate": 0.0,
+    "base_rate_maxp": 0.8346
+  }
+}
