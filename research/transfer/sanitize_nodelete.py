@@ -27,7 +27,7 @@ from baseline_eval import build_rows, fit_global_kc_prior  # noqa: E402
 from transfer_eval import stratified_auc_rows  # noqa: E402
 from llm_explain_restore_shim import restore_any  # noqa: E402
 from restore import load_user_samples  # noqa: E402
-from utils.data_source import get_data_source  # noqa: E402
+from utils.data_process import get_data_source  # noqa: E402
 
 ALIGN = {
     "assistments17": "assistments09__to__assistments17__llm__k3-high__c25k3__rep0",
