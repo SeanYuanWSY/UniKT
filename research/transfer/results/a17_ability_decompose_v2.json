@@ -1,0 +1,23 @@
+{
+  "assistments17": {
+    "alpha_star": 1.0,
+    "B1_A1excluded": 0.5481,
+    "B1_plus_ability": 0.5481,
+    "n": 261,
+    "delta": 0.0
+  },
+  "ednet_kt1": {
+    "alpha_star": 1.0,
+    "B1_A1excluded": 0.5252,
+    "B1_plus_ability": 0.5252,
+    "n": 245,
+    "delta": 0.0
+  },
+  "junyi2015": {
+    "alpha_star": 1.0,
+    "B1_A1excluded": 0.5624,
+    "B1_plus_ability": 0.5624,
+    "n": 213,
+    "delta": 0.0
+  }
+}
