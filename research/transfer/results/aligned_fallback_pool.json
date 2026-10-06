@@ -1,0 +1,98 @@
+{
+  "assistments17": {
+    "n_eval": 100,
+    "n_aligned_fallback_kcs": 84,
+    "pool_1": {
+      "mean": 0.5052,
+      "draw_min": 0.4757,
+      "draw_max": 0.5314,
+      "fallback_row_frac": 0.5344,
+      "aligned_fallback_row_frac": 0.4025
+    },
+    "pool_3": {
+      "mean": 0.5201,
+      "draw_min": 0.4879,
+      "draw_max": 0.5411,
+      "fallback_row_frac": 0.1579,
+      "aligned_fallback_row_frac": 0.141
+    },
+    "pool_5": {
+      "mean": 0.5177,
+      "draw_min": 0.4845,
+      "draw_max": 0.5378,
+      "fallback_row_frac": 0.1055,
+      "aligned_fallback_row_frac": 0.097
+    },
+    "pool_10": {
+      "mean": 0.5265,
+      "draw_min": 0.4651,
+      "draw_max": 0.5543,
+      "fallback_row_frac": 0.0437,
+      "aligned_fallback_row_frac": 0.0372
+    }
+  },
+  "ednet_kt1": {
+    "n_eval": 100,
+    "n_aligned_fallback_kcs": 26,
+    "pool_1": {
+      "mean": 0.4987,
+      "draw_min": 0.4807,
+      "draw_max": 0.5224,
+      "fallback_row_frac": 0.5944,
+      "aligned_fallback_row_frac": 0.0717
+    },
+    "pool_3": {
+      "mean": 0.4888,
+      "draw_min": 0.4383,
+      "draw_max": 0.5609,
+      "fallback_row_frac": 0.2905,
+      "aligned_fallback_row_frac": 0.0457
+    },
+    "pool_5": {
+      "mean": 0.5095,
+      "draw_min": 0.466,
+      "draw_max": 0.5457,
+      "fallback_row_frac": 0.1595,
+      "aligned_fallback_row_frac": 0.0353
+    },
+    "pool_10": {
+      "mean": 0.5137,
+      "draw_min": 0.451,
+      "draw_max": 0.5449,
+      "fallback_row_frac": 0.193,
+      "aligned_fallback_row_frac": 0.0407
+    }
+  },
+  "junyi2015": {
+    "n_eval": 100,
+    "n_aligned_fallback_kcs": 30,
+    "pool_1": {
+      "mean": 0.5241,
+      "draw_min": 0.4919,
+      "draw_max": 0.5554,
+      "fallback_row_frac": 0.5322,
+      "aligned_fallback_row_frac": 0.4453
+    },
+    "pool_3": {
+      "mean": 0.5374,
+      "draw_min": 0.4867,
+      "draw_max": 0.5665,
+      "fallback_row_frac": 0.3073,
+      "aligned_fallback_row_frac": 0.2671
+    },
+    "pool_5": {
+      "mean": 0.5518,
+      "draw_min": 0.5092,
+      "draw_max": 0.5738,
+      "fallback_row_frac": 0.2126,
+      "aligned_fallback_row_frac": 0.2034
+    },
+    "pool_10": {
+      "mean": 0.5547,
+      "draw_min": 0.5388,
+      "draw_max": 0.576,
+      "fallback_row_frac": 0.1099,
+      "aligned_fallback_row_frac": 0.0969
+    }
+  }
+}
