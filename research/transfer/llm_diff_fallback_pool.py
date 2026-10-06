@@ -1,11 +1,15 @@
 """Batch27: LLM difficulty as pool-table fallback + pure-LLM zero-shot table.
 
 Fallback trilogy: 0.5 (poolsize_gap.json) / aligned A09 (aligned_fallback_pool.json,
-dead) / LLM k3 difficulty estimates (this file, k3_difficulty_cache.json =
-predicted P(correct), idea7 gate: Junyi rho 0.61 / A17 0.15 / EdNet weak).
-Same pool draws as poolgap (rng 1000+seed, 10 draws) for exact pairing.
-Also scores pool_0: pure LLM difficulty table, zero target data (PS-0
-analogue with target-native LLM knowledge instead of cross-domain alignment).
+dead) / LLM k3 difficulty estimates (this file). CACHE PROVENANCE: the cache
+was written by streaming_gate.py keyed by REAL KC id (str(id)); do NOT
+regenerate it from idea7_difficulty_gate.py, whose estimates are keyed by
+position in a filtered list — keys would silently misalign. Values are
+predicted P(correct) (high = easy), idea7 gate: Junyi rho 0.61 / A17 0.15 /
+EdNet weak). Same pool draws as poolgap (rng 1000+seed, 10 draws) for exact
+pairing. Also scores pool_0: pure LLM difficulty table, zero target data
+(PS-0 analogue with target-native LLM knowledge instead of cross-domain
+alignment).
 """
 import json
 import sys
