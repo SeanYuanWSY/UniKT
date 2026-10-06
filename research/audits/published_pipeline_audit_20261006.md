@@ -18,3 +18,7 @@ assist2017/2015、SAINT（question-level）、pyKT 主表（question-level/all-i
 ## 论文引用策略
 - 稻草人质疑的直接回应 = pyKT 论文自己的泄漏量化表。
 - AKT 官方数据指纹检测可做成论文附录的可复现脚本（一次性统计，我们已有类似工具）。
+
+## 补充（Batch 17）：EdNet 的 pyKT 规则指纹定量
+- 13,169 题中 45.9% 多 tag（";"分隔）→ pyKT 规则（tags→"_"→explode）下必然展开。
+- 交互序列实测：相邻同题行中同标签 ~100%、异 KC 比例与 explode 结构一致——**pyKT 管线的 EdNet KC-level 数字携带与本文 EdNet identity 0.854 相同的标签复制通道**。审计的"机制成立"升级为"数据指纹坐实"。
