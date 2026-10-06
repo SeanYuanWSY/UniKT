@@ -1,0 +1,29 @@
+{
+  "assistments17": {
+    "n_rows": 1904,
+    "n_pairs": 883503,
+    "pooled_auc": 0.5321,
+    "within_share": 0.0108,
+    "within_acc": 0.5268,
+    "between_share": 0.9892,
+    "between_acc": 0.5322
+  },
+  "ednet_kt1": {
+    "n_rows": 928,
+    "n_pairs": 210535,
+    "pooled_auc": 0.5893,
+    "within_share": 0.0111,
+    "within_acc": 0.5627,
+    "between_share": 0.9889,
+    "between_acc": 0.5896
+  },
+  "junyi2015": {
+    "n_rows": 1844,
+    "n_pairs": 512523,
+    "pooled_auc": 0.6645,
+    "within_share": 0.0114,
+    "within_acc": 0.5515,
+    "between_share": 0.9886,
+    "between_acc": 0.6658
+  }
+}
