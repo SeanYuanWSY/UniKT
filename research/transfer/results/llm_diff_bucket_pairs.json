@@ -1,0 +1,50 @@
+{
+  "assistments17": {
+    "bucket_marginals_first300": [
+      0.3757,
+      0.4289,
+      0.407
+    ],
+    "bucket_marginals_tail100": [
+      0.3697,
+      0.4862,
+      0.4214
+    ],
+    "cross_bucket_pair_share": 0.3088,
+    "coarse_pair_acc": 0.5396,
+    "n_cross_label_pairs": 3206,
+    "n_pairs": 22181
+  },
+  "ednet_kt1": {
+    "bucket_marginals_first300": [
+      0.6247,
+      0.622,
+      0.6095
+    ],
+    "bucket_marginals_tail100": [
+      0.6507,
+      0.6384,
+      0.6137
+    ],
+    "cross_bucket_pair_share": 0.5619,
+    "coarse_pair_acc": 0.6064,
+    "n_cross_label_pairs": 1354,
+    "n_pairs": 5537
+  },
+  "junyi2015": {
+    "bucket_marginals_first300": [
+      0.547,
+      0.7062,
+      0.8107
+    ],
+    "bucket_marginals_tail100": [
+      0.7602,
+      0.6603,
+      0.7645
+    ],
+    "cross_bucket_pair_share": 0.2004,
+    "coarse_pair_acc": 0.7171,
+    "n_cross_label_pairs": 1746,
+    "n_pairs": 24453
+  }
+}
