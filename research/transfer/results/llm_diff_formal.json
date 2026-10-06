@@ -1,0 +1,92 @@
+{
+  "assistments17": {
+    "pool0_full": 0.5246,
+    "perm200_mean": 0.4987,
+    "perm200_max": 0.5399,
+    "perm200_pvalue": 0.0995,
+    "pool0_bucket3": 0.5241,
+    "bucket_marginals_0to2": [
+      0.3757,
+      0.4289,
+      0.407
+    ],
+    "within_bucket": {
+      "0": {
+        "n": 40,
+        "rho": 0.1784,
+        "mean_tgt_marginal": 0.3757
+      },
+      "1": {
+        "n": 27,
+        "rho": -0.015,
+        "mean_tgt_marginal": 0.4289
+      },
+      "2": {
+        "n": 29,
+        "rho": 0.1434,
+        "mean_tgt_marginal": 0.407
+      }
+    },
+    "n_unique_values": 28
+  },
+  "ednet_kt1": {
+    "pool0_full": 0.5496,
+    "perm200_mean": 0.4997,
+    "perm200_max": 0.5593,
+    "perm200_pvalue": 0.0448,
+    "pool0_bucket3": 0.5657,
+    "bucket_marginals_0to2": [
+      0.6247,
+      0.622,
+      0.6095
+    ],
+    "within_bucket": {
+      "0": {
+        "n": 62,
+        "rho": -0.0247,
+        "mean_tgt_marginal": 0.6247
+      },
+      "1": {
+        "n": 65,
+        "rho": 0.1397,
+        "mean_tgt_marginal": 0.622
+      },
+      "2": {
+        "n": 47,
+        "rho": 0.061,
+        "mean_tgt_marginal": 0.6095
+      }
+    },
+    "n_unique_values": 20
+  },
+  "junyi2015": {
+    "pool0_full": 0.5456,
+    "perm200_mean": 0.4997,
+    "perm200_max": 0.5618,
+    "perm200_pvalue": 0.0647,
+    "pool0_bucket3": 0.5488,
+    "bucket_marginals_0to2": [
+      0.547,
+      0.7062,
+      0.8107
+    ],
+    "within_bucket": {
+      "0": {
+        "n": 13,
+        "rho": 0.5447,
+        "mean_tgt_marginal": 0.547
+      },
+      "1": {
+        "n": 13,
+        "rho": -0.1379,
+        "mean_tgt_marginal": 0.7062
+      },
+      "2": {
+        "n": 12,
+        "rho": 0.6807,
+        "mean_tgt_marginal": 0.8107
+      }
+    },
+    "n_unique_values": 24
+  }
+}
