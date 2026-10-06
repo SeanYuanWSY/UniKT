@@ -1,0 +1,14 @@
+{
+  "source": "pykt-toolkit 0.0.38 official extend_multi_concepts",
+  "students": 4775,
+  "interactions_in": 1402001,
+  "rows_out_after_expand": 3360263,
+  "expansion_factor": 2.3968,
+  "questions_total": 11859,
+  "multi_concept_question_share": 0.4804,
+  "adjacent_sameq_pairs": 1963722,
+  "adjacent_sameq_share_of_rows": 0.5852,
+  "sameq_samelabel_rate": 0.9978,
+  "pykt_is_repeat_rows": 1958262,
+  "is_repeat_share": 0.5828
+}
