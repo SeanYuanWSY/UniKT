@@ -1,0 +1,34 @@
+{
+  "assistments17": {
+    "B1_fullset": 0.5402,
+    "B1_n": 273,
+    "identity_AKT": {
+      "sanitized_fullset": 0.5605,
+      "n": 273,
+      "a1_rows_sanitized": 0.5118,
+      "a1_n": 234
+    },
+    "transfer_AKT": {
+      "sanitized_fullset": 0.466,
+      "n": 265,
+      "a1_rows_sanitized": 0.4824,
+      "a1_n": 230
+    }
+  },
+  "ednet_kt1": {
+    "B1_fullset": 0.5454,
+    "B1_n": 245,
+    "identity_AKT": {
+      "sanitized_fullset": 0.509,
+      "n": 245,
+      "a1_rows_sanitized": 0.4378,
+      "a1_n": 180
+    },
+    "transfer_AKT": {
+      "sanitized_fullset": 0.3946,
+      "n": 84,
+      "a1_rows_sanitized": 0.3447,
+      "a1_n": 30
+    }
+  }
+}
