@@ -1,0 +1,47 @@
+{
+  "prior_mean": 0.4001,
+  "idAKT": {
+    "base": {
+      "mean": 0.5841,
+      "n": 261,
+      "gap_vs_B1": 0.0361
+    },
+    "hist-scramble": {
+      "mean": 0.5529,
+      "n": 261,
+      "gap_vs_B1": 0.0049
+    },
+    "kc-relabel": {
+      "mean": 0.4858,
+      "n": 261,
+      "gap_vs_B1": -0.0622
+    },
+    "order-shuffle": {
+      "mean": 0.573,
+      "n": 261,
+      "gap_vs_B1": 0.025
+    }
+  },
+  "idDKT": {
+    "base": {
+      "mean": 0.6331,
+      "n": 261,
+      "gap_vs_B1": 0.0851
+    },
+    "hist-scramble": {
+      "mean": 0.5398,
+      "n": 261,
+      "gap_vs_B1": -0.0082
+    },
+    "kc-relabel": {
+      "mean": 0.4846,
+      "n": 261,
+      "gap_vs_B1": -0.0634
+    },
+    "order-shuffle": {
+      "mean": 0.6147,
+      "n": 261,
+      "gap_vs_B1": 0.0667
+    }
+  }
+}
