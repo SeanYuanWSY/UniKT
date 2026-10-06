@@ -1,0 +1,116 @@
+{
+  "assistments17": {
+    "n_llm_kcs": 102,
+    "pool_0_llm_table": {
+      "mean": 0.5246,
+      "ci95": [
+        0.4905,
+        0.5593
+      ],
+      "n_scored": 95,
+      "llm_row_frac": 1.0
+    },
+    "pools": {
+      "pool_1": {
+        "mean": 0.5213,
+        "draw_min": 0.491,
+        "draw_max": 0.553,
+        "llm_fallback_row_frac": 0.5344
+      },
+      "pool_3": {
+        "mean": 0.5228,
+        "draw_min": 0.4859,
+        "draw_max": 0.5501,
+        "llm_fallback_row_frac": 0.1579
+      },
+      "pool_5": {
+        "mean": 0.5198,
+        "draw_min": 0.4785,
+        "draw_max": 0.5428,
+        "llm_fallback_row_frac": 0.1055
+      },
+      "pool_10": {
+        "mean": 0.5277,
+        "draw_min": 0.4668,
+        "draw_max": 0.5551,
+        "llm_fallback_row_frac": 0.0437
+      }
+    }
+  },
+  "ednet_kt1": {
+    "n_llm_kcs": 189,
+    "pool_0_llm_table": {
+      "mean": 0.5496,
+      "ci95": [
+        0.5022,
+        0.5965
+      ],
+      "n_scored": 83,
+      "llm_row_frac": 1.0
+    },
+    "pools": {
+      "pool_1": {
+        "mean": 0.5214,
+        "draw_min": 0.4955,
+        "draw_max": 0.541,
+        "llm_fallback_row_frac": 0.5944
+      },
+      "pool_3": {
+        "mean": 0.4972,
+        "draw_min": 0.4501,
+        "draw_max": 0.5629,
+        "llm_fallback_row_frac": 0.2905
+      },
+      "pool_5": {
+        "mean": 0.5158,
+        "draw_min": 0.4782,
+        "draw_max": 0.5561,
+        "llm_fallback_row_frac": 0.1595
+      },
+      "pool_10": {
+        "mean": 0.5176,
+        "draw_min": 0.4676,
+        "draw_max": 0.5434,
+        "llm_fallback_row_frac": 0.193
+      }
+    }
+  },
+  "junyi2015": {
+    "n_llm_kcs": 39,
+    "pool_0_llm_table": {
+      "mean": 0.5456,
+      "ci95": [
+        0.5014,
+        0.5887
+      ],
+      "n_scored": 82,
+      "llm_row_frac": 1.0
+    },
+    "pools": {
+      "pool_1": {
+        "mean": 0.5363,
+        "draw_min": 0.4939,
+        "draw_max": 0.5621,
+        "llm_fallback_row_frac": 0.5322
+      },
+      "pool_3": {
+        "mean": 0.5457,
+        "draw_min": 0.5073,
+        "draw_max": 0.5673,
+        "llm_fallback_row_frac": 0.3073
+      },
+      "pool_5": {
+        "mean": 0.5559,
+        "draw_min": 0.5235,
+        "draw_max": 0.5716,
+        "llm_fallback_row_frac": 0.2126
+      },
+      "pool_10": {
+        "mean": 0.5584,
+        "draw_min": 0.5391,
+        "draw_max": 0.5832,
+        "llm_fallback_row_frac": 0.1099
+      }
+    }
+  }
+}
