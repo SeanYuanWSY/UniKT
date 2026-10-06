@@ -1,0 +1,22 @@
+{
+  "junyi_table_std": {
+    "withA": 0.513,
+    "A1excluded": 0.513,
+    "n": 15
+  },
+  "identity_dkt_assistments17": {
+    "withA": 0.8192,
+    "A1excluded": 0.6357,
+    "A_excluded": 0.5979
+  },
+  "identity_dkt_ednet_kt1": {
+    "withA": 0.8676,
+    "A1excluded": 0.538,
+    "A_excluded": 0.5376
+  },
+  "identity_dkt_junyi2015": {
+    "withA": 0.4515,
+    "A1excluded": 0.4515,
+    "A_excluded": 0.5095
+  }
+}
