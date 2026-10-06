@@ -1,0 +1,28 @@
+{
+  "assistments17": {
+    "n_eval": 100,
+    "deep_A1excluded_mean": 0.4039,
+    "pool_10": {
+      "mean": 0.5274
+    },
+    "pool_30": {
+      "mean": 0.5357
+    },
+    "pool_100": {
+      "mean": 0.5392
+    }
+  },
+  "ednet_kt1": {
+    "n_eval": 100,
+    "deep_A1excluded_mean": 0.2723,
+    "pool_10": {
+      "mean": 0.5171
+    },
+    "pool_30": {
+      "mean": 0.5214
+    },
+    "pool_100": {
+      "mean": 0.5347
+    }
+  }
+}
