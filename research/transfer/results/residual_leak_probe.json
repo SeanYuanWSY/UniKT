@@ -1,0 +1,17 @@
+{
+  "assistments17": {
+    "copy_y_prev_on_A1excluded": 0.4704,
+    "copy_y_prev_on_nonA": 0.4724,
+    "copy_y_prev_on_A2_only": 0.5035
+  },
+  "ednet_kt1": {
+    "copy_y_prev_on_A1excluded": 0.4475,
+    "copy_y_prev_on_nonA": 0.4482,
+    "copy_y_prev_on_A2_only": null
+  },
+  "junyi2015": {
+    "copy_y_prev_on_A1excluded": 0.5141,
+    "copy_y_prev_on_nonA": 0.48,
+    "copy_y_prev_on_A2_only": 0.5071
+  }
+}
