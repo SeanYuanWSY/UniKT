@@ -54,18 +54,17 @@ def main(n_users=300):
         prior = fit_global_kc_prior(students)
         alignment = {int(k): v for k, v in load_alignment(ALIGN[ds]).items()}
 
-        # B1 per-student (A1-excluded rows)
+        # B1 per-student (A1-excluded rows) — independent traversal, no zip
         b1 = {}
-        surviving = [ws for ws in samples if len(ws.holdout_idx) > 0][: len(students)]
-        for ws, st in zip(surviving, students):
+        for ws in samples:
             hold = sorted(set(ws.holdout_idx.tolist()))
-            if len(st["rows"]) != len(hold):
-                continue
             rows = []
-            for r, i in zip(st["rows"], hold):
-                isA1 = i > 0 and int(ws.question[i]) == int(ws.question[i - 1]) and int(ws.sequence[i]) != int(ws.sequence[i - 1])
+            for i in hold:
+                if i == 0:
+                    continue
+                isA1 = int(ws.question[i]) == int(ws.question[i - 1]) and int(ws.sequence[i]) != int(ws.sequence[i - 1])
                 if not isA1:
-                    rows.append({"y": r["y"], "pred": prior.get(r["kc"], 0.5)})
+                    rows.append({"y": int(ws.response[i]), "pred": prior.get(int(ws.sequence[i]), 0.5)})
             a = stratified_auc_rows(rows, "pred")
             if a is not None:
                 b1[ws.user_id] = a
