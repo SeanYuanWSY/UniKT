@@ -22,3 +22,7 @@ assist2017/2015、SAINT（question-level）、pyKT 主表（question-level/all-i
 ## 补充（Batch 17）：EdNet 的 pyKT 规则指纹定量
 - 13,169 题中 45.9% 多 tag（";"分隔）→ pyKT 规则（tags→"_"→explode）下必然展开。
 - 交互序列实测：相邻同题行中同标签 ~100%、异 KC 比例与 explode 结构一致——**pyKT 管线的 EdNet KC-level 数字携带与本文 EdNet identity 0.854 相同的标签复制通道**。审计的"机制成立"升级为"数据指纹坐实"。
+
+## 补充（Batch 20）：pyKT 官方代码执行实证
+- pyKT 0.0.38 官方 extend_multi_concepts 在我方 EdNet 5000 学生采样上实跑：1,402,001 交互 → 3,360,263 行（×2.397），58.3% 输出行携带 pyKT 自带的 is_repeat=1 复制标记，同题相邻行同标签率 99.78%（pykt_official_expand.json）。
+- 审计证据等级从"规则指纹推断"升级为"官方代码执行实证"。未展开时同题相邻仅 5.4%，展开后 58.5%——复制行由官方函数制造，非数据固有。
