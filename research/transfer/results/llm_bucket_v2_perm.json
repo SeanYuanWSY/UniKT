@@ -1,0 +1,20 @@
+{
+  "assistments17": {
+    "real": 0.523,
+    "ge": 11,
+    "n_perm": 200,
+    "p_perm": 0.0597
+  },
+  "ednet_kt1": {
+    "real": 0.4695,
+    "ge": 199,
+    "n_perm": 200,
+    "p_perm": 0.995
+  },
+  "junyi2015": {
+    "real": 0.5369,
+    "ge": 20,
+    "n_perm": 200,
+    "p_perm": 0.1045
+  }
+}
