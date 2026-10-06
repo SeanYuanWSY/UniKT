@@ -1,0 +1,72 @@
+{
+  "b29_ref": {
+    "kc-relabel": {
+      "idAKT": 0.4858,
+      "idDKT": 0.4846
+    },
+    "order-shuffle": {
+      "idAKT": 0.573,
+      "idDKT": 0.6147
+    }
+  },
+  "idAKT": {
+    "kc-relabel": {
+      "seed7": {
+        "mean": 0.4858,
+        "n": 261
+      },
+      "seed8": {
+        "mean": 0.4932,
+        "n": 261
+      },
+      "seed9": {
+        "mean": 0.5019,
+        "n": 261
+      }
+    },
+    "order-shuffle": {
+      "base1000": {
+        "mean": 0.573,
+        "n": 261
+      },
+      "base2000": {
+        "mean": 0.5642,
+        "n": 261
+      },
+      "base3000": {
+        "mean": 0.5704,
+        "n": 261
+      }
+    }
+  },
+  "idDKT": {
+    "kc-relabel": {
+      "seed7": {
+        "mean": 0.4846,
+        "n": 261
+      },
+      "seed8": {
+        "mean": 0.4799,
+        "n": 261
+      },
+      "seed9": {
+        "mean": 0.5031,
+        "n": 261
+      }
+    },
+    "order-shuffle": {
+      "base1000": {
+        "mean": 0.6147,
+        "n": 261
+      },
+      "base2000": {
+        "mean": 0.6096,
+        "n": 261
+      },
+      "base3000": {
+        "mean": 0.6167,
+        "n": 261
+      }
+    }
+  }
+}
