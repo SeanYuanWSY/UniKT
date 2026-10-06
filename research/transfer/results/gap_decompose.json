@@ -1,0 +1,72 @@
+{
+  "assistments17": {
+    "tail100_n_students": 100,
+    "B1_first300": 0.5481,
+    "B1_n": 261,
+    "first300_paired": {
+      "seed42": {
+        "auc": 0.3949,
+        "n": 244
+      },
+      "seed43": {
+        "auc": 0.4101,
+        "n": 244
+      },
+      "seed44": {
+        "auc": 0.4073,
+        "n": 244
+      },
+      "mean_over_seeds": 0.4041
+    },
+    "tail100": {
+      "seed42": {
+        "auc": 0.39,
+        "n": 91
+      },
+      "seed43": {
+        "auc": 0.4077,
+        "n": 91
+      },
+      "seed44": {
+        "auc": 0.4141,
+        "n": 91
+      },
+      "mean_over_seeds": 0.4039
+    }
+  },
+  "ednet_kt1": {
+    "tail100_n_students": 100,
+    "B1_first300": 0.5252,
+    "B1_n": 245,
+    "first300_paired": {
+      "seed42": {
+        "auc": 0.4283,
+        "n": 56
+      },
+      "seed43": {
+        "auc": 0.4301,
+        "n": 56
+      },
+      "seed44": {
+        "auc": 0.4756,
+        "n": 56
+      },
+      "mean_over_seeds": 0.4447
+    },
+    "tail100": {
+      "seed42": {
+        "auc": 0.2954,
+        "n": 17
+      },
+      "seed43": {
+        "auc": 0.2971,
+        "n": 17
+      },
+      "seed44": {
+        "auc": 0.2245,
+        "n": 17
+      },
+      "mean_over_seeds": 0.2723
+    }
+  }
+}
