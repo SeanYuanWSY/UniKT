@@ -1,0 +1,10 @@
+{
+  "questions_total": 13169,
+  "questions_multi_tag_pct": 0.4593,
+  "rows_sampled": 3360233,
+  "adjacent_sameq": 181080,
+  "sameq_share": 0.054,
+  "sameq_samelabel_pct": 0.9974,
+  "sameq_diffkc_pct": 0.9982,
+  "verdict": "pyKT-rule fingerprint on EdNet: same-question adjacent rows share labels ~100% with different KCs = explode copies"
+}
