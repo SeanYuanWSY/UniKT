@@ -78,7 +78,7 @@ def build_rows(samples, alignment_name: str | None, max_seq_len: int = 200):
                 ev["q_hist"][q] = y
                 ev_len += 1
         if ev_len >= 3 and rows and 0 < sum(r["y"] for r in rows) < len(rows):
-            out.append({"rows": rows, "kc_hist": dict(ev["kc_hist"])})
+            out.append({"rows": rows, "kc_hist": dict(ev["kc_hist"]), "user_id": ws.user_id})
     return out
 
 
