@@ -1,0 +1,77 @@
+{
+  "assistments17": {
+    "n_eval": 100,
+    "n_pool_available": 174,
+    "pool_0_ref": 0.478,
+    "pool_1": {
+      "mean": 0.5118,
+      "draw_min": 0.4863,
+      "draw_max": 0.542
+    },
+    "pool_3": {
+      "mean": 0.5222,
+      "draw_min": 0.4956,
+      "draw_max": 0.5453
+    },
+    "pool_5": {
+      "mean": 0.5203,
+      "draw_min": 0.4898,
+      "draw_max": 0.5464
+    }
+  },
+  "ednet_kt1": {
+    "n_eval": 100,
+    "n_pool_available": 480,
+    "pool_0_ref": 0.4988,
+    "pool_1": {
+      "mean": 0.5022,
+      "draw_min": 0.4847,
+      "draw_max": 0.5289
+    },
+    "pool_3": {
+      "mean": 0.4912,
+      "draw_min": 0.4436,
+      "draw_max": 0.5646
+    },
+    "pool_5": {
+      "mean": 0.5102,
+      "draw_min": 0.4655,
+      "draw_max": 0.5487
+    }
+  },
+  "junyi2015": {
+    "n_eval": 100,
+    "n_pool_available": 131,
+    "pool_0_ref": 0.5211,
+    "pool_1": {
+      "mean": 0.527,
+      "draw_min": 0.4903,
+      "draw_max": 0.5637
+    },
+    "pool_3": {
+      "mean": 0.5373,
+      "draw_min": 0.4843,
+      "draw_max": 0.5692
+    },
+    "pool_5": {
+      "mean": 0.5496,
+      "draw_min": 0.5126,
+      "draw_max": 0.5712
+    },
+    "pool_10": {
+      "mean": 0.5555,
+      "draw_min": 0.5399,
+      "draw_max": 0.5728
+    },
+    "pool_30": {
+      "mean": 0.5621,
+      "draw_min": 0.5402,
+      "draw_max": 0.5799
+    },
+    "pool_100": {
+      "mean": 0.5662,
+      "draw_min": 0.5541,
+      "draw_max": 0.5777
+    }
+  }
+}

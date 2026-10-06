@@ -1,0 +1,47 @@
+{
+  "assistments17": {
+    "n_alignment_keys": 102,
+    "n_covered_kcs": 81,
+    "n_tgt_kcs_total": 96,
+    "n_tail_covered": 80,
+    "spearman_rho": -0.0055,
+    "spearman_rho_tail100": -0.022,
+    "sign_agree": 0.358,
+    "mean_aligned_prior": 0.6259,
+    "mean_tgt_marginal": 0.4006,
+    "std_aligned_prior": 0.1883,
+    "std_tgt_marginal": 0.1436,
+    "mean_abs_diff": 0.2732,
+    "tgt_marginal_allmean": 0.4001
+  },
+  "ednet_kt1": {
+    "n_alignment_keys": 189,
+    "n_covered_kcs": 24,
+    "n_tgt_kcs_total": 174,
+    "n_tail_covered": 24,
+    "spearman_rho": -0.2454,
+    "spearman_rho_tail100": -0.2642,
+    "sign_agree": 0.5833,
+    "mean_aligned_prior": 0.663,
+    "mean_tgt_marginal": 0.5863,
+    "std_aligned_prior": 0.1642,
+    "std_tgt_marginal": 0.1499,
+    "mean_abs_diff": 0.2155,
+    "tgt_marginal_allmean": 0.6196
+  },
+  "junyi2015": {
+    "n_alignment_keys": 39,
+    "n_covered_kcs": 29,
+    "n_tgt_kcs_total": 38,
+    "n_tail_covered": 28,
+    "spearman_rho": 0.1838,
+    "spearman_rho_tail100": -0.0203,
+    "sign_agree": 0.7931,
+    "mean_aligned_prior": 0.6282,
+    "mean_tgt_marginal": 0.7383,
+    "std_aligned_prior": 0.2016,
+    "std_tgt_marginal": 0.1272,
+    "mean_abs_diff": 0.2036,
+    "tgt_marginal_allmean": 0.6847
+  }
+}
