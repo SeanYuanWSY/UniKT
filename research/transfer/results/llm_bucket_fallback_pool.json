@@ -1,0 +1,197 @@
+{
+  "assistments17": {
+    "n_cache_kcs": 102,
+    "v2_anchor_means": {
+      "0": 0.3757,
+      "1": 0.4289,
+      "2": 0.407
+    },
+    "pool_1": {
+      "v1_poolcal": {
+        "mean": 0.5125,
+        "draw_min": 0.483,
+        "draw_max": 0.5515
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.523
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "pool_3": {
+      "v1_poolcal": {
+        "mean": 0.521,
+        "draw_min": 0.4958,
+        "draw_max": 0.5466
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5274
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "pool_5": {
+      "v1_poolcal": {
+        "mean": 0.5197,
+        "draw_min": 0.486,
+        "draw_max": 0.5496
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5218
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "pool_10": {
+      "v1_poolcal": {
+        "mean": 0.5291,
+        "draw_min": 0.4657,
+        "draw_max": 0.5642
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.529
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "pool_30": {
+      "v1_poolcal": {
+        "mean": 0.5355,
+        "draw_min": 0.4901,
+        "draw_max": 0.566
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5352
+      },
+      "cold_bucket_row_frac": 1.0
+    }
+  },
+  "ednet_kt1": {
+    "n_cache_kcs": 189,
+    "v2_anchor_means": {
+      "0": 0.6247,
+      "1": 0.622,
+      "2": 0.6095
+    },
+    "pool_1": {
+      "v1_poolcal": {
+        "mean": 0.5105,
+        "draw_min": 0.4431,
+        "draw_max": 0.5617
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.4695
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "pool_3": {
+      "v1_poolcal": {
+        "mean": 0.4903,
+        "draw_min": 0.4258,
+        "draw_max": 0.5592
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.4888
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "pool_5": {
+      "v1_poolcal": {
+        "mean": 0.5117,
+        "draw_min": 0.4641,
+        "draw_max": 0.5558
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5129
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "pool_10": {
+      "v1_poolcal": {
+        "mean": 0.5176,
+        "draw_min": 0.4488,
+        "draw_max": 0.5507
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5104
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "pool_30": {
+      "v1_poolcal": {
+        "mean": 0.5217,
+        "draw_min": 0.4582,
+        "draw_max": 0.5862
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5219
+      },
+      "cold_bucket_row_frac": 1.0
+    }
+  },
+  "junyi2015": {
+    "n_cache_kcs": 39,
+    "v2_anchor_means": {
+      "0": 0.547,
+      "1": 0.7062,
+      "2": 0.8107
+    },
+    "pool_1": {
+      "v1_poolcal": {
+        "mean": 0.5168,
+        "draw_min": 0.4591,
+        "draw_max": 0.571
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5369
+      },
+      "cold_bucket_row_frac": 0.7184
+    },
+    "pool_3": {
+      "v1_poolcal": {
+        "mean": 0.5408,
+        "draw_min": 0.4658,
+        "draw_max": 0.5768
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5466
+      },
+      "cold_bucket_row_frac": 0.9693
+    },
+    "pool_5": {
+      "v1_poolcal": {
+        "mean": 0.5515,
+        "draw_min": 0.4834,
+        "draw_max": 0.5797
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5533
+      },
+      "cold_bucket_row_frac": 0.9556
+    },
+    "pool_10": {
+      "v1_poolcal": {
+        "mean": 0.5612,
+        "draw_min": 0.5391,
+        "draw_max": 0.5896
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5589
+      },
+      "cold_bucket_row_frac": 0.9571
+    },
+    "pool_30": {
+      "v1_poolcal": {
+        "mean": 0.5631,
+        "draw_min": 0.5402,
+        "draw_max": 0.5799
+      },
+      "v2_cohort_anchor": {
+        "mean": 0.5636
+      },
+      "cold_bucket_row_frac": 1.0
+    },
+    "perm_pool_1": {
+      "real": 0.5168,
+      "ge": 94,
+      "n_perm": 200,
+      "p_perm": 0.4726
+    }
+  }
+}
