@@ -55,6 +55,22 @@ def is_a1(ws, i):
     return int(ws.question[i]) == int(ws.question[i - 1]) and int(ws.sequence[i]) != int(ws.sequence[i - 1])
 
 
+def run_ids(q_all):
+    """Maximal consecutive runs of identical question ids (one exploded
+    multi-KC answer = one run; rows in a run share the answer label).
+
+    t1fair3 (Codex batch42 review P1-1): prior_fixed excluded holdout rows by
+    INDEX only — sibling expand rows of a held-out answer kept its label in
+    the prior. prior_fixed2 excludes whole holdout question runs."""
+    rid = [0] * len(q_all)
+    r = 0
+    for i in range(1, len(q_all)):
+        if q_all[i] != q_all[i - 1]:
+            r += 1
+        rid[i] = r
+    return rid
+
+
 def boot_ci(d, B=5000, seed=0):
     rng = np.random.default_rng(seed)
     n = len(d)
@@ -77,13 +93,22 @@ def main(n_users=300):
         # ---- (1) prior with evidence-only membership: every student's
         # non-holdout evidence rows, no holdout-composition filtering.
         hist_all = {}
+        # t1fair3: run-complete variant — exclude the WHOLE question run of
+        # any holdout row (sibling expand rows carry the held-out label).
+        hist_all2 = {}
         for ws in samples:
             hold = set(ws.holdout_idx.tolist())
+            q_all = [int(x) for x in ws.question.tolist()]
+            rid = run_ids(q_all)
+            hold_runs = {rid[i] for i in hold}
             for i in range(len(ws.sequence)):
                 if i in hold:
                     continue
                 hist_all.setdefault(int(ws.sequence[i]), []).append(int(ws.response[i]))
+                if rid[i] not in hold_runs:
+                    hist_all2.setdefault(int(ws.sequence[i]), []).append(int(ws.response[i]))
         prior_fixed = {k: float(np.mean(v)) for k, v in hist_all.items() if v}
+        prior_fixed2 = {k: float(np.mean(v)) for k, v in hist_all2.items() if v}
 
         # old path (selection-leaked membership) for drift gate G3
         students_old = build_rows(samples, None)
@@ -91,9 +116,14 @@ def main(n_users=300):
 
         res = {
             "n_kc_prior_fixed": len(prior_fixed),
+            "n_kc_prior_fixed2": len(prior_fixed2),
             "n_kc_prior_old": len(prior_old),
             "prior_drift_max_abs": round(
                 float(max(abs(prior_fixed.get(k, 0.5) - prior_old.get(k, 0.5)) for k in set(prior_fixed) | set(prior_old))),
+                4,
+            ),
+            "sibling_drift_max_abs": round(
+                float(max(abs(prior_fixed2.get(k, 0.5) - prior_fixed.get(k, 0.5)) for k in set(prior_fixed2) | set(prior_fixed))),
                 4,
             ),
         }
@@ -117,9 +147,16 @@ def main(n_users=300):
 
         b1_old = b1_full_with(prior_old)
         b1_full = b1_full_with(prior_fixed)
+        b1_full2 = b1_full_with(prior_fixed2)
         res["B1_old_full_mean"] = mean_or_none(list(b1_old.values()))
         res["B1_fixed_full_mean"] = mean_or_none(list(b1_full.values()))
+        res["B1_fixed2_full_mean"] = mean_or_none(list(b1_full2.values()))
         res["B1_fixed_full_n"] = len(b1_full)
+        res["B1_sibling_drift_full_mean"] = (
+            round(res["B1_fixed2_full_mean"] - res["B1_fixed_full_mean"], 4)
+            if res["B1_fixed2_full_mean"] is not None and res["B1_fixed_full_mean"] is not None
+            else None
+        )
         res["selfcheck_B1_old_vs_t1"] = (
             res["B1_old_full_mean"] is not None
             and abs(res["B1_old_full_mean"] - B1_MEAN_REF[ds]) <= 0.002
@@ -137,6 +174,7 @@ def main(n_users=300):
             rm = restore_any(runmap[ds])
             deep = {}
             b1c = {}
+            b1c2 = {}
             n_dummy_excluded = 0
             n_nonfinite_probs = 0
             for ws in samples:
@@ -159,7 +197,7 @@ def main(n_users=300):
                 s = torch.tensor([s_seq], dtype=torch.long, device=rm.device)
                 r_ = torch.tensor([s_resp], dtype=torch.long, device=rm.device)
                 probs = _forward_probs(rm, s, r_, None)[0]
-                rows_d, rows_b = [], []
+                rows_d, rows_b, rows_b2 = [], [], []
                 for i in sorted(hold_pos):
                     if i == 0 or i not in jmap:
                         continue
@@ -172,22 +210,29 @@ def main(n_users=300):
                     y = int(ws.response[i])
                     rows_d.append({"y": y, "pred": float(probs[jmap[i]])})
                     rows_b.append({"y": y, "pred": prior_fixed.get(int(ws.sequence[i]), 0.5)})
+                    rows_b2.append({"y": y, "pred": prior_fixed2.get(int(ws.sequence[i]), 0.5)})
                 ad = stratified_auc_rows(rows_d, "pred")
                 # stratified_auc_rows silently drops NaN preds (ok = vs == vs) —
                 # count them so a same-support break is visible, not silent.
                 n_nonfinite_probs += sum(1 for r in rows_d if r["pred"] != r["pred"])
                 ab = stratified_auc_rows(rows_b, "pred")
+                ab2 = stratified_auc_rows(rows_b2, "pred")
                 if ad is not None and ab is not None:
                     deep[ws.user_id] = ad
                     b1c[ws.user_id] = ab
+                    b1c2[ws.user_id] = ab2
             common = sorted(u for u in deep if u in b1c)
             diffs = np.array([b1c[u] - deep[u] for u in common])
+            diffs2 = np.array([b1c2[u] - deep[u] for u in common])
             res[mtag] = {
                 "deep_mean_samesupport": mean_or_none([deep[u] for u in common]),
                 "B1_mean_samesupport": mean_or_none([b1c[u] for u in common]),
+                "B1_mean_samesupport_rc": mean_or_none([b1c2[u] for u in common]),
                 "n_paired": len(common),
                 "delta_fair_B1_minus_deep": mean_or_none(diffs.tolist()) if len(diffs) else None,
                 "ci95_fair": boot_ci(diffs) if len(diffs) else None,
+                "delta_fair_B1_minus_deep_rc": mean_or_none(diffs2.tolist()) if len(diffs2) else None,
+                "ci95_fair_rc": boot_ci(diffs2) if len(diffs2) else None,
                 "n_dummy_pos0_excluded": n_dummy_excluded,
                 "n_nonfinite_probs": n_nonfinite_probs,
             }
