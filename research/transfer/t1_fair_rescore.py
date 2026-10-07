@@ -216,10 +216,22 @@ def main(n_users=300):
         att_mean = {k: mean_or_none(v) for k, v in att.items()}
         if all(att_mean.get(k) is not None for k in ("copy_prev", "neg_prev", "copy_prev2", "neg_prev2")):
             # measured derivation first (P2-3): trust what this batch computed,
-            # cross-check against the b36 identity-derived constant
-            att_mean["sym_max_measured"] = round(max(0.5, att_mean["neg_prev"], att_mean["neg_prev2"]), 4)
+            # cross-check against the b36 identity-derived constant.
+            # NOTE family max must include the POSITIVE attacks too — Junyi's
+            # copy_prev (0.5141) dominates its negations (first run's
+            # max(0.5, neg, neg2) omitted it; fixed via t1fair2 rerun).
+            att_mean["sym_max_measured"] = round(
+                max(0.5, att_mean["copy_prev"], att_mean["neg_prev"], att_mean["copy_prev2"], att_mean["neg_prev2"]), 4
+            )
             att_mean["sym_max_ref_identity"] = round(
-                max(0.5, 1 - COPY_REF[ds]["copy_prev"], 1 - COPY_REF[ds]["copy_prev2"]), 4
+                max(
+                    0.5,
+                    COPY_REF[ds]["copy_prev"],
+                    1 - COPY_REF[ds]["copy_prev"],
+                    COPY_REF[ds]["copy_prev2"],
+                    1 - COPY_REF[ds]["copy_prev2"],
+                ),
+                4,
             )
             att_mean["selfcheck_copy_vs_b36"] = (
                 abs(att_mean["copy_prev"] - COPY_REF[ds]["copy_prev"]) <= 0.002
