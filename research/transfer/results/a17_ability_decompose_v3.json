@@ -3,10 +3,22 @@
     "alpha_star_leakfree": 1.0,
     "tuning_means_leakfree": {
       "0.0": 0.4797,
-      "0.25": 0.4887,
-      "0.5": 0.5014,
-      "0.75": 0.52,
-      "1.0": 0.5512
+      "0.25": 0.4875,
+      "0.5": 0.4976,
+      "0.75": 0.5149,
+      "1.0": 0.537
+    },
+    "tuning_coverage_leakfree": {
+      "n_tuning_rows_scored": 4136,
+      "n_students_valid_at_star": 269
+    },
+    "alpha_star_leaky_isolated": 1.0,
+    "tuning_means_leaky_isolated": {
+      "0.0": 0.4797,
+      "0.25": 0.4901,
+      "0.5": 0.5065,
+      "0.75": 0.5296,
+      "1.0": 0.5654
     },
     "alpha_star_leaky_repro": 1.0,
     "tuning_means_leaky": {
@@ -17,27 +29,34 @@
       "1.0": 0.5655
     },
     "selfcheck_v2_alpha": true,
+    "prior_drift_clean_vs_old_max_abs": 0.0087,
     "eval_final": {
-      "B1": 0.5481,
-      "B1ab": 0.5481,
+      "B1": 0.5485,
+      "B1ab": 0.5485,
       "n": 261,
       "delta": 0.0
     },
     "eval_sens_prior_tuning": {
-      "B1": 0.5472,
-      "B1ab": 0.5472,
+      "B1": 0.5494,
+      "B1ab": 0.5494,
+      "n": 261,
+      "delta": 0.0
+    },
+    "eval_v2repro": {
+      "B1": 0.5481,
+      "B1ab": 0.5481,
       "n": 261,
       "delta": 0.0
     },
     "eval_alpha0": {
-      "B1": 0.5481,
+      "B1": 0.5485,
       "B1ab": 0.3944,
       "n": 261,
-      "delta": -0.1536
+      "delta": -0.1541
     },
     "eval_alpha1": {
-      "B1": 0.5481,
-      "B1ab": 0.5481,
+      "B1": 0.5485,
+      "B1ab": 0.5485,
       "n": 261,
       "delta": 0.0
     },
@@ -47,10 +66,22 @@
     "alpha_star_leakfree": 1.0,
     "tuning_means_leakfree": {
       "0.0": 0.4838,
-      "0.25": 0.492,
+      "0.25": 0.4912,
       "0.5": 0.5001,
       "0.75": 0.5527,
-      "1.0": 0.598
+      "1.0": 0.5974
+    },
+    "tuning_coverage_leakfree": {
+      "n_tuning_rows_scored": 2086,
+      "n_students_valid_at_star": 212
+    },
+    "alpha_star_leaky_isolated": 1.0,
+    "tuning_means_leaky_isolated": {
+      "0.0": 0.4838,
+      "0.25": 0.4961,
+      "0.5": 0.5333,
+      "0.75": 0.5793,
+      "1.0": 0.5886
     },
     "alpha_star_leaky_repro": 1.0,
     "tuning_means_leaky": {
@@ -61,27 +92,34 @@
       "1.0": 0.5924
     },
     "selfcheck_v2_alpha": true,
+    "prior_drift_clean_vs_old_max_abs": 0.1667,
     "eval_final": {
-      "B1": 0.5252,
-      "B1ab": 0.5252,
+      "B1": 0.5263,
+      "B1ab": 0.5263,
       "n": 245,
       "delta": 0.0
     },
     "eval_sens_prior_tuning": {
-      "B1": 0.5323,
-      "B1ab": 0.5323,
+      "B1": 0.5327,
+      "B1ab": 0.5327,
+      "n": 245,
+      "delta": 0.0
+    },
+    "eval_v2repro": {
+      "B1": 0.5252,
+      "B1ab": 0.5252,
       "n": 245,
       "delta": 0.0
     },
     "eval_alpha0": {
-      "B1": 0.5252,
+      "B1": 0.5263,
       "B1ab": 0.3376,
       "n": 245,
-      "delta": -0.1875
+      "delta": -0.1887
     },
     "eval_alpha1": {
-      "B1": 0.5252,
-      "B1ab": 0.5252,
+      "B1": 0.5263,
+      "B1ab": 0.5263,
       "n": 245,
       "delta": 0.0
     },
@@ -91,10 +129,22 @@
     "alpha_star_leakfree": 1.0,
     "tuning_means_leakfree": {
       "0.0": 0.4542,
-      "0.25": 0.486,
-      "0.5": 0.5234,
-      "0.75": 0.5619,
-      "1.0": 0.6093
+      "0.25": 0.5134,
+      "0.5": 0.5453,
+      "0.75": 0.5729,
+      "1.0": 0.6098
+    },
+    "tuning_coverage_leakfree": {
+      "n_tuning_rows_scored": 4121,
+      "n_students_valid_at_star": 173
+    },
+    "alpha_star_leaky_isolated": 1.0,
+    "tuning_means_leaky_isolated": {
+      "0.0": 0.4542,
+      "0.25": 0.4856,
+      "0.5": 0.525,
+      "0.75": 0.5628,
+      "1.0": 0.6104
     },
     "alpha_star_leaky_repro": 1.0,
     "tuning_means_leaky": {
@@ -105,27 +155,34 @@
       "1.0": 0.6088
     },
     "selfcheck_v2_alpha": true,
+    "prior_drift_clean_vs_old_max_abs": 0.1231,
     "eval_final": {
-      "B1": 0.5624,
-      "B1ab": 0.5624,
+      "B1": 0.5668,
+      "B1ab": 0.5668,
       "n": 213,
       "delta": 0.0
     },
     "eval_sens_prior_tuning": {
-      "B1": 0.5637,
-      "B1ab": 0.5637,
+      "B1": 0.5481,
+      "B1ab": 0.5481,
+      "n": 213,
+      "delta": 0.0
+    },
+    "eval_v2repro": {
+      "B1": 0.5624,
+      "B1ab": 0.5624,
       "n": 213,
       "delta": 0.0
     },
     "eval_alpha0": {
-      "B1": 0.5624,
+      "B1": 0.5668,
       "B1ab": 0.3926,
       "n": 213,
-      "delta": -0.1698
+      "delta": -0.1742
     },
     "eval_alpha1": {
-      "B1": 0.5624,
-      "B1ab": 0.5624,
+      "B1": 0.5668,
+      "B1ab": 0.5668,
       "n": 213,
       "delta": 0.0
     },
