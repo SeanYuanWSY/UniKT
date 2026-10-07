@@ -1,0 +1,68 @@
+{
+  "assistments17": {
+    "alpha_star_fine": 1.0,
+    "tuning_means_fine": {
+      "0.0": 0.4797,
+      "0.25": 0.4875,
+      "0.5": 0.4976,
+      "0.75": 0.5149,
+      "0.9": 0.5237,
+      "0.95": 0.5281,
+      "1.0": 0.537
+    },
+    "n_tuning_rows_scored": 4136,
+    "n_students_valid_at_star": 269,
+    "selfcheck_v31_alpha1_mean": true,
+    "alpha0_holdout": {
+      "mean_per_stu_auc": 0.3944,
+      "n_students": 261,
+      "n_scored_rows": 5510,
+      "n_fallback_rows": 0,
+      "fallback_share": 0.0
+    }
+  },
+  "ednet_kt1": {
+    "alpha_star_fine": 1.0,
+    "tuning_means_fine": {
+      "0.0": 0.4838,
+      "0.25": 0.4912,
+      "0.5": 0.5001,
+      "0.75": 0.5527,
+      "0.9": 0.5902,
+      "0.95": 0.5965,
+      "1.0": 0.5974
+    },
+    "n_tuning_rows_scored": 2086,
+    "n_students_valid_at_star": 212,
+    "selfcheck_v31_alpha1_mean": true,
+    "alpha0_holdout": {
+      "mean_per_stu_auc": 0.3376,
+      "n_students": 245,
+      "n_scored_rows": 3389,
+      "n_fallback_rows": 0,
+      "fallback_share": 0.0
+    }
+  },
+  "junyi2015": {
+    "alpha_star_fine": 1.0,
+    "tuning_means_fine": {
+      "0.0": 0.4542,
+      "0.25": 0.5134,
+      "0.5": 0.5453,
+      "0.75": 0.5729,
+      "0.9": 0.5818,
+      "0.95": 0.5858,
+      "1.0": 0.6098
+    },
+    "n_tuning_rows_scored": 4121,
+    "n_students_valid_at_star": 173,
+    "selfcheck_v31_alpha1_mean": true,
+    "alpha0_holdout": {
+      "mean_per_stu_auc": 0.3926,
+      "n_students": 213,
+      "n_scored_rows": 4627,
+      "n_fallback_rows": 0,
+      "fallback_share": 0.0
+    }
+  }
+}
