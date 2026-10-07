@@ -1,0 +1,64 @@
+{
+  "ednet_kt1": {
+    "n_students": 383,
+    "n_kc_prior_b1": 167,
+    "n_kc_prior_old": 167,
+    "prior_drift_max_abs": 0.0439,
+    "identity_AKT": {
+      "deep_mean_samesupport": 0.4941,
+      "B1_mean_samesupport": 0.5691,
+      "n_paired": 318,
+      "delta_fair_B1_minus_deep": 0.0751,
+      "ci95_fair": [
+        0.0408,
+        0.1093
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    },
+    "identity_DKT": {
+      "deep_mean_samesupport": 0.5596,
+      "B1_mean_samesupport": 0.5691,
+      "n_paired": 318,
+      "delta_fair_B1_minus_deep": 0.0096,
+      "ci95_fair": [
+        -0.0223,
+        0.0419
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_AKT": {
+      "deep_mean_samesupport": 0.3765,
+      "B1_mean_samesupport": 0.5323,
+      "n_paired": 70,
+      "delta_fair_B1_minus_deep": 0.1557,
+      "ci95_fair": [
+        0.0572,
+        0.2539
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_DKT": {
+      "deep_mean_samesupport": 0.4421,
+      "B1_mean_samesupport": 0.5323,
+      "n_paired": 70,
+      "delta_fair_B1_minus_deep": 0.0902,
+      "ci95_fair": [
+        -0.0187,
+        0.1964
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    },
+    "sym_closure_attack": {
+      "copy_prev": 0.462,
+      "neg_prev": 0.538,
+      "copy_prev2": 0.4379,
+      "neg_prev2": 0.5621,
+      "sym_max_measured": 0.5621,
+      "selfcheck_neg_identity": true
+    }
+  }
+}
