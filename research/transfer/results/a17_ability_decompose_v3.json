@@ -1,0 +1,134 @@
+{
+  "assistments17": {
+    "alpha_star_leakfree": 1.0,
+    "tuning_means_leakfree": {
+      "0.0": 0.4797,
+      "0.25": 0.4887,
+      "0.5": 0.5014,
+      "0.75": 0.52,
+      "1.0": 0.5512
+    },
+    "alpha_star_leaky_repro": 1.0,
+    "tuning_means_leaky": {
+      "0.0": 0.4797,
+      "0.25": 0.4903,
+      "0.5": 0.507,
+      "0.75": 0.5299,
+      "1.0": 0.5655
+    },
+    "selfcheck_v2_alpha": true,
+    "eval_final": {
+      "B1": 0.5481,
+      "B1ab": 0.5481,
+      "n": 261,
+      "delta": 0.0
+    },
+    "eval_sens_prior_tuning": {
+      "B1": 0.5472,
+      "B1ab": 0.5472,
+      "n": 261,
+      "delta": 0.0
+    },
+    "eval_alpha0": {
+      "B1": 0.5481,
+      "B1ab": 0.3944,
+      "n": 261,
+      "delta": -0.1536
+    },
+    "eval_alpha1": {
+      "B1": 0.5481,
+      "B1ab": 0.5481,
+      "n": 261,
+      "delta": 0.0
+    },
+    "selfcheck_v2_B1": true
+  },
+  "ednet_kt1": {
+    "alpha_star_leakfree": 1.0,
+    "tuning_means_leakfree": {
+      "0.0": 0.4838,
+      "0.25": 0.492,
+      "0.5": 0.5001,
+      "0.75": 0.5527,
+      "1.0": 0.598
+    },
+    "alpha_star_leaky_repro": 1.0,
+    "tuning_means_leaky": {
+      "0.0": 0.4838,
+      "0.25": 0.4963,
+      "0.5": 0.5342,
+      "0.75": 0.5779,
+      "1.0": 0.5924
+    },
+    "selfcheck_v2_alpha": true,
+    "eval_final": {
+      "B1": 0.5252,
+      "B1ab": 0.5252,
+      "n": 245,
+      "delta": 0.0
+    },
+    "eval_sens_prior_tuning": {
+      "B1": 0.5323,
+      "B1ab": 0.5323,
+      "n": 245,
+      "delta": 0.0
+    },
+    "eval_alpha0": {
+      "B1": 0.5252,
+      "B1ab": 0.3376,
+      "n": 245,
+      "delta": -0.1875
+    },
+    "eval_alpha1": {
+      "B1": 0.5252,
+      "B1ab": 0.5252,
+      "n": 245,
+      "delta": 0.0
+    },
+    "selfcheck_v2_B1": true
+  },
+  "junyi2015": {
+    "alpha_star_leakfree": 1.0,
+    "tuning_means_leakfree": {
+      "0.0": 0.4542,
+      "0.25": 0.486,
+      "0.5": 0.5234,
+      "0.75": 0.5619,
+      "1.0": 0.6093
+    },
+    "alpha_star_leaky_repro": 1.0,
+    "tuning_means_leaky": {
+      "0.0": 0.4542,
+      "0.25": 0.4869,
+      "0.5": 0.5285,
+      "0.75": 0.5614,
+      "1.0": 0.6088
+    },
+    "selfcheck_v2_alpha": true,
+    "eval_final": {
+      "B1": 0.5624,
+      "B1ab": 0.5624,
+      "n": 213,
+      "delta": 0.0
+    },
+    "eval_sens_prior_tuning": {
+      "B1": 0.5637,
+      "B1ab": 0.5637,
+      "n": 213,
+      "delta": 0.0
+    },
+    "eval_alpha0": {
+      "B1": 0.5624,
+      "B1ab": 0.3926,
+      "n": 213,
+      "delta": -0.1698
+    },
+    "eval_alpha1": {
+      "B1": 0.5624,
+      "B1ab": 0.5624,
+      "n": 213,
+      "delta": 0.0
+    },
+    "selfcheck_v2_B1": true
+  }
+}
