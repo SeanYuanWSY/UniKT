@@ -98,6 +98,11 @@ def main(n_users=300):
                 "synergy": round((m["TT"] - m["FF"]) - (m["TT"] - m["FT"]) - (m["TT"] - m["TF"]), 4),
             }
         res["n"] = len(cells["TT"][1000])
+        # Codex Run A P2-9: anchor was written but never asserted — FF(base1000)
+        # must reproduce b29's hist-scramble mean (four decimals).
+        assert abs(res["base1000"]["FF"] - B29_HIST_SCRAMBLE[mtag]) < 5e-4, (
+            f"{mtag}: FF base1000 {res['base1000']['FF']} != b29 {B29_HIST_SCRAMBLE[mtag]}"
+        )
         out[mtag] = res
         print(mtag, json.dumps(res, ensure_ascii=False), flush=True)
 

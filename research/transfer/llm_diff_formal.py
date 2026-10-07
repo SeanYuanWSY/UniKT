@@ -79,7 +79,13 @@ def main():
             sh = rng.permutation(len(kcs))
             pllm = {kcs[sh[t]]: llm[kcs[t]] for t in range(len(kcs))}
             perms.append(pool0_auc(lambda kc: pllm.get(kc, 0.5))[0])
-        pval = float((np.sum(np.array(perms) >= real) + 1) / (N_PERM + 1))
+        # Codex Run A P1-6: with no valid students, real and every perm are NaN;
+        # NaN >= NaN is False everywhere, yielding a bogus p = 1/(B+1). Guard.
+        perm_arr = np.array(perms)
+        if np.isfinite(real) and np.isfinite(perm_arr).all():
+            pval = float((np.sum(perm_arr >= real) + 1) / (N_PERM + 1))
+        else:
+            pval = None
 
         # Part B: coarse vs fine
         vals = np.array([llm[k] for k in sorted(llm)])

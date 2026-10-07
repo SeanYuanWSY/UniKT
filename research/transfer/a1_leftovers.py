@@ -37,8 +37,13 @@ def main(n_users=250):
     students = build_rows(samples, None)
     prior = fit_global_kc_prior(students)
     t_all, t_noA1 = [], []
-    surviving = [ws for ws in samples if len(ws.holdout_idx) > 0][: len(students)]
-    for ws, st in zip(surviving, students):
+    # Codex Run A P1-3: positional zip can pair a filtered-out student with the
+    # wrong ws (equal lengths pass the check). Match by user_id instead.
+    st_by_uid = {st["user_id"]: st for st in students}
+    for ws in samples:
+        st = st_by_uid.get(ws.user_id)
+        if st is None:
+            continue
         hold = sorted(set(ws.holdout_idx.tolist()))
         if len(st["rows"]) != len(hold):
             continue
