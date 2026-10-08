@@ -1,0 +1,956 @@
+{
+  "assistments17": {
+    "identity_AKT": {
+      "run_dir": "runs/normal/AKT_assistments17_20261003-145008_fold0_bs64",
+      "n_paired": 261,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.5841,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": -0.0355,
+          "ci95_auc": [
+            -0.0622,
+            -0.0083
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": -0.0003,
+          "ci95_brier": [
+            -0.0088,
+            0.0082
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": -0.035,
+          "ci95_auc": [
+            -0.0617,
+            -0.008
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": -0.0002,
+          "ci95_brier": [
+            -0.0088,
+            0.0083
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": -0.0351,
+          "ci95_auc": [
+            -0.0616,
+            -0.008
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": -0.0004,
+          "ci95_brier": [
+            -0.0089,
+            0.0082
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": -0.0296,
+          "ci95_auc": [
+            -0.06,
+            -0.0
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": 0.0045,
+          "ci95_brier": [
+            -0.005,
+            0.0138
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": -0.0296,
+          "ci95_auc": [
+            -0.06,
+            -0.0002
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": 0.0047,
+          "ci95_brier": [
+            -0.0049,
+            0.014
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "identity_DKT": {
+      "run_dir": "runs/normal/DKT_assistments17_20261003-144042_fold0_bs128",
+      "n_paired": 261,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.6331,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": -0.0846,
+          "ci95_auc": [
+            -0.1125,
+            -0.0563
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": 0.0258,
+          "ci95_brier": [
+            0.0186,
+            0.0329
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": -0.084,
+          "ci95_auc": [
+            -0.1122,
+            -0.0558
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": 0.0259,
+          "ci95_brier": [
+            0.0187,
+            0.033
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": -0.0841,
+          "ci95_auc": [
+            -0.1118,
+            -0.0559
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": 0.0257,
+          "ci95_brier": [
+            0.0185,
+            0.0328
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": -0.0786,
+          "ci95_auc": [
+            -0.1098,
+            -0.0486
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": 0.0306,
+          "ci95_brier": [
+            0.0228,
+            0.0384
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": -0.0787,
+          "ci95_auc": [
+            -0.1099,
+            -0.0486
+          ],
+          "n_students_with_auc": 261,
+          "delta_brier_mean": 0.0308,
+          "ci95_brier": [
+            0.0229,
+            0.0386
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "transfer_AKT": {
+      "run_dir": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+      "n_paired": 244,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.3949,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.1625,
+          "ci95_auc": [
+            0.1277,
+            0.1967
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0818,
+          "ci95_brier": [
+            -0.0963,
+            -0.0671
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": 0.1606,
+          "ci95_auc": [
+            0.1259,
+            0.1946
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0817,
+          "ci95_brier": [
+            -0.0962,
+            -0.067
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": 0.1632,
+          "ci95_auc": [
+            0.1283,
+            0.1975
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0819,
+          "ci95_brier": [
+            -0.0964,
+            -0.0673
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": 0.1772,
+          "ci95_auc": [
+            0.1354,
+            0.2179
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0765,
+          "ci95_brier": [
+            -0.0923,
+            -0.0605
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.1775,
+          "ci95_auc": [
+            0.1355,
+            0.2183
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0763,
+          "ci95_brier": [
+            -0.092,
+            -0.0602
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "transfer_DKT": {
+      "run_dir": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+      "n_paired": 244,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.4482,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.1092,
+          "ci95_auc": [
+            0.0712,
+            0.1462
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0538,
+          "ci95_brier": [
+            -0.0685,
+            -0.039
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": 0.1074,
+          "ci95_auc": [
+            0.0698,
+            0.144
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0538,
+          "ci95_brier": [
+            -0.0683,
+            -0.0389
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": 0.1099,
+          "ci95_auc": [
+            0.072,
+            0.1469
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.054,
+          "ci95_brier": [
+            -0.0686,
+            -0.0391
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": 0.1239,
+          "ci95_auc": [
+            0.0812,
+            0.1647
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0486,
+          "ci95_brier": [
+            -0.0637,
+            -0.0331
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.1242,
+          "ci95_auc": [
+            0.0817,
+            0.1649
+          ],
+          "n_students_with_auc": 244,
+          "delta_brier_mean": -0.0483,
+          "ci95_brier": [
+            -0.0634,
+            -0.0329
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    }
+  },
+  "ednet_kt1": {
+    "identity_AKT": {
+      "run_dir": "runs/normal/AKT_ednet_kt1_20261003-190537_fold0_bs64",
+      "n_paired": 245,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.4642,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.0621,
+          "ci95_auc": [
+            0.0286,
+            0.0949
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0095,
+          "ci95_brier": [
+            0.0026,
+            0.0162
+          ],
+          "n_fallback_rows": 1
+        },
+        "loso": {
+          "delta_auc_mean": 0.0616,
+          "ci95_auc": [
+            0.0277,
+            0.0946
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0096,
+          "ci95_brier": [
+            0.0027,
+            0.0163
+          ],
+          "n_fallback_rows": 1
+        },
+        "laplace": {
+          "delta_auc_mean": 0.0616,
+          "ci95_auc": [
+            0.0275,
+            0.0947
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0093,
+          "ci95_brier": [
+            0.0024,
+            0.016
+          ],
+          "n_fallback_rows": 1
+        },
+        "first": {
+          "delta_auc_mean": 0.049,
+          "ci95_auc": [
+            0.0064,
+            0.0926
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0138,
+          "ci95_brier": [
+            0.0064,
+            0.0208
+          ],
+          "n_fallback_rows": 1
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.0499,
+          "ci95_auc": [
+            0.0074,
+            0.0934
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0144,
+          "ci95_brier": [
+            0.007,
+            0.0215
+          ],
+          "n_fallback_rows": 1
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "identity_DKT": {
+      "run_dir": "runs/normal/DKT_ednet_kt1_20261003-190327_fold0_bs128",
+      "n_paired": 245,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.5319,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": -0.0056,
+          "ci95_auc": [
+            -0.0522,
+            0.0392
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0226,
+          "ci95_brier": [
+            0.0164,
+            0.0288
+          ],
+          "n_fallback_rows": 1
+        },
+        "loso": {
+          "delta_auc_mean": -0.0061,
+          "ci95_auc": [
+            -0.0533,
+            0.0388
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0226,
+          "ci95_brier": [
+            0.0164,
+            0.0289
+          ],
+          "n_fallback_rows": 1
+        },
+        "laplace": {
+          "delta_auc_mean": -0.0061,
+          "ci95_auc": [
+            -0.0523,
+            0.0386
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0224,
+          "ci95_brier": [
+            0.0162,
+            0.0285
+          ],
+          "n_fallback_rows": 1
+        },
+        "first": {
+          "delta_auc_mean": -0.0187,
+          "ci95_auc": [
+            -0.0518,
+            0.0148
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0268,
+          "ci95_brier": [
+            0.0203,
+            0.0334
+          ],
+          "n_fallback_rows": 1
+        },
+        "loso_first": {
+          "delta_auc_mean": -0.0178,
+          "ci95_auc": [
+            -0.051,
+            0.0157
+          ],
+          "n_students_with_auc": 245,
+          "delta_brier_mean": 0.0274,
+          "ci95_brier": [
+            0.0208,
+            0.0339
+          ],
+          "n_fallback_rows": 1
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "transfer_AKT": {
+      "run_dir": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+      "n_paired": 56,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.4283,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.1407,
+          "ci95_auc": [
+            0.0434,
+            0.241
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.1253,
+          "ci95_brier": [
+            -0.1673,
+            -0.0836
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": 0.1394,
+          "ci95_auc": [
+            0.0421,
+            0.24
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.1253,
+          "ci95_brier": [
+            -0.1671,
+            -0.0836
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": 0.1407,
+          "ci95_auc": [
+            0.0434,
+            0.241
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.1263,
+          "ci95_brier": [
+            -0.168,
+            -0.0844
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": 0.0965,
+          "ci95_auc": [
+            0.0041,
+            0.1873
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.1227,
+          "ci95_brier": [
+            -0.1647,
+            -0.0806
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.0895,
+          "ci95_auc": [
+            0.0021,
+            0.1784
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.1228,
+          "ci95_brier": [
+            -0.1649,
+            -0.081
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "transfer_DKT": {
+      "run_dir": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+      "n_paired": 56,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.498,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.071,
+          "ci95_auc": [
+            -0.0317,
+            0.1789
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.0199,
+          "ci95_brier": [
+            -0.0413,
+            0.0001
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": 0.0697,
+          "ci95_auc": [
+            -0.0335,
+            0.1789
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.0199,
+          "ci95_brier": [
+            -0.0411,
+            -0.0001
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": 0.071,
+          "ci95_auc": [
+            -0.0317,
+            0.1789
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.0209,
+          "ci95_brier": [
+            -0.0419,
+            -0.0014
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": 0.0268,
+          "ci95_auc": [
+            -0.0727,
+            0.1287
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.0173,
+          "ci95_brier": [
+            -0.0387,
+            0.0025
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.0198,
+          "ci95_auc": [
+            -0.0786,
+            0.122
+          ],
+          "n_students_with_auc": 56,
+          "delta_brier_mean": -0.0174,
+          "ci95_brier": [
+            -0.0388,
+            0.0025
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    }
+  },
+  "junyi2015": {
+    "identity_AKT": {
+      "run_dir": "runs/normal/AKT_junyi2015_20261004-195553_fold0_bs64",
+      "n_paired": 213,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.4494,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.1174,
+          "ci95_auc": [
+            0.0823,
+            0.1515
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.0109,
+          "ci95_brier": [
+            0.0009,
+            0.0222
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": 0.112,
+          "ci95_auc": [
+            0.0752,
+            0.1473
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.0112,
+          "ci95_brier": [
+            0.0008,
+            0.0229
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": 0.1199,
+          "ci95_auc": [
+            0.0844,
+            0.1539
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.009,
+          "ci95_brier": [
+            0.0002,
+            0.0191
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": 0.1121,
+          "ci95_auc": [
+            0.075,
+            0.1479
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.0144,
+          "ci95_brier": [
+            0.0028,
+            0.0267
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.1076,
+          "ci95_auc": [
+            0.0696,
+            0.1444
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.0156,
+          "ci95_brier": [
+            0.0039,
+            0.0283
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "identity_DKT": {
+      "run_dir": "runs/normal/DKT_junyi2015_20261004-195512_fold0_bs128",
+      "n_paired": 213,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.4527,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.1141,
+          "ci95_auc": [
+            0.0797,
+            0.1477
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.016,
+          "ci95_brier": [
+            0.0071,
+            0.0256
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": 0.1087,
+          "ci95_auc": [
+            0.073,
+            0.1442
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.0164,
+          "ci95_brier": [
+            0.0073,
+            0.0261
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": 0.1165,
+          "ci95_auc": [
+            0.0823,
+            0.1506
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.0142,
+          "ci95_brier": [
+            0.0061,
+            0.0228
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": 0.1087,
+          "ci95_auc": [
+            0.0726,
+            0.145
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.0196,
+          "ci95_brier": [
+            0.0088,
+            0.0306
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.1043,
+          "ci95_auc": [
+            0.0667,
+            0.1414
+          ],
+          "n_students_with_auc": 213,
+          "delta_brier_mean": 0.0207,
+          "ci95_brier": [
+            0.0098,
+            0.0319
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "transfer_AKT": {
+      "run_dir": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+      "n_paired": 194,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.4529,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.1156,
+          "ci95_auc": [
+            0.0777,
+            0.1516
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": -0.0017,
+          "ci95_brier": [
+            -0.0114,
+            0.0079
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": 0.1095,
+          "ci95_auc": [
+            0.0708,
+            0.1469
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": -0.0014,
+          "ci95_brier": [
+            -0.0112,
+            0.0085
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": 0.1156,
+          "ci95_auc": [
+            0.0777,
+            0.1516
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": -0.0013,
+          "ci95_brier": [
+            -0.0108,
+            0.0083
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": 0.1058,
+          "ci95_auc": [
+            0.0662,
+            0.1427
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": 0.0028,
+          "ci95_brier": [
+            -0.0092,
+            0.0147
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.1005,
+          "ci95_auc": [
+            0.0606,
+            0.1396
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": 0.0041,
+          "ci95_brier": [
+            -0.0077,
+            0.0161
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    },
+    "transfer_DKT": {
+      "run_dir": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+      "n_paired": 194,
+      "n_nonfinite_probs": 0,
+      "deep_mean_auc": 0.441,
+      "variants": {
+        "pooled": {
+          "delta_auc_mean": 0.1274,
+          "ci95_auc": [
+            0.0888,
+            0.1651
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": 0.0004,
+          "ci95_brier": [
+            -0.0089,
+            0.0095
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso": {
+          "delta_auc_mean": 0.1213,
+          "ci95_auc": [
+            0.0829,
+            0.1585
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": 0.0008,
+          "ci95_brier": [
+            -0.0086,
+            0.01
+          ],
+          "n_fallback_rows": 0
+        },
+        "laplace": {
+          "delta_auc_mean": 0.1274,
+          "ci95_auc": [
+            0.0888,
+            0.1651
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": 0.0009,
+          "ci95_brier": [
+            -0.0084,
+            0.0099
+          ],
+          "n_fallback_rows": 0
+        },
+        "first": {
+          "delta_auc_mean": 0.1177,
+          "ci95_auc": [
+            0.0788,
+            0.1554
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": 0.0049,
+          "ci95_brier": [
+            -0.005,
+            0.0149
+          ],
+          "n_fallback_rows": 0
+        },
+        "loso_first": {
+          "delta_auc_mean": 0.1124,
+          "ci95_auc": [
+            0.075,
+            0.149
+          ],
+          "n_students_with_auc": 194,
+          "delta_brier_mean": 0.0062,
+          "ci95_brier": [
+            -0.0038,
+            0.0162
+          ],
+          "n_fallback_rows": 0
+        }
+      },
+      "anchor_matches_t1fair": true
+    }
+  }
+}
