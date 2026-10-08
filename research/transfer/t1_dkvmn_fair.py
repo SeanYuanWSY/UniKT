@@ -1,6 +1,6 @@
 """Batch 49: DKVMN through the fair-recompute pipeline (fourth architecture).
 
-All headline conclusions rest on DKT+AKT only. This batch scores DKVMN
+After batch48 (SAKT) the architecture axis extends to a fourth model. This batch scores DKVMN
 (default-config identity runs trained in batch49 + the existing DKVMN
 assistments09 source run) on the exact batch41/43 fair rows: same samples,
 same run-complete prior_fixed2, same A1-only protocol, same same-support
@@ -9,14 +9,14 @@ pairing.
 Structural anchor (preregistered): the scored support is model-independent
 — it is determined by the mapping/keep filter, A1 exclusion, holdout labels
 and per-student label diversity, never by the model (given finite probs).
-So n_paired must EQUAL t1fair_rescore.json's counterpart cells (both the
+So n_paired must EQUAL t1_fair_rescore.json's counterpart cells (both the
 AKT and DKT cell of the same domain/mode), and n_kc_prior_b1 must equal
 the reference. Any mismatch = construction drift, not a DKVMN finding.
 
 Deltas vs t1_fair_rescore.py:
  (1) RUNS: DKVMN only, identity run dirs discovered by glob (newest
      DKVMN_<ds>_*) and recorded in the JSON; transfer = existing
-     DKVMN_assistments09_20261003-025330 run;
+     DKVMN_assistments09_20261003-024801 run;
  (2) support anchor instead of value anchor (no external DKVMN reference
      exists under this protocol);
  (3) dropped old-prior diagnostics / full-subset B1 means / sym attack
