@@ -1,0 +1,644 @@
+{
+  "assistments17": {
+    "identity_AKT": {
+      "n_paired": 261,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": -0.1248,
+        "ci95": [
+          -0.1687,
+          -0.0846
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": -0.1452,
+        "ci95": [
+          -0.1954,
+          -0.0995
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": -0.1618,
+        "ci95": [
+          -0.2176,
+          -0.1102
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 97,
+        "n_wrongside": 36
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 48,
+        "n_wrongside": 18
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 42,
+        "n_wrongside": 17
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_students_affected_deep_eps1e-10": 35,
+      "n_nonfinite_probs": 0
+    },
+    "identity_DKT": {
+      "n_paired": 261,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": 0.0526,
+        "ci95": [
+          0.034,
+          0.0705
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": 0.0538,
+        "ci95": [
+          0.0349,
+          0.0725
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": 0.0556,
+        "ci95": [
+          0.0361,
+          0.0759
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_AKT": {
+      "n_paired": 244,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": -0.3334,
+        "ci95": [
+          -0.3941,
+          -0.2758
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": -0.3335,
+        "ci95": [
+          -0.3962,
+          -0.2739
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": -0.3309,
+        "ci95": [
+          -0.3937,
+          -0.2704
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 5,
+        "n_wrongside": 3
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_DKT": {
+      "n_paired": 244,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": -0.1418,
+        "ci95": [
+          -0.1791,
+          -0.1049
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": -0.1401,
+        "ci95": [
+          -0.1781,
+          -0.102
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": -0.1376,
+        "ci95": [
+          -0.1772,
+          -0.0974
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    }
+  },
+  "ednet_kt1": {
+    "identity_AKT": {
+      "n_paired": 245,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": 0.0103,
+        "ci95": [
+          -0.0058,
+          0.0257
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": 0.0102,
+        "ci95": [
+          -0.0059,
+          0.0257
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": 0.0102,
+        "ci95": [
+          -0.0059,
+          0.0257
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 1,
+        "n_wrongside": 1
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    },
+    "identity_DKT": {
+      "n_paired": 245,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": 0.0477,
+        "ci95": [
+          0.034,
+          0.0615
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": 0.0477,
+        "ci95": [
+          0.034,
+          0.0615
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": 0.0477,
+        "ci95": [
+          0.034,
+          0.0615
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_AKT": {
+      "n_paired": 56,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": -1.1006,
+        "ci95": [
+          -1.4572,
+          -0.7784
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": -1.1551,
+        "ci95": [
+          -1.537,
+          -0.81
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": -1.1551,
+        "ci95": [
+          -1.537,
+          -0.81
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 21,
+        "n_wrongside": 11
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_DKT": {
+      "n_paired": 56,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": -0.0531,
+        "ci95": [
+          -0.1038,
+          -0.0058
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": -0.0531,
+        "ci95": [
+          -0.1038,
+          -0.0058
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": -0.0531,
+        "ci95": [
+          -0.1038,
+          -0.0058
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    }
+  },
+  "junyi2015": {
+    "identity_AKT": {
+      "n_paired": 213,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": 0.0412,
+        "ci95": [
+          -0.0121,
+          0.1198
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": 0.0549,
+        "ci95": [
+          -0.0121,
+          0.1617
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": 0.0756,
+        "ci95": [
+          -0.0121,
+          0.2236
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 10,
+        "n_wrongside": 7
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 10,
+        "n_wrongside": 7
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 10,
+        "n_wrongside": 7
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    },
+    "identity_DKT": {
+      "n_paired": 213,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": 0.066,
+        "ci95": [
+          0.0152,
+          0.1422
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": 0.0798,
+        "ci95": [
+          0.0152,
+          0.1838
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": 0.1004,
+        "ci95": [
+          0.0152,
+          0.2457
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 10,
+        "n_wrongside": 7
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 10,
+        "n_wrongside": 7
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 10,
+        "n_wrongside": 7
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_AKT": {
+      "n_paired": 194,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": -0.0354,
+        "ci95": [
+          -0.0718,
+          -0.0018
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": -0.0354,
+        "ci95": [
+          -0.0718,
+          -0.0018
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": -0.0354,
+        "ci95": [
+          -0.0718,
+          -0.0018
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_DKT": {
+      "n_paired": 194,
+      "anchor_auc_matches_t1fair": true,
+      "anchor_brier_matches_b46": true,
+      "ll_delta_eps1e-05": {
+        "mean": 0.0061,
+        "ci95": [
+          -0.0219,
+          0.033
+        ]
+      },
+      "ll_delta_eps1e-07": {
+        "mean": 0.0061,
+        "ci95": [
+          -0.0219,
+          0.033
+        ]
+      },
+      "ll_delta_eps1e-10": {
+        "mean": 0.0061,
+        "ci95": [
+          -0.0219,
+          0.033
+        ]
+      },
+      "anchor_ll_eps1e-07_matches_b46": true,
+      "clip_d_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_d_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-05": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-07": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_b_eps1e-10": {
+        "n_clip": 0,
+        "n_wrongside": 0
+      },
+      "clip_students_affected_deep_eps1e-10": 0,
+      "n_nonfinite_probs": 0
+    }
+  }
+}
