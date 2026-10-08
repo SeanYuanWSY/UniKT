@@ -45,6 +45,14 @@ for _name, _path in (
 OLD = {"SAKT": {"delta": 0.1609, "deep_mean": 0.4059, "epochs": 16},
        "DKVMN": {"delta": 0.1342, "deep_mean": 0.4326, "epochs": 30}}
 
+# b47/b49 original runs: if newest_run returns one of these, the p30 training
+# died before creating its run dir and we would silently re-score the OLD
+# checkpoint (fork review P2-1) — fail loudly instead.
+OLD_RUN_BASES = {
+    "SAKT_junyi2015_20261008-092533_fold0_bs64",
+    "DKVMN_junyi2015_20261008-100906_fold0_bs128",
+}
+
 
 def is_a1(ws, i):
     return int(ws.question[i]) == int(ws.question[i - 1]) and int(ws.sequence[i]) != int(ws.sequence[i - 1])
@@ -78,6 +86,9 @@ def newest_run(arch):
     cands = sorted(glob.glob(f"/root/unikt-fork/runs/normal/{arch}_{DS}_*_fold0_*"))
     assert cands, f"no {arch} run for {DS}"
     run = cands[-1]
+    assert os.path.basename(run) not in OLD_RUN_BASES, (
+        f"newest {arch} run is the OLD pre-p30 run — p30 training missing: {run}"
+    )
     assert os.path.exists(run + "/best_model.pth"), f"incomplete {arch} run: {run}"
     return "runs/normal/" + os.path.basename(run), run
 
@@ -149,7 +160,9 @@ def main(n_users=300):
             "ci95": boot_ci(deltas),
             "n_nonfinite_probs": n_nonfinite,
             "n_dummy_pos0_excluded": n_dummy,
+            "n_kc_prior_b1": len(prior_b1),
             "anchor_n_paired": len(common) == ref["n_paired"],
+            "anchor_n_kc_prior": len(prior_b1) == 38,
             "anchor_b1_mean_matches_ref": (
                 b1_mean is not None
                 and abs(b1_mean - ref["B1_mean_samesupport_rc"]) <= 0.0001
