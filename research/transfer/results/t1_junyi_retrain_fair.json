@@ -1,0 +1,46 @@
+{
+  "identity_SAKT_p30": {
+    "run_dir": "runs/normal/SAKT_junyi2015_20261008-133328_fold0_bs64",
+    "n_paired": 213,
+    "deep_mean": 0.4059,
+    "b1_mean": 0.5668,
+    "delta_b1_minus_deep": 0.1609,
+    "ci95": [
+      0.1308,
+      0.1899
+    ],
+    "n_nonfinite_probs": 0,
+    "n_dummy_pos0_excluded": 0,
+    "n_kc_prior_b1": 38,
+    "anchor_n_paired": true,
+    "anchor_n_kc_prior": true,
+    "anchor_b1_mean_matches_ref": true,
+    "old_run": {
+      "delta": 0.1609,
+      "deep_mean": 0.4059,
+      "epochs": 16
+    }
+  },
+  "identity_DKVMN_p30": {
+    "run_dir": "runs/normal/DKVMN_junyi2015_20261008-133445_fold0_bs128",
+    "n_paired": 213,
+    "deep_mean": 0.431,
+    "b1_mean": 0.5668,
+    "delta_b1_minus_deep": 0.1358,
+    "ci95": [
+      0.103,
+      0.1688
+    ],
+    "n_nonfinite_probs": 0,
+    "n_dummy_pos0_excluded": 0,
+    "n_kc_prior_b1": 38,
+    "anchor_n_paired": true,
+    "anchor_n_kc_prior": true,
+    "anchor_b1_mean_matches_ref": true,
+    "old_run": {
+      "delta": 0.1342,
+      "deep_mean": 0.4326,
+      "epochs": 30
+    }
+  }
+}
