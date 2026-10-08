@@ -1,0 +1,823 @@
+{
+  "cells": {
+    "assistments17|DKT": {
+      "run_dir": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+      "n_paired": 244,
+      "deep_mean_auc": 0.4482,
+      "n_kc_by_N": {
+        "10": 72,
+        "25": 83,
+        "50": 85,
+        "100": 95,
+        "200": 96,
+        "300": 96
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0701,
+          "ci95": [
+            0.0315,
+            0.1078
+          ],
+          "n_students": 244
+        },
+        "25": {
+          "delta_auc_mean": 0.0919,
+          "ci95": [
+            0.0533,
+            0.1305
+          ],
+          "n_students": 244
+        },
+        "50": {
+          "delta_auc_mean": 0.0897,
+          "ci95": [
+            0.0512,
+            0.1282
+          ],
+          "n_students": 244
+        },
+        "100": {
+          "delta_auc_mean": 0.0966,
+          "ci95": [
+            0.0596,
+            0.1334
+          ],
+          "n_students": 244
+        },
+        "200": {
+          "delta_auc_mean": 0.1064,
+          "ci95": [
+            0.0696,
+            0.1425
+          ],
+          "n_students": 244
+        },
+        "300": {
+          "delta_auc_mean": 0.1092,
+          "ci95": [
+            0.0712,
+            0.1462
+          ],
+          "n_students": 244
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "assistments17|AKT": {
+      "run_dir": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+      "n_paired": 244,
+      "deep_mean_auc": 0.3949,
+      "n_kc_by_N": {
+        "10": 72,
+        "25": 83,
+        "50": 85,
+        "100": 95,
+        "200": 96,
+        "300": 96
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.1234,
+          "ci95": [
+            0.0845,
+            0.1616
+          ],
+          "n_students": 244
+        },
+        "25": {
+          "delta_auc_mean": 0.1452,
+          "ci95": [
+            0.1076,
+            0.1823
+          ],
+          "n_students": 244
+        },
+        "50": {
+          "delta_auc_mean": 0.1429,
+          "ci95": [
+            0.105,
+            0.1796
+          ],
+          "n_students": 244
+        },
+        "100": {
+          "delta_auc_mean": 0.1499,
+          "ci95": [
+            0.115,
+            0.1838
+          ],
+          "n_students": 244
+        },
+        "200": {
+          "delta_auc_mean": 0.1596,
+          "ci95": [
+            0.1244,
+            0.1932
+          ],
+          "n_students": 244
+        },
+        "300": {
+          "delta_auc_mean": 0.1625,
+          "ci95": [
+            0.1277,
+            0.1967
+          ],
+          "n_students": 244
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "assistments17|SAKT": {
+      "run_dir": "runs/normal/SAKT_assistments09_20261003-025330_fold0_bs64",
+      "n_paired": 244,
+      "deep_mean_auc": 0.4693,
+      "n_kc_by_N": {
+        "10": 72,
+        "25": 83,
+        "50": 85,
+        "100": 95,
+        "200": 96,
+        "300": 96
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.049,
+          "ci95": [
+            0.0081,
+            0.0901
+          ],
+          "n_students": 244
+        },
+        "25": {
+          "delta_auc_mean": 0.0709,
+          "ci95": [
+            0.0335,
+            0.1104
+          ],
+          "n_students": 244
+        },
+        "50": {
+          "delta_auc_mean": 0.0686,
+          "ci95": [
+            0.0302,
+            0.1067
+          ],
+          "n_students": 244
+        },
+        "100": {
+          "delta_auc_mean": 0.0756,
+          "ci95": [
+            0.0394,
+            0.1124
+          ],
+          "n_students": 244
+        },
+        "200": {
+          "delta_auc_mean": 0.0853,
+          "ci95": [
+            0.0495,
+            0.1219
+          ],
+          "n_students": 244
+        },
+        "300": {
+          "delta_auc_mean": 0.0881,
+          "ci95": [
+            0.051,
+            0.1267
+          ],
+          "n_students": 244
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "assistments17|DKVMN": {
+      "run_dir": "runs/normal/DKVMN_assistments09_20261003-024801_fold0_bs128",
+      "n_paired": 244,
+      "deep_mean_auc": 0.4542,
+      "n_kc_by_N": {
+        "10": 72,
+        "25": 83,
+        "50": 85,
+        "100": 95,
+        "200": 96,
+        "300": 96
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0641,
+          "ci95": [
+            0.0274,
+            0.101
+          ],
+          "n_students": 244
+        },
+        "25": {
+          "delta_auc_mean": 0.086,
+          "ci95": [
+            0.0522,
+            0.1214
+          ],
+          "n_students": 244
+        },
+        "50": {
+          "delta_auc_mean": 0.0837,
+          "ci95": [
+            0.0492,
+            0.1193
+          ],
+          "n_students": 244
+        },
+        "100": {
+          "delta_auc_mean": 0.0907,
+          "ci95": [
+            0.0565,
+            0.1261
+          ],
+          "n_students": 244
+        },
+        "200": {
+          "delta_auc_mean": 0.1004,
+          "ci95": [
+            0.066,
+            0.1358
+          ],
+          "n_students": 244
+        },
+        "300": {
+          "delta_auc_mean": 0.1032,
+          "ci95": [
+            0.0688,
+            0.1379
+          ],
+          "n_students": 244
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "ednet_kt1|DKT": {
+      "run_dir": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+      "n_paired": 56,
+      "deep_mean_auc": 0.498,
+      "n_kc_by_N": {
+        "10": 152,
+        "25": 159,
+        "50": 174,
+        "100": 174,
+        "200": 174,
+        "300": 175
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0507,
+          "ci95": [
+            -0.0677,
+            0.1714
+          ],
+          "n_students": 56
+        },
+        "25": {
+          "delta_auc_mean": 0.0157,
+          "ci95": [
+            -0.0913,
+            0.122
+          ],
+          "n_students": 56
+        },
+        "50": {
+          "delta_auc_mean": 0.0116,
+          "ci95": [
+            -0.1039,
+            0.127
+          ],
+          "n_students": 56
+        },
+        "100": {
+          "delta_auc_mean": 0.0708,
+          "ci95": [
+            -0.0351,
+            0.1809
+          ],
+          "n_students": 56
+        },
+        "200": {
+          "delta_auc_mean": 0.0788,
+          "ci95": [
+            -0.03,
+            0.1929
+          ],
+          "n_students": 56
+        },
+        "300": {
+          "delta_auc_mean": 0.071,
+          "ci95": [
+            -0.0317,
+            0.1789
+          ],
+          "n_students": 56
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "ednet_kt1|AKT": {
+      "run_dir": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+      "n_paired": 56,
+      "deep_mean_auc": 0.4283,
+      "n_kc_by_N": {
+        "10": 152,
+        "25": 159,
+        "50": 174,
+        "100": 174,
+        "200": 174,
+        "300": 175
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.1204,
+          "ci95": [
+            -0.0029,
+            0.2393
+          ],
+          "n_students": 56
+        },
+        "25": {
+          "delta_auc_mean": 0.0854,
+          "ci95": [
+            -0.0101,
+            0.1839
+          ],
+          "n_students": 56
+        },
+        "50": {
+          "delta_auc_mean": 0.0813,
+          "ci95": [
+            -0.017,
+            0.1812
+          ],
+          "n_students": 56
+        },
+        "100": {
+          "delta_auc_mean": 0.1406,
+          "ci95": [
+            0.0285,
+            0.2514
+          ],
+          "n_students": 56
+        },
+        "200": {
+          "delta_auc_mean": 0.1486,
+          "ci95": [
+            0.0455,
+            0.2555
+          ],
+          "n_students": 56
+        },
+        "300": {
+          "delta_auc_mean": 0.1407,
+          "ci95": [
+            0.0434,
+            0.241
+          ],
+          "n_students": 56
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "ednet_kt1|SAKT": {
+      "run_dir": "runs/normal/SAKT_assistments09_20261003-025330_fold0_bs64",
+      "n_paired": 56,
+      "deep_mean_auc": 0.458,
+      "n_kc_by_N": {
+        "10": 152,
+        "25": 159,
+        "50": 174,
+        "100": 174,
+        "200": 174,
+        "300": 175
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0907,
+          "ci95": [
+            -0.0174,
+            0.1985
+          ],
+          "n_students": 56
+        },
+        "25": {
+          "delta_auc_mean": 0.0557,
+          "ci95": [
+            -0.0377,
+            0.1479
+          ],
+          "n_students": 56
+        },
+        "50": {
+          "delta_auc_mean": 0.0516,
+          "ci95": [
+            -0.0433,
+            0.1517
+          ],
+          "n_students": 56
+        },
+        "100": {
+          "delta_auc_mean": 0.1108,
+          "ci95": [
+            0.0123,
+            0.2144
+          ],
+          "n_students": 56
+        },
+        "200": {
+          "delta_auc_mean": 0.1188,
+          "ci95": [
+            0.0219,
+            0.222
+          ],
+          "n_students": 56
+        },
+        "300": {
+          "delta_auc_mean": 0.111,
+          "ci95": [
+            0.0228,
+            0.2008
+          ],
+          "n_students": 56
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "ednet_kt1|DKVMN": {
+      "run_dir": "runs/normal/DKVMN_assistments09_20261003-024801_fold0_bs128",
+      "n_paired": 56,
+      "deep_mean_auc": 0.4946,
+      "n_kc_by_N": {
+        "10": 152,
+        "25": 159,
+        "50": 174,
+        "100": 174,
+        "200": 174,
+        "300": 175
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0541,
+          "ci95": [
+            -0.0453,
+            0.159
+          ],
+          "n_students": 56
+        },
+        "25": {
+          "delta_auc_mean": 0.0191,
+          "ci95": [
+            -0.0722,
+            0.1106
+          ],
+          "n_students": 56
+        },
+        "50": {
+          "delta_auc_mean": 0.015,
+          "ci95": [
+            -0.0818,
+            0.113
+          ],
+          "n_students": 56
+        },
+        "100": {
+          "delta_auc_mean": 0.0742,
+          "ci95": [
+            -0.0098,
+            0.1622
+          ],
+          "n_students": 56
+        },
+        "200": {
+          "delta_auc_mean": 0.0822,
+          "ci95": [
+            0.0003,
+            0.1703
+          ],
+          "n_students": 56
+        },
+        "300": {
+          "delta_auc_mean": 0.0744,
+          "ci95": [
+            0.0049,
+            0.1511
+          ],
+          "n_students": 56
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "junyi2015|DKT": {
+      "run_dir": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+      "n_paired": 194,
+      "deep_mean_auc": 0.441,
+      "n_kc_by_N": {
+        "10": 28,
+        "25": 29,
+        "50": 33,
+        "100": 37,
+        "200": 38,
+        "300": 38
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0857,
+          "ci95": [
+            0.0433,
+            0.1279
+          ],
+          "n_students": 194
+        },
+        "25": {
+          "delta_auc_mean": 0.082,
+          "ci95": [
+            0.0406,
+            0.1229
+          ],
+          "n_students": 194
+        },
+        "50": {
+          "delta_auc_mean": 0.1153,
+          "ci95": [
+            0.0758,
+            0.1524
+          ],
+          "n_students": 194
+        },
+        "100": {
+          "delta_auc_mean": 0.1164,
+          "ci95": [
+            0.0792,
+            0.1517
+          ],
+          "n_students": 194
+        },
+        "200": {
+          "delta_auc_mean": 0.1203,
+          "ci95": [
+            0.0823,
+            0.1574
+          ],
+          "n_students": 194
+        },
+        "300": {
+          "delta_auc_mean": 0.1274,
+          "ci95": [
+            0.0888,
+            0.1651
+          ],
+          "n_students": 194
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "junyi2015|AKT": {
+      "run_dir": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+      "n_paired": 194,
+      "deep_mean_auc": 0.4529,
+      "n_kc_by_N": {
+        "10": 28,
+        "25": 29,
+        "50": 33,
+        "100": 37,
+        "200": 38,
+        "300": 38
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0738,
+          "ci95": [
+            0.0308,
+            0.1158
+          ],
+          "n_students": 194
+        },
+        "25": {
+          "delta_auc_mean": 0.0701,
+          "ci95": [
+            0.0272,
+            0.1123
+          ],
+          "n_students": 194
+        },
+        "50": {
+          "delta_auc_mean": 0.1034,
+          "ci95": [
+            0.0634,
+            0.1421
+          ],
+          "n_students": 194
+        },
+        "100": {
+          "delta_auc_mean": 0.1045,
+          "ci95": [
+            0.0664,
+            0.1404
+          ],
+          "n_students": 194
+        },
+        "200": {
+          "delta_auc_mean": 0.1085,
+          "ci95": [
+            0.0701,
+            0.1457
+          ],
+          "n_students": 194
+        },
+        "300": {
+          "delta_auc_mean": 0.1156,
+          "ci95": [
+            0.0777,
+            0.1516
+          ],
+          "n_students": 194
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "junyi2015|SAKT": {
+      "run_dir": "runs/normal/SAKT_assistments09_20261003-025330_fold0_bs64",
+      "n_paired": 194,
+      "deep_mean_auc": 0.4682,
+      "n_kc_by_N": {
+        "10": 28,
+        "25": 29,
+        "50": 33,
+        "100": 37,
+        "200": 38,
+        "300": 38
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0585,
+          "ci95": [
+            0.0181,
+            0.0992
+          ],
+          "n_students": 194
+        },
+        "25": {
+          "delta_auc_mean": 0.0548,
+          "ci95": [
+            0.0129,
+            0.0964
+          ],
+          "n_students": 194
+        },
+        "50": {
+          "delta_auc_mean": 0.0881,
+          "ci95": [
+            0.0482,
+            0.1278
+          ],
+          "n_students": 194
+        },
+        "100": {
+          "delta_auc_mean": 0.0892,
+          "ci95": [
+            0.0518,
+            0.1272
+          ],
+          "n_students": 194
+        },
+        "200": {
+          "delta_auc_mean": 0.0931,
+          "ci95": [
+            0.0546,
+            0.132
+          ],
+          "n_students": 194
+        },
+        "300": {
+          "delta_auc_mean": 0.1002,
+          "ci95": [
+            0.0602,
+            0.1393
+          ],
+          "n_students": 194
+        }
+      },
+      "anchor_matches_ref": true
+    },
+    "junyi2015|DKVMN": {
+      "run_dir": "runs/normal/DKVMN_assistments09_20261003-024801_fold0_bs128",
+      "n_paired": 194,
+      "deep_mean_auc": 0.4563,
+      "n_kc_by_N": {
+        "10": 28,
+        "25": 29,
+        "50": 33,
+        "100": 37,
+        "200": 38,
+        "300": 38
+      },
+      "by_N": {
+        "10": {
+          "delta_auc_mean": 0.0704,
+          "ci95": [
+            0.0261,
+            0.1128
+          ],
+          "n_students": 194
+        },
+        "25": {
+          "delta_auc_mean": 0.0667,
+          "ci95": [
+            0.0231,
+            0.1095
+          ],
+          "n_students": 194
+        },
+        "50": {
+          "delta_auc_mean": 0.1,
+          "ci95": [
+            0.0576,
+            0.1422
+          ],
+          "n_students": 194
+        },
+        "100": {
+          "delta_auc_mean": 0.1011,
+          "ci95": [
+            0.0613,
+            0.1414
+          ],
+          "n_students": 194
+        },
+        "200": {
+          "delta_auc_mean": 0.105,
+          "ci95": [
+            0.0659,
+            0.1457
+          ],
+          "n_students": 194
+        },
+        "300": {
+          "delta_auc_mean": 0.1122,
+          "ci95": [
+            0.0739,
+            0.1504
+          ],
+          "n_students": 194
+        }
+      },
+      "anchor_matches_ref": true
+    }
+  },
+  "summary": {
+    "assistments17|DKT": {
+      "min_N_significant": 10,
+      "all_N_point_positive": true
+    },
+    "assistments17|AKT": {
+      "min_N_significant": 10,
+      "all_N_point_positive": true
+    },
+    "assistments17|SAKT": {
+      "min_N_significant": 10,
+      "all_N_point_positive": true
+    },
+    "assistments17|DKVMN": {
+      "min_N_significant": 10,
+      "all_N_point_positive": true
+    },
+    "ednet_kt1|DKT": {
+      "min_N_significant": null,
+      "all_N_point_positive": true
+    },
+    "ednet_kt1|AKT": {
+      "min_N_significant": 100,
+      "all_N_point_positive": true
+    },
+    "ednet_kt1|SAKT": {
+      "min_N_significant": 100,
+      "all_N_point_positive": true
+    },
+    "ednet_kt1|DKVMN": {
+      "min_N_significant": 200,
+      "all_N_point_positive": true
+    },
+    "junyi2015|DKT": {
+      "min_N_significant": 10,
+      "all_N_point_positive": true
+    },
+    "junyi2015|AKT": {
+      "min_N_significant": 10,
+      "all_N_point_positive": true
+    },
+    "junyi2015|SAKT": {
+      "min_N_significant": 10,
+      "all_N_point_positive": true
+    },
+    "junyi2015|DKVMN": {
+      "min_N_significant": 10,
+      "all_N_point_positive": true
+    }
+  },
+  "n_anchor_pass": 12
+}
