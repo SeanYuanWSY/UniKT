@@ -1,0 +1,98 @@
+{
+  "assistments17": {
+    "n_kc_prior_b1": 96,
+    "anchor_n_kc_prior_matches": true,
+    "identity_SAKT": {
+      "run_dir": "runs/normal/SAKT_assistments17_20261008-091753_fold0_bs64",
+      "deep_mean_samesupport": 0.5601,
+      "B1_mean_samesupport_rc": 0.5485,
+      "n_paired": 261,
+      "anchor_n_paired_model_independent": true,
+      "delta_fair_B1_minus_deep_rc": -0.0115,
+      "ci95_fair_rc": [
+        -0.038,
+        0.0154
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_SAKT": {
+      "run_dir": "runs/normal/SAKT_assistments09_20261003-025330_fold0_bs64",
+      "deep_mean_samesupport": 0.4693,
+      "B1_mean_samesupport_rc": 0.5574,
+      "n_paired": 244,
+      "anchor_n_paired_model_independent": true,
+      "delta_fair_B1_minus_deep_rc": 0.0881,
+      "ci95_fair_rc": [
+        0.051,
+        0.1267
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    }
+  },
+  "ednet_kt1": {
+    "n_kc_prior_b1": 175,
+    "anchor_n_kc_prior_matches": true,
+    "identity_SAKT": {
+      "run_dir": "runs/normal/SAKT_ednet_kt1_20261008-092053_fold0_bs64",
+      "deep_mean_samesupport": 0.5286,
+      "B1_mean_samesupport_rc": 0.5263,
+      "n_paired": 245,
+      "anchor_n_paired_model_independent": true,
+      "delta_fair_B1_minus_deep_rc": -0.0023,
+      "ci95_fair_rc": [
+        -0.0501,
+        0.0452
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_SAKT": {
+      "run_dir": "runs/normal/SAKT_assistments09_20261003-025330_fold0_bs64",
+      "deep_mean_samesupport": 0.458,
+      "B1_mean_samesupport_rc": 0.569,
+      "n_paired": 56,
+      "anchor_n_paired_model_independent": true,
+      "delta_fair_B1_minus_deep_rc": 0.111,
+      "ci95_fair_rc": [
+        0.0228,
+        0.2008
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    }
+  },
+  "junyi2015": {
+    "n_kc_prior_b1": 38,
+    "anchor_n_kc_prior_matches": true,
+    "identity_SAKT": {
+      "run_dir": "runs/normal/SAKT_junyi2015_20261008-092533_fold0_bs64",
+      "deep_mean_samesupport": 0.4059,
+      "B1_mean_samesupport_rc": 0.5668,
+      "n_paired": 213,
+      "anchor_n_paired_model_independent": true,
+      "delta_fair_B1_minus_deep_rc": 0.1609,
+      "ci95_fair_rc": [
+        0.1308,
+        0.1899
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    },
+    "transfer_SAKT": {
+      "run_dir": "runs/normal/SAKT_assistments09_20261003-025330_fold0_bs64",
+      "deep_mean_samesupport": 0.4682,
+      "B1_mean_samesupport_rc": 0.5684,
+      "n_paired": 194,
+      "anchor_n_paired_model_independent": true,
+      "delta_fair_B1_minus_deep_rc": 0.1002,
+      "ci95_fair_rc": [
+        0.0602,
+        0.1393
+      ],
+      "n_dummy_pos0_excluded": 0,
+      "n_nonfinite_probs": 0
+    }
+  }
+}
