@@ -88,7 +88,13 @@ def expected_run(arch, ds, seed):
     hits = []
     for run in cands:
         meta_path = run + "/run_metadata.yaml"
-        assert os.path.exists(meta_path), f"missing run_metadata.yaml in {run}"
+        # Kimi b60 P1: the glob spans ALL historical {arch,ds} runs, and a
+        # pre-metadata-era run would crash the assert below. A run without
+        # metadata cannot prove its seed, so skipping it never loosens the
+        # whitelist; a b60 run missing metadata still fails loudly via
+        # len(hits) == 0.
+        if not os.path.exists(meta_path):
+            continue
         with open(meta_path) as f:
             meta = yaml.safe_load(f) or {}
         if int(meta.get("seed", -1)) == seed:
