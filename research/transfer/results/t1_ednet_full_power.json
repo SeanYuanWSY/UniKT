@@ -1,0 +1,356 @@
+{
+  "cells": {
+    "ednet_kt1|DKT|s42": {
+      "n_paired": 126,
+      "deep_mean": 0.4669,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.0801,
+      "ci95": [
+        0.0015,
+        0.1602
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.0487,
+        "ci95_s1": [
+          -0.0594,
+          0.1547
+        ],
+        "delta_s2": 0.0666,
+        "ci95_s2": [
+          -0.0272,
+          0.1622
+        ]
+      }
+    },
+    "ednet_kt1|DKT|s1": {
+      "n_paired": 126,
+      "deep_mean": 0.4584,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.0886,
+      "ci95": [
+        0.0056,
+        0.1716
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.0487,
+        "ci95_s1": [
+          -0.0594,
+          0.1547
+        ],
+        "delta_s2": 0.0666,
+        "ci95_s2": [
+          -0.0272,
+          0.1622
+        ]
+      }
+    },
+    "ednet_kt1|DKT|s2": {
+      "n_paired": 126,
+      "deep_mean": 0.4924,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.0546,
+      "ci95": [
+        -0.0191,
+        0.1265
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.0487,
+        "ci95_s1": [
+          -0.0594,
+          0.1547
+        ],
+        "delta_s2": 0.0666,
+        "ci95_s2": [
+          -0.0272,
+          0.1622
+        ]
+      }
+    },
+    "ednet_kt1|AKT|s42": {
+      "n_paired": 126,
+      "deep_mean": 0.3995,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.1475,
+      "ci95": [
+        0.0713,
+        0.2222
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.1385,
+        "ci95_s1": [
+          0.0377,
+          0.2426
+        ],
+        "delta_s2": 0.096,
+        "ci95_s2": [
+          0.0062,
+          0.1891
+        ]
+      }
+    },
+    "ednet_kt1|AKT|s1": {
+      "n_paired": 126,
+      "deep_mean": 0.4019,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.145,
+      "ci95": [
+        0.069,
+        0.2195
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.1385,
+        "ci95_s1": [
+          0.0377,
+          0.2426
+        ],
+        "delta_s2": 0.096,
+        "ci95_s2": [
+          0.0062,
+          0.1891
+        ]
+      }
+    },
+    "ednet_kt1|AKT|s2": {
+      "n_paired": 126,
+      "deep_mean": 0.4331,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.1139,
+      "ci95": [
+        0.0423,
+        0.1861
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.1385,
+        "ci95_s1": [
+          0.0377,
+          0.2426
+        ],
+        "delta_s2": 0.096,
+        "ci95_s2": [
+          0.0062,
+          0.1891
+        ]
+      }
+    },
+    "ednet_kt1|SAKT|s42": {
+      "n_paired": 126,
+      "deep_mean": 0.4365,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.1105,
+      "ci95": [
+        0.0385,
+        0.1803
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.1383,
+        "ci95_s1": [
+          0.0265,
+          0.2517
+        ],
+        "delta_s2": 0.0779,
+        "ci95_s2": [
+          -0.0274,
+          0.1826
+        ]
+      }
+    },
+    "ednet_kt1|SAKT|s1": {
+      "n_paired": 126,
+      "deep_mean": 0.4532,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.0938,
+      "ci95": [
+        0.0096,
+        0.1766
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.1383,
+        "ci95_s1": [
+          0.0265,
+          0.2517
+        ],
+        "delta_s2": 0.0779,
+        "ci95_s2": [
+          -0.0274,
+          0.1826
+        ]
+      }
+    },
+    "ednet_kt1|SAKT|s2": {
+      "n_paired": 126,
+      "deep_mean": 0.5081,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.0389,
+      "ci95": [
+        -0.0384,
+        0.1164
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.1383,
+        "ci95_s1": [
+          0.0265,
+          0.2517
+        ],
+        "delta_s2": 0.0779,
+        "ci95_s2": [
+          -0.0274,
+          0.1826
+        ]
+      }
+    },
+    "ednet_kt1|DKVMN|s42": {
+      "n_paired": 126,
+      "deep_mean": 0.4886,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.0584,
+      "ci95": [
+        -0.0172,
+        0.1314
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.0462,
+        "ci95_s1": [
+          -0.0346,
+          0.1262
+        ],
+        "delta_s2": 0.0529,
+        "ci95_s2": [
+          -0.0307,
+          0.14
+        ]
+      }
+    },
+    "ednet_kt1|DKVMN|s1": {
+      "n_paired": 126,
+      "deep_mean": 0.5079,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.0391,
+      "ci95": [
+        -0.0251,
+        0.1043
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.0462,
+        "ci95_s1": [
+          -0.0346,
+          0.1262
+        ],
+        "delta_s2": 0.0529,
+        "ci95_s2": [
+          -0.0307,
+          0.14
+        ]
+      }
+    },
+    "ednet_kt1|DKVMN|s2": {
+      "n_paired": 126,
+      "deep_mean": 0.527,
+      "b1_mean": 0.547,
+      "delta_b1_minus_deep": 0.0199,
+      "ci95": [
+        -0.0588,
+        0.0999
+      ],
+      "n_nonfinite_probs": 0,
+      "n_fallback_rows": 0,
+      "n_kc_prior": 179,
+      "anchor_n_kc_prior": false,
+      "anchor_b1_matches_b59": false,
+      "b59_queue300_ref": {
+        "n_paired": 56,
+        "delta_s1": 0.0462,
+        "ci95_s1": [
+          -0.0346,
+          0.1262
+        ],
+        "delta_s2": 0.0529,
+        "ci95_s2": [
+          -0.0307,
+          0.14
+        ]
+      }
+    }
+  },
+  "src09_by_seed": {
+    "DKT|s42": "runs/normal/DKT_assistments09_20261003-024700_fold0_bs128",
+    "DKT|s1": "runs/normal/DKT_assistments09_20261009-103449_fold0_bs128",
+    "DKT|s2": "runs/normal/DKT_assistments09_20261009-113859_fold0_bs128",
+    "AKT|s42": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+    "AKT|s1": "runs/normal/AKT_assistments09_20261009-104238_fold0_bs64",
+    "AKT|s2": "runs/normal/AKT_assistments09_20261009-114726_fold0_bs64",
+    "SAKT|s42": "runs/normal/SAKT_assistments09_20261003-025330_fold0_bs64",
+    "SAKT|s1": "runs/normal/SAKT_assistments09_20261009-103519_fold0_bs64",
+    "SAKT|s2": "runs/normal/SAKT_assistments09_20261009-113930_fold0_bs64",
+    "DKVMN|s42": "runs/normal/DKVMN_assistments09_20261003-024801_fold0_bs128",
+    "DKVMN|s1": "runs/normal/DKVMN_assistments09_20261009-103604_fold0_bs128",
+    "DKVMN|s2": "runs/normal/DKVMN_assistments09_20261009-114008_fold0_bs128"
+  },
+  "n_total_students": 683,
+  "n_anchor_pass": 0
+}
