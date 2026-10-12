@@ -81,7 +81,14 @@ def expected_run(arch, ds, seed=42):
     # whitelist: seed match + completion + CHECKPOINT-DIMENSION sanity
     # (b71 crash: orphan runs from old preprocessing carry mismatched item
     # counts, e.g. DKT junyi 014541 = 40 items vs current 38-KC+pad=39).
-    # Cheap state-dict shape probe; oldest-first among survivors.
+    # v3: per-arch item-embedding key (advisory: v2 used the DKT-only
+    # out_layer key, which would skip ALL AKT/SAKT/DKVMN candidates).
+    # Direct n_items embeddings measured from real checkpoints:
+    #   DKT out_layer.weight | AKT q_embed.weight | SAKT exercise_emb.weight
+    #   DKVMN k_emb_layer.weight   (each [0] == n_items; interaction/qa
+    #   embeddings are 2n(+1) and are NOT used, to avoid emb/out conflation).
+    ITEM_KEY = {"DKT": "out_layer.weight", "AKT": "q_embed.weight",
+                "SAKT": "exercise_emb.weight", "DKVMN": "k_emb_layer.weight"}
     EXPECT_ITEMS = {"assistments17": {102}, "ednet_kt1": {189}, "junyi2015": {38, 39}}
     cands = sorted(glob.glob(f"/root/unikt-fork/runs/normal/{arch}_{ds}_*_fold0_*"))
     ok_runs = []
@@ -101,11 +108,12 @@ def expected_run(arch, ds, seed=42):
         try:
             sd = torch.load(run + "/best_model.pth", map_location="cpu", weights_only=False)
             sd = sd.get("state_dict", sd)
-            out_w = [v for k, v in sd.items() if k.endswith("out_layer.weight")]
-            if out_w and out_w[0].shape[0] in EXPECT_ITEMS[ds]:
+            key = ITEM_KEY[arch]
+            item_w = [v for k, v in sd.items() if k.endswith(key)]
+            if item_w and item_w[0].shape[0] in EXPECT_ITEMS[ds]:
                 ok_runs.append(run)  # dimension-compatible original
             else:
-                print(f"[whitelist] skip dim-mismatch {run}: out_layer={tuple(out_w[0].shape) if out_w else None}", flush=True)
+                print(f"[whitelist] skip dim-mismatch {run}: {key}={tuple(item_w[0].shape) if item_w else 'absent'}", flush=True)
         except Exception as e:
             print(f"[whitelist] skip unreadable {run}: {e}", flush=True)
     assert ok_runs, f"no dimension-valid seed-42 run for {arch}/{ds}"
