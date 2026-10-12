@@ -78,28 +78,40 @@ def boot_ci(d, B=5000, seed=0):
 
 
 def expected_run(arch, ds, seed=42):
-    # identity in-domain seed-42 runs = ORIGINAL protocol runs (various dates);
-    # whitelist: seed match + uniqueness + completion, no date rule (b60-style)
+    # whitelist: seed match + completion + CHECKPOINT-DIMENSION sanity
+    # (b71 crash: orphan runs from old preprocessing carry mismatched item
+    # counts, e.g. DKT junyi 014541 = 40 items vs current 38-KC+pad=39).
+    # Cheap state-dict shape probe; oldest-first among survivors.
+    EXPECT_ITEMS = {"assistments17": {102}, "ednet_kt1": {189}, "junyi2015": {38, 39}}
     cands = sorted(glob.glob(f"/root/unikt-fork/runs/normal/{arch}_{ds}_*_fold0_*"))
-    hits = []
+    ok_runs = []
     for run in cands:
         meta_path = run + "/run_metadata.yaml"
         if not os.path.exists(meta_path):
             continue
         with open(meta_path) as f:
             meta = yaml.safe_load(f) or {}
-        # exclude p30 retrain family (20261009/10 dated b57/58 runs at seed 42) via best-epoch? No —
-        # b57 p30 runs ARE valid seed-42 identity models; the ORIGINAL is ambiguous.
-        # Rule (preregistered): prefer the OLDEST seed-42 run (original protocol, earliest date).
-        if int(meta.get("seed", -1)) == seed:
-            hits.append(run)
-    assert hits, f"no seed-42 run for {arch}/{ds}"
-    hits.sort()  # date prefix sorts lexicographically -> oldest first
-    chosen = hits[0]
-    assert os.path.exists(chosen + "/best_model.pth"), chosen
-    with open(chosen + "/run.log", errors="ignore") as f:
-        assert "Training complete" in f.read(), chosen
-    return "runs/normal/" + os.path.basename(chosen), len(hits)
+        if int(meta.get("seed", -1)) != seed:
+            continue
+        if not os.path.exists(run + "/best_model.pth"):
+            continue
+        with open(run + "/run.log", errors="ignore") as f:
+            if "Training complete" not in f.read():
+                continue
+        try:
+            sd = torch.load(run + "/best_model.pth", map_location="cpu", weights_only=False)
+            sd = sd.get("state_dict", sd)
+            out_w = [v for k, v in sd.items() if k.endswith("out_layer.weight")]
+            if out_w and out_w[0].shape[0] in EXPECT_ITEMS[ds]:
+                ok_runs.append(run)  # dimension-compatible original
+            else:
+                print(f"[whitelist] skip dim-mismatch {run}: out_layer={tuple(out_w[0].shape) if out_w else None}", flush=True)
+        except Exception as e:
+            print(f"[whitelist] skip unreadable {run}: {e}", flush=True)
+    assert ok_runs, f"no dimension-valid seed-42 run for {arch}/{ds}"
+    ok_runs.sort()  # oldest first (original protocol)
+    chosen = ok_runs[0]
+    return "runs/normal/" + os.path.basename(chosen), len(ok_runs)
 
 
 def build_pooled_prior(samples):
@@ -178,6 +190,8 @@ def main(n_users=300):
             del rm
             common = sorted(per_stu)
             d_fus_vs_max = [per_stu[u][0] - per_stu[u][3] for u in common]
+            d_fus_vs_b1 = [per_stu[u][0] - per_stu[u][2] for u in common]
+            d_fus_vs_deep = [per_stu[u][0] - per_stu[u][1] for u in common]
             out["cells"][f"{ds}|{arch}"] = {
                 "run_dir": run_rel,
                 "n_seed42_runs_seen": n_hits,
@@ -188,7 +202,11 @@ def main(n_users=300):
                 "b1_mean": round(float(np.mean([per_stu[u][2] for u in common])), 4),
                 "max_mean": round(float(np.mean([per_stu[u][3] for u in common])), 4),
                 "delta_fus_minus_max": round(float(np.mean(d_fus_vs_max)), 4),
-                "ci95": boot_ci(d_fus_vs_max),
+                "ci95_max": boot_ci(d_fus_vs_max),
+                "delta_fus_minus_b1": round(float(np.mean(d_fus_vs_b1)), 4),
+                "ci95_vs_b1": boot_ci(d_fus_vs_b1),
+                "delta_fus_minus_deep": round(float(np.mean(d_fus_vs_deep)), 4),
+                "ci95_vs_deep": boot_ci(d_fus_vs_deep),
                 "n_nonfinite_probs": n_nonfinite,
                 "anchor_n_paired": len(common) == NP_REF[ds],
                 "anchor_b1_mean": abs(round(float(np.mean([per_stu[u][2] for u in common])), 4) - B1_REF[ds]) <= 0.0001,
