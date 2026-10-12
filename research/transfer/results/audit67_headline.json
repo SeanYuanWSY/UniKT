@@ -1,0 +1,15 @@
+{
+  "ref_probe": "{\"assistments17\": {\"B1_mean\": 0.5481, \"B1_n\": 261, \"identity_AKT\": {\"deep_mean\": 0.5841, \"n_paired\": 261, \"delta_B1_minus_deep\": -0.036, \"ci95\": [-0.0629, -0.0084]}, \"identity_DKT\": {\"deep_mean\": 0.63",
+  "checks": {},
+  "src09": "runs/normal/AKT_assistments09_20261003-025410_fold0_bs64",
+  "replay": {
+    "n_paired": 244,
+    "delta": 0.1625,
+    "ci95": [
+      0.1277,
+      0.1967
+    ],
+    "deep_mean": 0.3949,
+    "b1_mean": 0.5574
+  }
+}
