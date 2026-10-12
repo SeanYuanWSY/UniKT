@@ -1,0 +1,50 @@
+{
+  "cells": {
+    "assistments17": {
+      "n_paired": 261,
+      "markov_mean": 0.5245,
+      "b1_mean": 0.5485,
+      "delta_markov_minus_b1": -0.0241,
+      "ci95": [
+        -0.0426,
+        -0.006
+      ],
+      "n_nonfinite_probs": 0,
+      "n_kc_prior_b1": 96,
+      "n_trans_raw": 949,
+      "n_trans_kept_ge3": 814,
+      "anchor_n_kc": true
+    },
+    "ednet_kt1": {
+      "n_paired": 245,
+      "markov_mean": 0.5264,
+      "b1_mean": 0.5264,
+      "delta_markov_minus_b1": 0.0,
+      "ci95": [
+        -0.0008,
+        0.0009
+      ],
+      "n_nonfinite_probs": 0,
+      "n_kc_prior_b1": 175,
+      "n_trans_raw": 750,
+      "n_trans_kept_ge3": 453,
+      "anchor_n_kc": true
+    },
+    "junyi2015": {
+      "n_paired": 213,
+      "markov_mean": 0.5518,
+      "b1_mean": 0.5668,
+      "delta_markov_minus_b1": -0.0149,
+      "ci95": [
+        -0.039,
+        0.0096
+      ],
+      "n_nonfinite_probs": 0,
+      "n_kc_prior_b1": 38,
+      "n_trans_raw": 72,
+      "n_trans_kept_ge3": 69,
+      "anchor_n_kc": true
+    }
+  },
+  "n_anchor_pass": 3
+}
