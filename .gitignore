@@ -51,3 +51,6 @@ docs/source/**/*.mo
 
 # Personal research docs stay local (user rule 2026-10-04): only code goes to GitHub
 research/*.md
+
+# Keep this raw reviewer run log out of Git
+/research/batch_reports/codex_b4648_review_20261008.md
